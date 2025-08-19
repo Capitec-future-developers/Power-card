@@ -1,12 +1,14 @@
 const content = document.querySelector('.content');
+const customerService = document.getElementById('customer-service');
 
 content.innerHTML = `
 <img src="../img/issuer-front.png" alt="issuer-front" class="issuer-front">
 `;
 
-const customerService = document.querySelector('.customer-service');
 
-content.innerHTML = `
+function showCustomerService() {
+
+  content.innerHTML = `
  <section>
  <div class="customer-details">
  <div class="left-details">
@@ -39,4 +41,12 @@ content.innerHTML = `
 </table>
 </div>
 </section>
-`
+`;
+
+}
+
+// Attach event
+customerService.addEventListener('click', (e) => {
+  e.stopPropagation(); // prevent parent toggle
+  showCustomerService();
+});

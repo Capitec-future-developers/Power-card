@@ -45,7 +45,7 @@ sideBar.innerHTML = `
   <div class="drop">
     <a><span class="material-icons-sharp" style="color: red; font-size: 15px;">public</span> Customer service</a>
     <ul>
-      <li>Customer service</li>
+      <li id="customer-service">Customer service</li>
     </ul>
   </div>
 `;
@@ -65,5 +65,13 @@ drops.forEach(drop => {
     drops.forEach(d => d.querySelector('ul').style.display = "none");
     // toggle clicked one
     submenu.style.display = isVisible ? "none" : "block";
+
   });
+});
+
+const customerServiceLi = document.getElementById('customer-service');
+
+customerServiceLi.addEventListener('click', (e) => {
+  e.stopPropagation(); // prevents the parent <a> click from hiding the submenu
+  showCustomerService();
 });
