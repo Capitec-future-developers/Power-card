@@ -28,7 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <div class="action-btn">
         <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
-        <button class="clear">Clear <span class="material-icons-sharp">ink_eraser</span></button>
+        <button class="clear" style="
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  gap: 5px;
+  color: white;
+  background-color: #092365;
+  border: none;
+  font-size: 16px;
+  width: 120px;
+  height: 35px;
+  cursor: pointer;
+  border-radius: 2px;
+ ;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
       </div>
 
       <div class="client-details">
@@ -50,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchBtn = document.querySelector('.search-btn');
     const clearBtn = document.querySelector('.clear');
 
-    // Fetch customer on search
+
     searchBtn.addEventListener('click', async () => {
       const pan = document.getElementById('pan').value.trim();
       if (!pan) return alert('Please enter a PAN number');
