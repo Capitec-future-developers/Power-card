@@ -240,61 +240,48 @@
 
 .client-details td {
   display: none;
-}
-
-/* Collapse styles */
-.collapse {
+}/* Collapsible Table Rows */
+.detail-row .collapsible-content {
   display: none;
+  overflow: hidden;
+  padding: 10px;
+  background: #f5f5f5;
+  transition: all 0.35s ease;
 }
 
-.collapse.show {
+.detail-row .collapsible-content.show {
   display: block;
 }
 
-.collapsing {
-  position: relative;
-  height: 0;
-  overflow: hidden;
-  transition: height 0.35s ease;
-}
-
-.collapse-toggle {
+.collapsible-row {
   cursor: pointer;
-  position: relative;
 }
 
-.collapse-toggle::after {
-  content: '';
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  vertical-align: middle;
-  border-top: 5px solid;
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
+.collapsible-row .material-icons-sharp {
   transition: transform 0.3s ease;
 }
 
-.collapse-toggle[aria-expanded="true"]::after {
+.collapsible-row.expanded .material-icons-sharp {
   transform: rotate(180deg);
 }
 
-.sidebar-collapse {
-  transition: all 0.3s ease;
+/* Optional: detail inputs styling */
+.detail-row input {
+  width: 100%;
+  margin-bottom: 5px;
 }
 
-.sidebar-collapse.collapsed {
-  width: 50px;
+
+
+/* Optional: table styling */
+#client-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.sidebar-collapse.collapsed .drop > a span:not(.material-icons-sharp),
-.sidebar-collapse.collapsed .search {
-  display: none;
-}
-
-.sidebar-collapse.collapsed .drop ul {
-  display: none !important;
+#client-table th, #client-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
 .error-message {

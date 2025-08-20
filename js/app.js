@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
 
-  // === Mock Database with constraints and timestamps ===
+  // === Mock Database ===
   const mockDatabase = [
     {
       pan: '4644090987127908',
@@ -51,17 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  // Utility functions
+  // Utility function
   const isValidPAN = pan => typeof pan === 'string' && pan.length >= 13;
-  const isUniqueLegalID = (legal_id, pan) => !mockDatabase.some(c => c.legal_id === legal_id && c.pan !== pan);
-  const getCustomerSummary = customer => ({
-    pan: customer.pan,
-    full_name: `${customer.first_name} ${customer.family_name || ''}`.trim(),
-    corporate_name: customer.corporate_name,
-    phone: customer.phone,
-    age: customer.birth_date ? Math.floor((new Date() - new Date(customer.birth_date)) / (365.25*24*60*60*1000)) : null,
-    created_at: customer.created_at
-  });
 
   // Show initial image
   content.innerHTML = `<img src="img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
@@ -88,18 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div class="action-btn">
           <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
-          <button class="clear" style="align-items: center;
-  justify-content: center;
-  gap: 5px;
-  color: white;
-  background-color: #092365;
-  border: none;
-  font-size: 16px;
-  width: 120px;
-  height: 35px;
-  cursor: pointer;
-  border-radius: 2px;
-  padding-top: 10px;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
+          <button class="clear">Clear <span class="material-icons-sharp">ink_eraser</span></button>
         </div>
 
         <div class="client-details">
@@ -128,22 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchBtn.addEventListener('click', () => {
       const pan = document.getElementById('pan').value.trim();
-      if (!pan) {
-        showError('Please enter a PAN number');
-        return;
-      }
-      if (!isValidPAN(pan)) {
-        showError('PAN must be at least 13 characters');
-        return;
-      }
-      hideError();
+      if (!pan) return showError('Please enter a PAN number');
+      if (!isValidPAN(pan)) return showError('PAN must be at least 13 characters');
 
+      hideError();
       const customer = mockDatabase.find(c => c.pan === pan);
-      if (!customer) {
-        showError('PAN not found');
-        document.getElementById('client-table-body').innerHTML = '';
-        return;
-      }
+      if (!customer) return showError('PAN not found');
 
       renderCustomerTable(customer);
     });
@@ -202,16 +172,19 @@ document.addEventListener('DOMContentLoaded', () => {
       tableBody.appendChild(row);
       tableBody.appendChild(detailRow);
 
+      // Collapsible toggle
       row.addEventListener('click', () => {
         const content = detailRow.querySelector('.collapsible-content');
-        content.classList.toggle('active');
+        content.classList.toggle('show');     // matches CSS
+        row.classList.toggle('expanded');     // rotates arrow
+
         const icon = row.querySelector('.material-icons-sharp');
-        icon.textContent = content.classList.contains('active') ? 'expand_less' : 'expand_more';
+        icon.textContent = content.classList.contains('show') ? 'expand_less' : 'expand_more';
       });
     }
 
-    function showError(message) {
-      errorMessage.textContent = message;
+    function showError(msg) {
+      errorMessage.textContent = msg;
       errorMessage.style.display = 'block';
     }
 
