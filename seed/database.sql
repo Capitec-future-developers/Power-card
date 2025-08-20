@@ -1,6 +1,6 @@
 -- 1. Create the customers table with timestamps and better constraints
 CREATE TABLE IF NOT EXISTS customers (
-                                       pan VARCHAR(20) PRIMARY KEY CHECK (LENGTH(pan) >= 13), -- Basic PAN validation
+                                       pan VARCHAR(20) PRIMARY KEY CHECK (LENGTH(pan) >= 13),
                                        first_name VARCHAR(50) NOT NULL,
                                        family_name VARCHAR(50),
                                        corporate_id VARCHAR(20),
@@ -9,11 +9,10 @@ CREATE TABLE IF NOT EXISTS customers (
                                        client_code VARCHAR(20),
                                        corporate_name VARCHAR(100),
                                        phone VARCHAR(20),
-                                       birth_date DATE CHECK (birth_date <= CURRENT_DATE), -- Prevent future birth dates
+                                       birth_date DATE CHECK (birth_date <= CURRENT_DATE),
                                        address TEXT,
                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
--- Composite index for common query patterns
                                        CONSTRAINT unique_legal_id UNIQUE (legal_id)
 );
 
@@ -35,8 +34,7 @@ INSERT INTO customers (
      'Durban Solutions', '0835533344', '1985-12-15', '78 Pine Road, Durban, SA')
 ON CONFLICT (pan) DO NOTHING;
 
-
--- 4. Create updated_at function if it doesn't exist
+-- 4. Create updated_at function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
   RETURNS TRIGGER AS $$
 BEGIN
@@ -52,7 +50,7 @@ CREATE TRIGGER trg_update_customers_updated_at
   FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
--- 6. Optional: Create a view for commonly accessed customer data
+-- 6. Create a view for commonly accessed customer data
 CREATE OR REPLACE VIEW customer_summary AS
 SELECT
   pan,
@@ -62,9 +60,3 @@ SELECT
   EXTRACT(YEAR FROM AGE(birth_date)) as age,
   created_at
 FROM customers;
-
--- 7. Verify inserted data
-SELECT * FROM customers ORDER BY created_at DESC;
-
--- 8. Example query: Find all customers for a specific corporation
-SELECT * FROM customers WHERE corporate_id = 'CORP001';
