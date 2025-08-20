@@ -426,6 +426,122 @@
   border: 1px solid #ddd;
   min-height: 20px;
 }
+/* Customer info section */
+.customer-info-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.customer-info-section h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-item label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+  font-size: 12px;
+}
+
+.info-item span {
+  padding: 8px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  min-height: 20px;
+  font-size: 14px;
+}
+
+/* Payment Instruments and Accounts sections */
+.payment-section,
+.accounts-section {
+  margin-top: 20px;
+  width: 100%;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.payment-section h3,
+.accounts-section h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.payment-table,
+.accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.payment-table th,
+.payment-table td,
+.accounts-table th,
+.accounts-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.payment-table th,
+.accounts-table th {
+  background-color: #e8e6e6;
+  font-weight: 600;
+}
+
+.payment-table tr:nth-child(even),
+.accounts-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.payment-table tr:hover,
+.accounts-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Adjust column widths for payment instruments */
+.payment-table th:nth-child(1) { width: 20%; }
+.payment-table th:nth-child(2) { width: 15%; }
+.payment-table th:nth-child(3) { width: 15%; }
+.payment-table th:nth-child(4) { width: 15%; }
+.payment-table th:nth-child(5) { width: 10%; }
+.payment-table th:nth-child(6) { width: 10%; }
+.payment-table th:nth-child(7) { width: 10%; }
+.payment-table th:nth-child(8) { width: 5%; }
+
+/* Adjust column widths for accounts */
+.accounts-table th:nth-child(1) { width: 25%; }
+.accounts-table th:nth-child(2) { width: 20%; }
+.accounts-table th:nth-child(3) { width: 20%; }
+.accounts-table th:nth-child(4) { width: 15%; }
 
 /* Container for all customer details */
 .customer-detail-container {
@@ -443,6 +559,7 @@
 
 .detail-row.show td {
   padding: 0;
+  border-top: none;
 }
 
 /* Make sure tables don't overflow */
@@ -452,18 +569,22 @@
   width: 100%;
 }
 
-.payment-table th:nth-child(1),
-.accounts-table th:nth-child(1) { width: 20%; }
-.payment-table th:nth-child(2),
-.accounts-table th:nth-child(2) { width: 15%; }
-.payment-table th:nth-child(3) { width: 15%; }
-.payment-table th:nth-child(4) { width: 15%; }
-.payment-table th:nth-child(5) { width: 10%; }
-.payment-table th:nth-child(6) { width: 10%; }
-.payment-table th:nth-child(7) { width: 10%; }
-.payment-table th:nth-child(8) { width: 5%; }
-.accounts-table th:nth-child(3) { width: 15%; }
-.accounts-table th:nth-child(4) { width: 15%; }
+/* Timestamp section */
+.timestamp {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  font-size: 14px;
+  color: #555;
+  background-color: #f9f9f9;
+  padding: 10px 15px;
+}
+
+.timestamp strong {
+  color: #333;
+}
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
@@ -482,4 +603,30 @@
   .accounts-table td {
     padding: 6px 4px;
   }
+}
+
+/* Collapsible row styling */
+.collapsible-row {
+  cursor: pointer;
+  background-color: #f9f9f9;
+}
+
+.collapsible-row:hover {
+  background-color: #eaeaea;
+}
+
+.detail-row {
+  display: none; /* hidden by default */
+}
+
+.detail-row.show {
+  display: table-row; /* expand row when toggled */
+}
+
+.expand-icon {
+  transition: transform 0.3s ease;
+}
+
+.expand-icon.rotated {
+  transform: rotate(180deg);
 }

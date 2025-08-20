@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
           type: 'Personal Gold Account',
           number: '4140442000004918',
           status: 'NORMAL',
-          expiry: '01/10/2025'
+          expiry: '01/10/2025',
+          pan_status_date: '01/01/2025'
         }
       ]
     },
@@ -69,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
           type: 'Business Account',
           number: '4140123000005678',
           status: 'NORMAL',
-          expiry: '03/15/2026'
+          expiry: '03/15/2026',
+          pan_status_date: '02/01/2025'
         }
       ]
     },
@@ -104,7 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
           type: 'Savings Account',
           number: '4140442000009876',
           status: 'NORMAL',
-          expiry: '12/12/2024'
+          expiry: '12/12/2024',
+          pan_status_date: '03/01/2025'
         }
       ]
     }
@@ -154,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
  <table id="client-table">
  <thead>
  <tr>
- <th>PAN</th>
+ <th>Client code</th>
  <th>First name</th>
  <th>Family name</th>
  <th>Legal ID</th>
@@ -225,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = document.createElement('tr');
       row.className = 'collapsible-row';
       row.innerHTML = `
- <td>${customer.pan}</td>
+ <td>${customer.client_code}</td>
  <td>${customer.first_name}</td>
  <td>${customer.family_name}</td>
  <td>${customer.legal_id}</td>
@@ -240,56 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
       detailsRow.innerHTML = `
  <td colspan="8">
  <div class="customer-detail-container">
- <div class="customer-info-section">
- <h3>Customer Information</h3>
- <div class="info-grid">
- <div class="info-item">
- <label>PAN:</label>
- <span>${customer.pan}</span>
- </div>
- <div class="info-item">
- <label>First Name:</label>
- <span>${customer.first_name}</span>
- </div>
- <div class="info-item">
- <label>Corporate ID:</label>
- <span>${customer.corporate_id}</span>
- </div>
- <div class="info-item">
- <label>Legal ID:</label>
- <span>${customer.legal_id}</span>
- </div>
- <div class="info-item">
- <label>Client Host ID:</label>
- <span>${customer.client_host_id}</span>
- </div>
- <div class="info-item">
- <label>Client Code:</label>
- <span>${customer.client_code}</span>
- </div>
- <div class="info-item">
- <label>Family Name:</label>
- <span>${customer.family_name}</span>
- </div>
- <div class="info-item">
- <label>Corporate Name:</label>
- <span>${customer.corporate_name}</span>
- </div>
- <div class="info-item">
- <label>Phone:</label>
- <span>${customer.phone}</span>
- </div>
- <div class="info-item">
- <label>Birth Date:</label>
- <span>${customer.birth_date}</span>
- </div>
- <div class="info-item full-width">
- <label>Address:</label>
- <span>${customer.address}</span>
- </div>
- </div>
- </div>
-
+ <!-- Payment Instruments Section -->
  <div class="payment-section">
  <h3>Payment Instruments</h3>
  <table class="payment-table">
@@ -322,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
  </table>
  </div>
 
+ <!-- Accounts Section -->
  <div class="accounts-section">
  <h3>Accounts</h3>
  <table class="accounts-table">
