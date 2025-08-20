@@ -21,7 +21,7 @@ app.use(helmet({
   },
 }));
 
-// Rate limiting
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100
@@ -39,15 +39,15 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
+/
 app.use(express.static(path.join(__dirname, '..')));
 
-// Serve index.html at root
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-// Validation middleware for PAN
+
 const validatePAN = (req, res, next) => {
   const { pan } = req.params;
   if (!pan || pan.length < 13 || pan.length > 20 || !/^\d+$/.test(pan)) {
@@ -59,7 +59,6 @@ const validatePAN = (req, res, next) => {
   next();
 };
 
-// API route to get customer by PAN
 app.get('/customer/:pan', validatePAN, async (req, res) => {
   const { pan } = req.params;
   try {
@@ -88,7 +87,7 @@ app.get('/customer/:pan', validatePAN, async (req, res) => {
   }
 });
 
-// Health check endpoint
+
 app.get('/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
@@ -105,7 +104,7 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// 404 handler for API routes
+
 app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -113,12 +112,12 @@ app.use('/api/*', (req, res) => {
   });
 });
 
-// Fallback to index.html for client-side routing
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-// Global error handler
+
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({
