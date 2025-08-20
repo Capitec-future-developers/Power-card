@@ -6,7 +6,6 @@ content.innerHTML = `
 <img src="../img/issuer-front.png" alt="issuer-front" class="issuer-front">
 `;
 
-
 function showCustomerService() {
 
   content.innerHTML = `
@@ -37,7 +36,7 @@ function showCustomerService() {
 
   <div class="right-details">
     <div class="field">
-      <label for="rfname">client code</label>
+      <label for="rfname">Client code</label>
       <input type="text" id="rfname" class="card-number">
     </div>
     <div class="field">
@@ -55,35 +54,20 @@ function showCustomerService() {
   </div>
 </div>
 
-
 <div class="action-btn">
   <button class="search-btn inactive">
     Search <span class="material-icons-sharp">search</span>
   </button>
 
-  <button class="clear" style="
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  color: white;
-  background-color: #092365;
-  border: none;
-  font-size: 16px;
-  width: 120px;
-  height: 35px;
-  cursor: pointer;
-  border-radius: 1px;
-  padding: 0 10px;">
-    Clear <span class="material-icons-sharp" style="position: absolute;">ink_eraser</span>
+  <button class="clear">
+    Clear <span class="material-icons-sharp">ink_eraser</span>
   </button>
 </div>
 
-
-</div>
 <div class="client-details">
   <table>
     <tr>
-    <th style="width: 10px;"></th>
+      <th style="width: 10px;"></th>
       <th>Client code</th>
       <th>First name</th>
       <th>Family name</th>
@@ -106,31 +90,44 @@ function showCustomerService() {
   const searchBtn = document.querySelector('.search-btn');
   const clearBtn = document.querySelector('.clear');
 
-  searchBtn.addEventListener('click', () => {
+  searchBtn.addEventListener('click', async () => {
     const pan = document.getElementById('pan').value.trim();
     if (!pan) {
       alert('Please enter a PAN number');
       return;
     }
 
+    try {
+      const response = await fetch(`http://localhost:3000/customer/${pan}`);
+      if (!response.ok) {
+        alert('PAN not found');
+        return;
+      }
+      const customer = await response.json();
 
-    customerView.innerHTML = `
-    <div class="customer-details">
-      <div class="left-details">
-        <div class="field"><label>Pan</label><input type="text" value="${pan}" disabled></div>
-        <div class="field"><label>First name</label><input type="text" value="John" disabled></div>
-        <div class="field"><label>Corporate ID</label><input type="text" value="CORP001" disabled></div>
-        <div class="field"><label>Legal ID</label><input type="text" value="L12345" disabled></div>
-        <div class="field"><label>Client host ID</label><input type="text" value="CH001" disabled></div>
+      customerView.innerHTML = `
+      <div class="customer-details">
+        <div class="left-details">
+          <div class="field"><label>Pan</label><input type="text" value="${customer.pan}" disabled></div>
+          <div class="field"><label>First name</label><input type="text" value="${customer.first_name}" disabled></div>
+          <div class="field"><label>Corporate ID</label><input type="text" value="${customer.corporate_id}" disabled></div>
+          <div class="field"><label>Legal ID</label><input type="text" value="${customer.legal_id}" disabled></div>
+          <div class="field"><label>Client host ID</label><input type="text" value="${customer.client_host_id}" disabled></div>
+        </div>
+        <div class="right-details">
+          <div class="field"><label>Client code</label><input type="text" value="${customer.client_code}" disabled></div>
+          <div class="field"><label>Family name</label><input type="text" value="${customer.family_name}" disabled></div>
+          <div class="field"><label>Corporate name</label><input type="text" value="${customer.corporate_name}" disabled></div>
+          <div class="field"><label>Phone</label><input type="text" value="${customer.phone}" disabled></div>
+          <div class="field"><label>Birth date</label><input type="text" value="${customer.birth_date}" disabled></div>
+          <div class="field"><label>Address</label><input type="text" value="${customer.address}" disabled></div>
+        </div>
       </div>
-      <div class="right-details">
-        <div class="field"><label>Client code</label><input type="text" value="C001" disabled></div>
-        <div class="field"><label>Family name</label><input type="text" value="Doe" disabled></div>
-        <div class="field"><label>Corporate name</label><input type="text" value="Acme Corp" disabled></div>
-        <div class="field"><label>Phone</label><input type="text" value="0655511132" disabled></div>
-      </div>
-    </div>
-    `;
+      `;
+    } catch (err) {
+      console.error(err);
+      alert('Server error');
+    }
   });
 
   clearBtn.addEventListener('click', () => {
