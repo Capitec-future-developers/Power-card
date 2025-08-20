@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
 
-  // === Mock Database ===
+  // === Mock Database with constraints and timestamps ===
   const mockDatabase = [
     {
       pan: '4644090987127908',
@@ -51,56 +51,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  // Utility function
+  // Utility functions
   const isValidPAN = pan => typeof pan === 'string' && pan.length >= 13;
+  const isUniqueLegalID = (legal_id, pan) => !mockDatabase.some(c => c.legal_id === legal_id && c.pan !== pan);
+  const getCustomerSummary = customer => ({
+    pan: customer.pan,
+    full_name: `${customer.first_name} ${customer.family_name || ''}`.trim(),
+    corporate_name: customer.corporate_name,
+    phone: customer.phone,
+    age: customer.birth_date ? Math.floor((new Date() - new Date(customer.birth_date)) / (365.25*24*60*60*1000)) : null,
+    created_at: customer.created_at
+  });
 
   // Show initial image
   content.innerHTML = `<img src="img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
 
   function showCustomerService() {
     content.innerHTML = `
-      <section>
-        <div class="error-message" id="error-message"></div>
-        <div class="customer-details">
-          <div class="left-details">
-            <div class="field"><label for="pan">Pan</label><input type="text" id="pan" class="card-number" placeholder="Enter PAN"></div>
-            <div class="field"><label for="fname">First name</label><input type="text" id="fname" class="card-number"></div>
-            <div class="field"><label for="corpId">Corporate ID</label><input type="text" id="corpId" class="card-number"></div>
-            <div class="field"><label for="legalId">Legal ID</label><input type="text" id="legalId" class="card-number"></div>
-            <div class="field"><label for="clientId">Client host ID</label><input type="text" id="clientId" class="card-number"></div>
-          </div>
-          <div class="right-details">
-            <div class="field"><label for="clientCode">Client code</label><input type="text" id="clientCode" class="card-number"></div>
-            <div class="field"><label for="familyName">Family name</label><input type="text" id="familyName" class="card-number"></div>
-            <div class="field"><label for="corpName">Corporate name</label><input type="text" id="corpName" class="card-number"></div>
-            <div class="field"><label for="phone">Phone</label><input type="tel" id="phone" class="card-number" placeholder="ex: 0655511132"></div>
-          </div>
-        </div>
+ <section>
+ <div class="error-message" id="error-message"></div>
+ <div class="customer-details">
+ <div class="left-details">
+ <div class="field"><label for="pan">Pan</label><input type="text" id="pan" class="card-number" placeholder="Enter PAN"></div>
+ <div class="field"><label for="fname">First name</label><input type="text" id="fname" class="card-number"></div>
+ <div class="field"><label for="corpId">Corporate ID</label><input type="text" id="corpId" class="card-number"></div>
+ <div class="field"><label for="legalId">Legal ID</label><input type="text" id="legalId" class="card-number"></div>
+ <div class="field"><label for="clientId">Client host ID</label><input type="text" id="clientId" class="card-number"></div>
+ </div>
+ <div class="right-details">
+ <div class="field"><label for="clientCode">Client code</label><input type="text" id="clientCode" class="card-number"></div>
+ <div class="field"><label for="familyName">Family name</label><input type="text" id="familyName" class="card-number"></div>
+ <div class="field"><label for="corpName">Corporate name</label><input type="text" id="corpName" class="card-number"></div>
+ <div class="field"><label for="phone">Phone</label><input type="tel" id="phone" class="card-number" placeholder="ex: 0655511132"></div>
+ </div>
+ </div>
 
-        <div class="action-btn">
-          <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
-          <button class="clear">Clear <span class="material-icons-sharp">ink_eraser</span></button>
-        </div>
+ <div class="action-btn">
+ <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
+ <button class="clear" style="align-items: center;
+ justify-content: center;
+ gap: 5px;
+ color: white;
+ background-color: #092365;
+ border: none;
+ font-size: 16px;
+ width: 120px;
+ height: 35px;
+ cursor: pointer;
+ border-radius: 2px;
+ padding-top: 10px;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
+ </div>
 
-        <div class="client-details">
-          <table id="client-table">
-            <thead>
-              <tr>
-                <th>Client code</th>
-                <th>First name</th>
-                <th>Family name</th>
-                <th>Legal ID</th>
-                <th>Phone</th>
-                <th>Birth date</th>
-                <th>Address</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="client-table-body"></tbody>
-          </table>
-        </div>
-      </section>
-    `;
+ <div class="client-details">
+ <table id="client-table">
+ <thead>
+ <tr>
+ <th>Client code</th>
+ <th>First name</th>
+ <th>Family name</th>
+ <th>Legal ID</th>
+ <th>Phone</th>
+ <th>Birth date</th>
+ <th>Address</th>
+ <th>Actions</th>
+ </tr>
+ </thead>
+ <tbody id="client-table-body"></tbody>
+ </table>
+ </div>
+ </section>
+ `;
 
     const searchBtn = document.querySelector('.search-btn');
     const clearBtn = document.querySelector('.clear');
@@ -108,12 +128,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchBtn.addEventListener('click', () => {
       const pan = document.getElementById('pan').value.trim();
-      if (!pan) return showError('Please enter a PAN number');
-      if (!isValidPAN(pan)) return showError('PAN must be at least 13 characters');
+      const fname = document.getElementById('fname').value.trim();
+      const clientId = document.getElementById('clientId').value.trim();
+
+      // Check if at least one search criteria is provided
+      if (!pan && !fname && !clientId) {
+        showError('Please enter at least one search criteria (PAN, First Name, or Client Host ID)');
+        return;
+      }
 
       hideError();
-      const customer = mockDatabase.find(c => c.pan === pan);
-      if (!customer) return showError('PAN not found');
+
+      // Find customer based on search criteria
+      let customer = null;
+      if (pan) {
+        if (!isValidPAN(pan)) {
+          showError('PAN must be at least 13 characters');
+          return;
+        }
+        customer = mockDatabase.find(c => c.pan === pan);
+      } else if (fname) {
+        customer = mockDatabase.find(c =>
+          c.first_name.toLowerCase().includes(fname.toLowerCase())
+        );
+      } else if (clientId) {
+        customer = mockDatabase.find(c => c.client_host_id === clientId);
+      }
+
+      if (!customer) {
+        showError('No customer found with the provided criteria');
+        document.getElementById('client-table-body').innerHTML = '';
+        return;
+      }
 
       renderCustomerTable(customer);
     });
@@ -131,60 +177,64 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = document.createElement('tr');
       row.className = 'collapsible-row';
       row.innerHTML = `
-        <td>${customer.client_code}</td>
-        <td>${customer.first_name}</td>
-        <td>${customer.family_name}</td>
-        <td>${customer.legal_id}</td>
-        <td>${customer.phone}</td>
-        <td>${customer.birth_date}</td>
-        <td>${customer.address.substring(0, 20)}...</td>
-        <td><span class="material-icons-sharp">expand_more</span></td>
-      `;
+ <td>${customer.client_code}</td>
+ <td>${customer.first_name}</td>
+ <td>${customer.family_name}</td>
+ <td>${customer.legal_id}</td>
+ <td>${customer.phone}</td>
+ <td>${customer.birth_date}</td>
+ <td>${customer.address.substring(0, 20)}...</td>
+ <td><span class="material-icons-sharp expand-icon">expand_more</span></td>
+ `;
 
       const detailRow = document.createElement('tr');
       detailRow.className = 'detail-row';
       detailRow.innerHTML = `
-        <td colspan="8">
-          <div class="collapsible-content">
-            <div class="detail-container">
-              <div class="left-details">
-                <div class="detail-field"><label>Pan</label><input type="text" value="${customer.pan}" disabled></div>
-                <div class="detail-field"><label>First name</label><input type="text" value="${customer.first_name}" disabled></div>
-                <div class="detail-field"><label>Corporate ID</label><input type="text" value="${customer.corporate_id}" disabled></div>
-                <div class="detail-field"><label>Legal ID</label><input type="text" value="${customer.legal_id}" disabled></div>
-                <div class="detail-field"><label>Client host ID</label><input type="text" value="${customer.client_host_id}" disabled></div>
-              </div>
-              <div class="right-details">
-                <div class="detail-field"><label>Client code</label><input type="text" value="${customer.client_code}" disabled></div>
-                <div class="detail-field"><label>Family name</label><input type="text" value="${customer.family_name}" disabled></div>
-                <div class="detail-field"><label>Corporate name</label><input type="text" value="${customer.corporate_name}" disabled></div>
-                <div class="detail-field"><label>Phone</label><input type="text" value="${customer.phone}" disabled></div>
-                <div class="detail-field"><label>Birth date</label><input type="text" value="${customer.birth_date}" disabled></div>
-                <div class="detail-field"><label>Address</label><input type="text" value="${customer.address}" disabled></div>
-                <div class="detail-field"><label>Created At</label><input type="text" value="${customer.created_at.toLocaleString()}" disabled></div>
-                <div class="detail-field"><label>Updated At</label><input type="text" value="${customer.updated_at.toLocaleString()}" disabled></div>
-              </div>
-            </div>
-          </div>
-        </td>
-      `;
+ <td colspan="8">
+ <div class="collapsible-content">
+ <div class="detail-container">
+ <div class="left-details">
+ <div class="detail-field"><label>Pan</label><input type="text" value="${customer.pan}" disabled></div>
+ <div class="detail-field"><label>First name</label><input type="text" value="${customer.first_name}" disabled></div>
+ <div class="detail-field"><label>Corporate ID</label><input type="text" value="${customer.corporate_id}" disabled></div>
+ <div class="detail-field"><label>Legal ID</label><input type="text" value="${customer.legal_id}" disabled></div>
+ <div class="detail-field"><label>Client host ID</label><input type="text" value="${customer.client_host_id}" disabled></div>
+ </div>
+ <div class="right-details">
+ <div class="detail-field"><label>Client code</label><input type="text" value="${customer.client_code}" disabled></div>
+ <div class="detail-field"><label>Family name</label><input type="text" value="${customer.family_name}" disabled></div>
+ <div class="detail-field"><label>Corporate name</label><input type="text" value="${customer.corporate_name}" disabled></div>
+ <div class="detail-field"><label>Phone</label><input type="text" value="${customer.phone}" disabled></div>
+ <div class="detail-field"><label>Birth date</label><input type="text" value="${customer.birth_date}" disabled></div>
+ <div class="detail-field"><label>Address</label><input type="text" value="${customer.address}" disabled></div>
+ <div class="detail-field"><label>Created At</label><input type="text" value="${customer.created_at.toLocaleString()}" disabled></div>
+ <div class="detail-field"><label>Updated At</label><input type="text" value="${customer.updated_at.toLocaleString()}" disabled></div>
+ </div>
+ </div>
+ </div>
+ </td>
+ `;
 
       tableBody.appendChild(row);
       tableBody.appendChild(detailRow);
 
-      // Collapsible toggle
+      // Add click event to toggle the detail row
       row.addEventListener('click', () => {
-        const content = detailRow.querySelector('.collapsible-content');
-        content.classList.toggle('show');     // matches CSS
-        row.classList.toggle('expanded');     // rotates arrow
-
-        const icon = row.querySelector('.material-icons-sharp');
-        icon.textContent = content.classList.contains('show') ? 'expand_less' : 'expand_more';
+        const isVisible = detailRow.classList.contains('show');
+        if (isVisible) {
+          detailRow.classList.remove('show');
+          row.querySelector('.expand-icon').textContent = 'expand_more';
+          row.querySelector('.expand-icon').classList.remove('rotated');
+        } else {
+          detailRow.classList.add('show');
+          row.querySelector('.expand-icon').textContent = 'expand_less';
+          row.querySelector('.expand-icon').classList.add('rotated');
+        }
       });
     }
 
-    function showError(msg) {
-      errorMessage.textContent = msg;
+    function showError(message) {
+      errorMessage.textContent = message;
       errorMessage.style.display = 'block';
     }
 

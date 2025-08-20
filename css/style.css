@@ -240,51 +240,104 @@
 
 .client-details td {
   display: none;
-}/* Collapsible Table Rows */
-.detail-row .collapsible-content {
-  display: none;
-  overflow: hidden;
-  padding: 10px;
-  background: #f5f5f5;
-  transition: all 0.35s ease;
-}
 
-.detail-row .collapsible-content.show {
-  display: block;
-}
+  /* Add these styles to your existing CSS */
 
-.collapsible-row {
-  cursor: pointer;
-}
+  /* Client details table */
+  .client-details {
+    position: absolute;
+    top: 330px;
+    left: 200px;
+    width: 88%;
+  }
 
-.collapsible-row .material-icons-sharp {
-  transition: transform 0.3s ease;
-}
+  .client-details table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
 
-.collapsible-row.expanded .material-icons-sharp {
-  transform: rotate(180deg);
-}
+  .client-details th,
+  .client-details td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    font-size: 14px;
+    background-color: #e8e6e6;
+  }
 
-/* Optional: detail inputs styling */
-.detail-row input {
-  width: 100%;
-  margin-bottom: 5px;
-}
+  .client-details th {
+    background-color: #d0cece;
+    font-weight: bold;
+  }
+
+  /* Collapsible rows */
+  .collapsible-row {
+    cursor: pointer;
+    background-color: #f9f9f9;
+  }
+
+  .collapsible-row:hover {
+    background-color: #eaeaea;
+  }
+
+  .detail-row {
+    display: none;
+  }
+
+  .detail-row.show {
+    display: table-row;
+  }
+
+  .collapsible-content {
+    padding: 15px;
+    background-color: #f5f5f5;
+  }
+
+  .detail-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .detail-container .left-details,
+  .detail-container .right-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .detail-field {
+    display: flex;
+    align-items: center;
+  }
+
+  .detail-field label {
+    width: 120px;
+    text-align: right;
+    font-weight: 500;
+    color: #555;
+    margin-right: 10px;
+  }
+
+  .detail-field input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+  }
+
+  .expand-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .expand-icon.rotated {
+    transform: rotate(180deg);
+  }
 
 
-
-/* Optional: table styling */
-#client-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-#client-table th, #client-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.error-message {
+  .error-message {
   position: absolute;
   top: 50px;
   left: 200px;
