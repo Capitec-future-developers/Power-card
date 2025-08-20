@@ -22,18 +22,19 @@ CREATE INDEX IF NOT EXISTS idx_customers_corporate_id ON customers(corporate_id)
 CREATE INDEX IF NOT EXISTS idx_customers_client_code ON customers(client_code);
 CREATE INDEX IF NOT EXISTS idx_customers_name ON customers(first_name, family_name);
 
--- 3. Insert sample data with more comprehensive examples
+-- 3. Insert sample data with South African clients and valid PAN prefixes
 INSERT INTO customers (
   pan, first_name, family_name, corporate_id, legal_id,
   client_host_id, client_code, corporate_name, phone, birth_date, address
 ) VALUES
-    ('4644090987127908', 'John', 'Doe', 'CORP001', 'L12345', 'CH001', 'C001',
-     'Acme Corp', '0655511132', '1990-01-01', '123 Main St, Anytown, USA'),
-    ('1234567890123456', 'Jane', 'Smith', 'CORP002', 'L67890', 'CH002', 'C002',
-     'Globex Ltd', '0655522233', '1995-05-05', '456 Oak Ave, Somewhere, USA'),
-    ('9876543210987654', 'Robert', 'Johnson', 'CORP001', 'L54321', 'CH001', 'C003',
-     'Acme Corp', '0655533344', '1985-12-15', '789 Pine Rd, Anycity, USA')
+    ('4644090987127908', 'Omphile', 'Mohlala', 'CORP001', 'L12345', 'CH001', 'C001',
+     'Mzansi Tech', '0825511132', '1990-01-01', '12 Rose Street, Johannesburg, SA'),
+    ('4140123456789012', 'Spencer', 'Nong', 'CORP002', 'L67890', 'CH002', 'C002',
+     'Cape Innovations', '0815522233', '1995-05-05', '45 Oak Avenue, Cape Town, SA'),
+    ('4644987654321098', 'Zenzi', 'Dube', 'CORP003', 'L54321', 'CH003', 'C003',
+     'Durban Solutions', '0835533344', '1985-12-15', '78 Pine Road, Durban, SA')
 ON CONFLICT (pan) DO NOTHING;
+
 
 -- 4. Create updated_at function if it doesn't exist
 CREATE OR REPLACE FUNCTION update_updated_at_column()
