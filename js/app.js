@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
 
-
   const mockDatabase = [
     {
       pan: '4644090987127908',
@@ -17,7 +16,27 @@ document.addEventListener('DOMContentLoaded', () => {
       birth_date: '1990-01-01',
       address: '12 Rose Street, Johannesburg, SA',
       created_at: new Date('2025-01-01T10:00:00'),
-      updated_at: new Date('2025-01-01T10:00:00')
+      updated_at: new Date('2025-01-01T10:00:00'),
+      payment_instruments: [
+        {
+          type: 'Personal Gold Credit Card',
+          number: '464479XXXXXX6088',
+          name: 'O. MOHLALA',
+          full_name: 'OMPHILE MOHLALA',
+          status: 'Not applicable',
+          expiry: '05/2025',
+          condition: 'REPLACED',
+          type_detail: 'Primary'
+        }
+      ],
+      accounts: [
+        {
+          type: 'Personal Gold Account',
+          number: '4140442000004918',
+          status: 'NORMAL',
+          expiry: '01/10/2025'
+        }
+      ]
     },
     {
       pan: '4140123456789012',
@@ -32,7 +51,27 @@ document.addEventListener('DOMContentLoaded', () => {
       birth_date: '1995-05-05',
       address: '45 Oak Avenue, Cape Town, SA',
       created_at: new Date('2025-02-01T10:00:00'),
-      updated_at: new Date('2025-02-01T10:00:00')
+      updated_at: new Date('2025-02-01T10:00:00'),
+      payment_instruments: [
+        {
+          type: 'Business Platinum Card',
+          number: '414012XXXXXX9012',
+          name: 'S. NONG',
+          full_name: 'SPENCER NONG',
+          status: 'Active',
+          expiry: '08/2026',
+          condition: 'NEW',
+          type_detail: 'Primary'
+        }
+      ],
+      accounts: [
+        {
+          type: 'Business Account',
+          number: '4140123000005678',
+          status: 'NORMAL',
+          expiry: '03/15/2026'
+        }
+      ]
     },
     {
       pan: '4644987654321098',
@@ -47,7 +86,27 @@ document.addEventListener('DOMContentLoaded', () => {
       birth_date: '1985-12-15',
       address: '78 Pine Road, Durban, SA',
       created_at: new Date('2025-03-01T10:00:00'),
-      updated_at: new Date('2025-03-01T10:00:00')
+      updated_at: new Date('2025-03-01T10:00:00'),
+      payment_instruments: [
+        {
+          type: 'Personal Silver Credit Card',
+          number: '464498XXXXXX1098',
+          name: 'Z. DUBE',
+          full_name: 'ZENZI DUBE',
+          status: 'Active',
+          expiry: '11/2024',
+          condition: 'ACTIVE',
+          type_detail: 'Primary'
+        }
+      ],
+      accounts: [
+        {
+          type: 'Savings Account',
+          number: '4140442000009876',
+          status: 'NORMAL',
+          expiry: '12/12/2024'
+        }
+      ]
     }
   ];
 
@@ -88,25 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
  <div class="action-btn">
  <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
- <button class="clear" style="align-items: center;
- justify-content: center;
- gap: 5px;
- color: white;
- background-color: #092365;
- border: none;
- font-size: 16px;
- width: 120px;
- height: 35px;
- cursor: pointer;
- border-radius: 2px;
- padding-top: 10px;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
+ <button class="clear" style="align-items: center; justify-content: center; gap: 5px; color: white; background-color: #092365; border: none; font-size: 16px; width: 120px; height: 35px; cursor: pointer; border-radius: 2px; padding-top: 10px;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
  </div>
 
  <div class="client-details">
  <table id="client-table">
  <thead>
  <tr>
- <th>Client code</th>
+ <th>PAN</th>
  <th>First name</th>
  <th>Family name</th>
  <th>Legal ID</th>
@@ -177,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = document.createElement('tr');
       row.className = 'collapsible-row';
       row.innerHTML = `
- <td>${customer.client_code}</td>
+ <td>${customer.pan}</td>
  <td>${customer.first_name}</td>
  <td>${customer.family_name}</td>
  <td>${customer.legal_id}</td>
@@ -187,9 +235,142 @@ document.addEventListener('DOMContentLoaded', () => {
  <td><span class="material-icons-sharp expand-icon">expand_more</span></td>
  `;
 
+      const detailsRow = document.createElement('tr');
+      detailsRow.className = 'details-row';
+      detailsRow.innerHTML = `
+ <td colspan="8">
+ <div class="customer-detail-container">
+ <div class="customer-info-section">
+ <h3>Customer Information</h3>
+ <div class="info-grid">
+ <div class="info-item">
+ <label>PAN:</label>
+ <span>${customer.pan}</span>
+ </div>
+ <div class="info-item">
+ <label>First Name:</label>
+ <span>${customer.first_name}</span>
+ </div>
+ <div class="info-item">
+ <label>Corporate ID:</label>
+ <span>${customer.corporate_id}</span>
+ </div>
+ <div class="info-item">
+ <label>Legal ID:</label>
+ <span>${customer.legal_id}</span>
+ </div>
+ <div class="info-item">
+ <label>Client Host ID:</label>
+ <span>${customer.client_host_id}</span>
+ </div>
+ <div class="info-item">
+ <label>Client Code:</label>
+ <span>${customer.client_code}</span>
+ </div>
+ <div class="info-item">
+ <label>Family Name:</label>
+ <span>${customer.family_name}</span>
+ </div>
+ <div class="info-item">
+ <label>Corporate Name:</label>
+ <span>${customer.corporate_name}</span>
+ </div>
+ <div class="info-item">
+ <label>Phone:</label>
+ <span>${customer.phone}</span>
+ </div>
+ <div class="info-item">
+ <label>Birth Date:</label>
+ <span>${customer.birth_date}</span>
+ </div>
+ <div class="info-item full-width">
+ <label>Address:</label>
+ <span>${customer.address}</span>
+ </div>
+ </div>
+ </div>
+
+ <div class="payment-section">
+ <h3>Payment Instruments</h3>
+ <table class="payment-table">
+ <thead>
+ <tr>
+ <th>Type</th>
+ <th>Number</th>
+ <th>Name</th>
+ <th>Full Name</th>
+ <th>Status</th>
+ <th>Expiry</th>
+ <th>Condition</th>
+ <th>Type Detail</th>
+ </tr>
+ </thead>
+ <tbody>
+ ${customer.payment_instruments.map(instrument => `
+ <tr>
+ <td>${instrument.type}</td>
+ <td>${instrument.number}</td>
+ <td>${instrument.name}</td>
+ <td>${instrument.full_name}</td>
+ <td>${instrument.status}</td>
+ <td>${instrument.expiry}</td>
+ <td>${instrument.condition}</td>
+ <td>${instrument.type_detail}</td>
+ </tr>
+ `).join('')}
+ </tbody>
+ </table>
+ </div>
+
+ <div class="accounts-section">
+ <h3>Accounts</h3>
+ <table class="accounts-table">
+ <thead>
+ <tr>
+ <th>Type</th>
+ <th>Number</th>
+ <th>Status</th>
+ <th>Expiry</th>
+ </tr>
+ </thead>
+ <tbody>
+ ${customer.accounts.map(account => `
+ <tr>
+ <td>${account.type}</td>
+ <td>${account.number}</td>
+ <td>${account.status}</td>
+ <td>${account.expiry}</td>
+ </tr>
+ `).join('')}
+ </tbody>
+ </table>
+ </div>
+
+ <div class="timestamp">
+ <strong>EXIG US</strong>
+ <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+ <span>${new Date().toLocaleDateString()}</span>
+ </div>
+ </div>
+ </td>
+ `;
+
+      // Initially hide the details
+      detailsRow.style.display = 'none';
+
+      // Add click event to toggle details
+      row.addEventListener('click', () => {
+        if (detailsRow.style.display === 'none') {
+          detailsRow.style.display = 'table-row';
+          row.querySelector('.expand-icon').textContent = 'expand_less';
+        } else {
+          detailsRow.style.display = 'none';
+          row.querySelector('.expand-icon').textContent = 'expand_more';
+        }
+      });
 
       tableBody.appendChild(row);
-
+      tableBody.appendChild(detailsRow);
     }
 
     function showError(message) {
