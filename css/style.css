@@ -1,19 +1,15 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Sharp');
-* {
+*{
   font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
-
-.header {
+.header{
   position: relative;
   top: 0;
-  background-color: #fff;
+  background-color: #ffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.side-bar {
+.side-bar{
   position: absolute;
   top: 50px;
   left: 0;
@@ -21,81 +17,94 @@
   height: 100%;
   background-color: #504f4f;
   color: white;
-  overflow-y: auto;
+  overflow: scroll;
   scrollbar-width: none;
 }
 
-.search-bar {
+.search-bar{
   background-color: white;
   height: 30px;
   border: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  padding: 0 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
 }
 
-.search {
-  width: 100%;
-  height: 25px;
+.search{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 140px;
+  height: 10px;
   padding: 5px;
-  font-size: 14px;
-  border: none;
-  outline: none;
+  font-size: 16px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+
+
 }
 
-.right-side {
+.right-side{
   position: absolute;
   top: -7px;
   right: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
   padding: 10px;
+  flex-direction: row;
+  gap: 10px;
+
 }
 
-.profile {
+.profile{
   display: flex;
   align-items: center;
   color: #146;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 4px;
+
 }
 
-.profile:hover {
+.profile:hover{
   background-color: #85a4bf;
+  text-decoration: none;
+  height: 100%;
 }
 
-.subheader {
+.subheader{
   position: absolute;
   top: 41px;
   left: 191px;
-  width: calc(100% - 191px);
+  width: 88.5%;
   height: 32px;
   background-color: #092365;
   color: white;
-  padding: 5px 10px;
+  text-align: left;
+  padding-left: 10px;
   font-size: 16px;
   font-weight: 500;
+  padding-top: 5px;
 }
 
-.drop {
+.drop{
+  flex: 1;
   padding-top: 10px;
   color: white;
   text-align: left;
   padding-left: 10px;
 }
 
+
 .side-bar .drop ul {
   display: none;
   list-style: none;
+  padding-left: -10px;
   margin: 5px 0;
-  padding-left: 15px;
 }
+
 
 .side-bar .drop.active ul {
   display: block;
 }
+
 
 .side-bar .drop > a {
   display: block;
@@ -109,30 +118,31 @@
   background-color: #333;
 }
 
+
 .side-bar .drop ul li {
   padding: 6px 10px;
   cursor: pointer;
 }
-
 .side-bar .drop ul li:hover {
   background-color: #444;
 }
 
-.issuer-front {
+.issuer-front{
   position: absolute;
   top: 85px;
   left: 201px;
-  width: calc(100% - 201px);
-  height: calc(100% - 85px);
+  width: 89%;
+  height: 94%;
 }
 
 .customer-details {
   position: absolute;
-  top: 105px;
+  top: 20px;
   left: 210px;
   display: flex;
   justify-content: space-between;
   gap: 50px;
+  margin-top: 85px;
 }
 
 .left-details,
@@ -154,12 +164,13 @@
   text-align: right;
   font-size: 12px;
   font-weight: 500;
-  color: #888;
+  color: #888888;
   white-space: nowrap;
 }
 
 .card-number {
   width: 500px;
+  height: 15px;
   padding: 5px 10px;
   font-size: 16px;
   font-weight: 500;
@@ -175,7 +186,8 @@
   gap: 10px;
 }
 
-.search-btn {
+.search-btn
+{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,47 +200,47 @@
   height: 35px;
   cursor: pointer;
   border-radius: 2px;
+  padding: 0 10px;
 }
-
 .search-btn.inactive {
   pointer-events: none;
   opacity: 0.5;
+  cursor: not-allowed;
   background-color: #666;
 }
-
-.client-details {
+.client-details table {
   position: absolute;
   top: 330px;
   left: 200px;
-  width: calc(100% - 200px);
-}
-
-.client-details table {
-  width: 100%;
   border-collapse: collapse;
+  width: 88%;
   table-layout: fixed;
 }
 
 .client-details th,
 .client-details td {
   border: 1px solid #ccc;
-  padding: 8px 12px;
-  font-size: 14px;
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 500;
   background-color: #e8e6e6;
 }
 
-.client-details th {
-  background-color: #d0cece;
-  font-weight: bold;
+/* ❌ REMOVE display:flex from <tr> */
+.client-details tr {
+  display: table-row;   /* default behavior */
 }
 
-/* 🔽 Collapsible rows */
+.client-details th {
+  background-color: #d5d5d5;
+  font-weight: 600;
+}
+
+/* ✅ Collapsible rows */
 .collapsible-row {
   cursor: pointer;
   background-color: #f9f9f9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .collapsible-row:hover {
@@ -236,22 +248,27 @@
 }
 
 .detail-row {
-  display: none;
+  display: none;   /* hidden by default */
 }
 
 .detail-row.show {
-  display: table-row;
+  display: table-row;  /* expand row when toggled */
 }
 
 .collapsible-content {
-  padding: 15px;
+  padding: 20px;
   background-color: #f5f5f5;
+  min-height: 200px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* Container inside expanded row */
 .detail-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 30px;
+  width: 100%;
 }
 
 .detail-container .left-details,
@@ -259,7 +276,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
 .detail-field {
@@ -268,16 +285,16 @@
 }
 
 .detail-field label {
-  width: 120px;
+  width: 150px;
   text-align: right;
   font-weight: 500;
   color: #555;
-  margin-right: 10px;
+  margin-right: 15px;
 }
 
 .detail-field input {
   flex: 1;
-  padding: 5px;
+  padding: 8px;
   border: 1px solid #ddd;
   background-color: #fff;
 }
@@ -296,11 +313,11 @@
   top: 50px;
   left: 200px;
   width: calc(100% - 200px);
-  height: 35px;
+  height: 40px;
   background-color: #ff0000;
   color: white;
   display: none;
   align-items: center;
-  padding-left: 10px;
+  padding-left: 12px;
   font-size: 16px;
 }

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
 
-  // === Mock Database with constraints and timestamps ===
+
   const mockDatabase = [
     {
       pan: '4644090987127908',
@@ -187,50 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
  <td><span class="material-icons-sharp expand-icon">expand_more</span></td>
  `;
 
-      const detailRow = document.createElement('tr');
-      detailRow.className = 'detail-row';
-      detailRow.innerHTML = `
- <td colspan="8">
- <div class="collapsible-content">
- <div class="detail-container">
- <div class="left-details">
- <div class="detail-field"><label>Pan</label><input type="text" value="${customer.pan}" disabled></div>
- <div class="detail-field"><label>First name</label><input type="text" value="${customer.first_name}" disabled></div>
- <div class="detail-field"><label>Corporate ID</label><input type="text" value="${customer.corporate_id}" disabled></div>
- <div class="detail-field"><label>Legal ID</label><input type="text" value="${customer.legal_id}" disabled></div>
- <div class="detail-field"><label>Client host ID</label><input type="text" value="${customer.client_host_id}" disabled></div>
- </div>
- <div class="right-details">
- <div class="detail-field"><label>Client code</label><input type="text" value="${customer.client_code}" disabled></div>
- <div class="detail-field"><label>Family name</label><input type="text" value="${customer.family_name}" disabled></div>
- <div class="detail-field"><label>Corporate name</label><input type="text" value="${customer.corporate_name}" disabled></div>
- <div class="detail-field"><label>Phone</label><input type="text" value="${customer.phone}" disabled></div>
- <div class="detail-field"><label>Birth date</label><input type="text" value="${customer.birth_date}" disabled></div>
- <div class="detail-field"><label>Address</label><input type="text" value="${customer.address}" disabled></div>
- <div class="detail-field"><label>Created At</label><input type="text" value="${customer.created_at.toLocaleString()}" disabled></div>
- <div class="detail-field"><label>Updated At</label><input type="text" value="${customer.updated_at.toLocaleString()}" disabled></div>
- </div>
- </div>
- </div>
- </td>
- `;
 
       tableBody.appendChild(row);
-      tableBody.appendChild(detailRow);
 
-      // Add click event to toggle the detail row
-      row.addEventListener('click', () => {
-        const isVisible = detailRow.classList.contains('show');
-        if (isVisible) {
-          detailRow.classList.remove('show');
-          row.querySelector('.expand-icon').textContent = 'expand_more';
-          row.querySelector('.expand-icon').classList.remove('rotated');
-        } else {
-          detailRow.classList.add('show');
-          row.querySelector('.expand-icon').textContent = 'expand_less';
-          row.querySelector('.expand-icon').classList.add('rotated');
-        }
-      });
     }
 
     function showError(message) {
