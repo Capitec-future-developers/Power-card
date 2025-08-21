@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
+  const customerView = document.getElementById('customer-view');
 
   const mockDatabase = [
     {
@@ -316,3 +317,12 @@ document.addEventListener('DOMContentLoaded', () => {
     customerServiceBtn.addEventListener('click', showCustomerService);
   }
 });
+
+function showCustomerView(customer) {
+
+  content.innerHTML = `
+  <div class="customer-view">
+
+</div>
+  `
+}
