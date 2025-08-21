@@ -241,13 +241,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const detailsRow = document.createElement('tr');
       detailsRow.className = 'details-row';
       detailsRow.innerHTML = `
- <td colspan="8">
+ <td colspan="8" style="height: 100%;">
  <div class="customer-detail-container">
  <!-- Payment Instruments Section -->
  <div class="payment-section">
  <h3>Payment Instruments</h3>
  <table class="payment-table">
- <thead>
+ <thead class="payment-section-table">
  <tr>
  <th>Type</th>
  <th>Number</th>
@@ -299,12 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
  `).join('')}
  </tbody>
  </table>
- </div>
-
- <div class="timestamp">
- <strong>EXIG US</strong>
- <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
- <span>${new Date().toLocaleDateString()}</span>
  </div>
  </div>
  </td>
