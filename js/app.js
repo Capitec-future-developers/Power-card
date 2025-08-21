@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
  <!-- Payment Instruments Section -->
  <div class="payment-section">
  <h3>Payment Instruments</h3>
- <table class="payment-table" style="position: absolute; top: 60px; width: 100%; left: 10px; ">
+ <table class="payment-table" style="position: absolute; top: 70px; width: 100%; left: 10px; ">
  <tbody>
  ${customer.payment_instruments.map(instrument => `
  <tr>

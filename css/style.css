@@ -338,7 +338,7 @@
 
 .payment-section{
   position: absolute;
-  top: -8px;
+  top: 5px;
   left: -30px;
   display: flex;
   flex-direction: column;
@@ -356,4 +356,5 @@
   gap: 3px;
   border: 1px solid #ccc;
   width: 113%;
+  height: 50px;
 }
