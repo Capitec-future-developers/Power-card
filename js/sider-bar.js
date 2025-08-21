@@ -8,7 +8,7 @@ sideBar.innerHTML = `
   <div class="line" style="border-bottom: 1px solid #ffffff;"></div>
 
   <div class="drop">
-    <a style="text-wrap: nowrap;"><span class="material-icons-sharp" style="color: red; font-size: 15px;">public</span> Customer management</a>
+    <a><span class="material-icons-sharp" style="color: red; font-size: 15px;">public</span> Customer management</a>
     <ul>
       <li>Client</li>
       <li>Corporate</li>
@@ -50,6 +50,7 @@ sideBar.innerHTML = `
   </div>
 `;
 
+// === Dropdown functionality ===
 const drops = document.querySelectorAll('.drop');
 
 drops.forEach(drop => {
@@ -59,19 +60,22 @@ drops.forEach(drop => {
   // start hidden
   submenu.style.display = "none";
 
-  link.addEventListener('click', () => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+
     const isVisible = submenu.style.display === "block";
-    // hide all first (if you want accordion behavior)
+
+    // hide all menus first
     drops.forEach(d => d.querySelector('ul').style.display = "none");
+
     // toggle clicked one
     submenu.style.display = isVisible ? "none" : "block";
-
   });
 });
 
+// === Specific action for "Customer service" ===
 const customerServiceLi = document.getElementById('customer-service');
-
 customerServiceLi.addEventListener('click', (e) => {
-  e.stopPropagation(); // prevents the parent <a> click from hiding the submenu
+  e.stopPropagation(); // prevent closing parent
   showCustomerService();
 });

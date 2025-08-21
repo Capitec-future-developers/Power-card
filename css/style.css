@@ -360,3 +360,13 @@
   height: 50px;
   cursor: pointer;
 }
+
+.customer-view{
+  position: absolute;
+  top: 180px;
+  left: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid #ccc;
+}

@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
   const customerView = document.getElementById('customer-view');
+  const subheader = document.getElementById('subheader'); // 👈 fixed subheader
+
+  // ---- Helper to update subheader ----
+  function setSubheader(text) {
+    if (subheader) subheader.textContent = text;
+  }
 
   const mockDatabase = [
     {
@@ -116,63 +122,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Utility functions
   const isValidPAN = pan => typeof pan === 'string' && pan.length >= 13;
-  const isUniqueLegalID = (legal_id, pan) => !mockDatabase.some(c => c.legal_id === legal_id && c.pan !== pan);
-  const getCustomerSummary = customer => ({
-    pan: customer.pan,
-    full_name: `${customer.first_name} ${customer.family_name || ''}`.trim(),
-    corporate_name: customer.corporate_name,
-    phone: customer.phone,
-    age: customer.birth_date ? Math.floor((new Date() - new Date(customer.birth_date)) / (365.25*24*60*60*1000)) : null,
-    created_at: customer.created_at
-  });
 
   // Show initial image
   content.innerHTML = `<img src="img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
 
   function showCustomerService() {
+    setSubheader("Customer Service"); // 👈 update header text
+
     content.innerHTML = `
- <section>
- <div class="error-message" id="error-message"></div>
- <div class="customer-details">
- <div class="left-details">
- <div class="field"><label for="pan">Pan</label><input type="text" id="pan" class="card-number" placeholder="Enter PAN"></div>
- <div class="field"><label for="fname">First name</label><input type="text" id="fname" class="card-number"></div>
- <div class="field"><label for="corpId">Corporate ID</label><input type="text" id="corpId" class="card-number"></div>
- <div class="field"><label for="legalId">Legal ID</label><input type="text" id="legalId" class="card-number"></div>
- <div class="field"><label for="clientId">Client host ID</label><input type="text" id="clientId" class="card-number"></div>
- </div>
- <div class="right-details">
- <div class="field"><label for="clientCode">Client code</label><input type="text" id="clientCode" class="card-number"></div>
- <div class="field"><label for="familyName">Family name</label><input type="text" id="familyName" class="card-number"></div>
- <div class="field"><label for="corpName">Corporate name</label><input type="text" id="corpName" class="card-number"></div>
- <div class="field"><label for="phone">Phone</label><input type="tel" id="phone" class="card-number" placeholder="ex: 0655511132"></div>
- </div>
- </div>
+      <section>
+        <div class="error-message" id="error-message"></div>
+        <div class="customer-details">
+          <div class="left-details">
+            <div class="field"><label for="pan">Pan</label><input type="text" id="pan" class="card-number" placeholder="Enter PAN"></div>
+            <div class="field"><label for="fname">First name</label><input type="text" id="fname" class="card-number"></div>
+            <div class="field"><label for="corpId">Corporate ID</label><input type="text" id="corpId" class="card-number"></div>
+            <div class="field"><label for="legalId">Legal ID</label><input type="text" id="legalId" class="card-number"></div>
+            <div class="field"><label for="clientId">Client host ID</label><input type="text" id="clientId" class="card-number"></div>
+          </div>
+          <div class="right-details">
+            <div class="field"><label for="clientCode">Client code</label><input type="text" id="clientCode" class="card-number"></div>
+            <div class="field"><label for="familyName">Family name</label><input type="text" id="familyName" class="card-number"></div>
+            <div class="field"><label for="corpName">Corporate name</label><input type="text" id="corpName" class="card-number"></div>
+            <div class="field"><label for="phone">Phone</label><input type="tel" id="phone" class="card-number" placeholder="ex: 0655511132"></div>
+          </div>
+        </div>
 
- <div class="action-btn">
- <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
- <button class="clear" style="align-items: center; justify-content: center; gap: 5px; color: white; background-color: #092365; border: none; font-size: 16px; width: 120px; height: 35px; cursor: pointer; border-radius: 2px; padding-top: 10px;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
- </div>
+        <div class="action-btn">
+          <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
+          <button class="clear" style="align-items: center; justify-content: center; gap: 5px; color: white; background-color: #092365; border: none; font-size: 16px; width: 120px; height: 35px; cursor: pointer; border-radius: 2px; padding-top: 10px;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
+        </div>
 
- <div class="client-details">
- <table id="client-table">
- <thead>
- <tr>
- <th>Client code</th>
- <th>First name</th>
- <th>Family name</th>
- <th>Legal ID</th>
- <th>Phone</th>
- <th>Birth date</th>
- <th>Address</th>
- <th>Actions</th>
- </tr>
- </thead>
- <tbody id="client-table-body"></tbody>
- </table>
- </div>
- </section>
- `;
+        <div class="client-details">
+          <table id="client-table">
+            <thead>
+              <tr>
+                <th>Client code</th>
+                <th>First name</th>
+                <th>Family name</th>
+                <th>Legal ID</th>
+                <th>Phone</th>
+                <th>Birth date</th>
+                <th>Address</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="client-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    `;
 
     const searchBtn = document.querySelector('.search-btn');
     const clearBtn = document.querySelector('.clear');
@@ -183,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const fname = document.getElementById('fname').value.trim();
       const clientId = document.getElementById('clientId').value.trim();
 
-      // Check if at least one search criteria is provided
       if (!pan && !fname && !clientId) {
         showError('Please enter at least one search criteria (PAN, First Name, or Client Host ID)');
         return;
@@ -191,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       hideError();
 
-      // Find customer based on search criteria
       let customer = null;
       if (pan) {
         if (!isValidPAN(pan)) {
@@ -229,66 +226,64 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = document.createElement('tr');
       row.className = 'collapsible-row';
       row.innerHTML = `
- <td>${customer.client_code}</td>
- <td>${customer.first_name}</td>
- <td>${customer.family_name}</td>
- <td>${customer.legal_id}</td>
- <td>${customer.phone}</td>
- <td>${customer.birth_date}</td>
- <td>${customer.address.substring(0, 20)}...</td>
- <td><span class="material-icons-sharp expand-icon">expand_more</span></td>
- `;
+        <td>${customer.client_code}</td>
+        <td>${customer.first_name}</td>
+        <td>${customer.family_name}</td>
+        <td>${customer.legal_id}</td>
+        <td>${customer.phone}</td>
+        <td>${customer.birth_date}</td>
+        <td>${customer.address.substring(0, 20)}...</td>
+        <td><span class="material-icons-sharp expand-icon">expand_more</span></td>
+      `;
 
       const detailsRow = document.createElement('tr');
       detailsRow.className = 'details-row';
       detailsRow.innerHTML = `
- <td colspan="8" style="position: relative; height: 200px;">
- <div class="customer-detail-container">
- <!-- Payment Instruments Section -->
- <div class="payment-section">
- <h3>Payment Instruments</h3>
- <table class="payment-table" style="position: absolute; top: 70px; width: 100%; left: 10px; ">
- <tbody>
- ${customer.payment_instruments.map(instrument => `
- <tr>
- <td>${instrument.type}</td>
- <td>${instrument.number}</td>
- <td>${instrument.name}</td>
- <td>${instrument.full_name}</td>
- <td>${instrument.status}</td>
- <td>${instrument.expiry}</td>
- <td>${instrument.condition}</td>
- <td>${instrument.type_detail}</td>
- </tr>
- `).join('')}
- </tbody>
- </table>
- </div>
+        <td colspan="8" style="position: relative; height: 200px;">
+          <div class="customer-detail-container">
+            <!-- Payment Instruments Section -->
+            <div class="payment-section">
+              <h3>Payment Instruments</h3>
+              <table class="payment-table" style="position: absolute; top: 70px; width: 100%; left: 10px; ">
+                <tbody>
+                  ${customer.payment_instruments.map(instrument => `
+                    <tr>
+                      <td>${instrument.type}</td>
+                      <td>${instrument.number}</td>
+                      <td>${instrument.name}</td>
+                      <td>${instrument.full_name}</td>
+                      <td>${instrument.status}</td>
+                      <td>${instrument.expiry}</td>
+                      <td>${instrument.condition}</td>
+                      <td>${instrument.type_detail}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
 
- <!-- Accounts Section -->
- <div class="accounts-section">
- <h3>Accounts</h3>
- <table class="accounts-table" style="position: absolute; top: 60px; width: 100%; left: 10px; " >
- <tbody>
- ${customer.accounts.map(account => `
- <tr>
- <td>${account.type}</td>
- <td>${account.number}</td>
- <td>${account.status}</td>
- <td>${account.expiry}</td>
- </tr>
- `).join('')}
- </tbody>
- </table>
- </div>
- </div>
- </td>
- `;
+            <!-- Accounts Section -->
+            <div class="accounts-section">
+              <h3>Accounts</h3>
+              <table class="accounts-table" style="position: absolute; top: 60px; width: 100%; left: 10px; " >
+                <tbody>
+                  ${customer.accounts.map(account => `
+                    <tr>
+                      <td>${account.type}</td>
+                      <td>${account.number}</td>
+                      <td>${account.status}</td>
+                      <td>${account.expiry}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </td>
+      `;
 
-      // Initially hide the details
       detailsRow.style.display = 'none';
 
-      // Add click event to toggle details
       row.addEventListener('click', () => {
         if (detailsRow.style.display === 'none') {
           detailsRow.style.display = 'table-row';
@@ -296,6 +291,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           detailsRow.style.display = 'none';
           row.querySelector('.expand-icon').textContent = 'expand_more';
+        }
+      });
+
+      // Double-click payment table → show Customer View
+      detailsRow.addEventListener('dblclick', (e) => {
+        if (e.target.closest('.payment-table')) {
+          showCustomerView(customer);
         }
       });
 
@@ -316,13 +318,78 @@ document.addEventListener('DOMContentLoaded', () => {
   if (customerServiceBtn) {
     customerServiceBtn.addEventListener('click', showCustomerService);
   }
+
+  function showCustomerView(customer) {
+    setSubheader("Customer View"); // 👈 update header text
+
+    content.innerHTML = `
+      <section class="customer-view">
+        <button id="back-btn" style="margin-bottom: 15px; background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">← Back</button>
+
+        <div class="customer-header">
+          <p><strong>Full Name:</strong> ${customer.first_name} ${customer.family_name}</p>
+          <p><strong>Corporate:</strong> ${customer.corporate_name}</p>
+          <p><strong>Phone:</strong> ${customer.phone}</p>
+          <p><strong>Address:</strong> ${customer.address}</p>
+        </div>
+
+        <div class="customer-subdetails">
+          <h3>Payment Instruments</h3>
+          <table class="payment-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Full Name</th>
+                <th>Status</th>
+                <th>Expiry</th>
+                <th>Condition</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${customer.payment_instruments.map(pi => `
+                <tr>
+                  <td>${pi.type}</td>
+                  <td>${pi.number}</td>
+                  <td>${pi.name}</td>
+                  <td>${pi.full_name}</td>
+                  <td>${pi.status}</td>
+                  <td>${pi.expiry}</td>
+                  <td>${pi.condition}</td>
+                  <td>${pi.type_detail}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <h3>Accounts</h3>
+          <table class="accounts-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Number</th>
+                <th>Status</th>
+                <th>Expiry</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${customer.accounts.map(acc => `
+                <tr>
+                  <td>${acc.type}</td>
+                  <td>${acc.number}</td>
+                  <td>${acc.status}</td>
+                  <td>${acc.expiry}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    `;
+
+    // Back button → return to Customer Service
+    document.getElementById('back-btn').addEventListener('click', showCustomerService);
+  }
 });
-
-function showCustomerView(customer) {
-
-  content.innerHTML = `
-  <div class="customer-view">
-
-</div>
-  `
-}

@@ -17,5 +17,5 @@ header.innerHTML = `
         </div>
       </div>
       </div>
-    <div class="subheader">Hi OmphileMohlala, Welcome to PowerCARD 3.5 !</div>
+    <div class="subheader" id="subheader">Hi OmphileMohlala, Welcome to PowerCARD 3.5 !</div>
 `;
