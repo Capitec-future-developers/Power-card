@@ -563,7 +563,13 @@
 }
 
 /* Make sure tables don't overflow */
-.payment-table,
+.payment-table{
+  position: absolute;
+  top: 330px;
+  left: 200px;
+  border-collapse: collapse;
+  width: 88%;
+}
 .accounts-table {
   table-layout: fixed;
   width: 100%;
