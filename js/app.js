@@ -241,24 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const detailsRow = document.createElement('tr');
       detailsRow.className = 'details-row';
       detailsRow.innerHTML = `
- <td colspan="8" style="height: 100%;">
+ <td colspan="8" style="position: relative; height: 200px;">
  <div class="customer-detail-container">
  <!-- Payment Instruments Section -->
  <div class="payment-section">
  <h3>Payment Instruments</h3>
- <table class="payment-table">
- <thead class="payment-section-table">
- <tr>
- <th>Type</th>
- <th>Number</th>
- <th>Name</th>
- <th>Full Name</th>
- <th>Status</th>
- <th>Expiry</th>
- <th>Condition</th>
- <th>Type Detail</th>
- </tr>
- </thead>
+ <table class="payment-table" style="position: absolute; top: 60px; width: 100%; left: 10px; ">
  <tbody>
  ${customer.payment_instruments.map(instrument => `
  <tr>
@@ -279,15 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
  <!-- Accounts Section -->
  <div class="accounts-section">
  <h3>Accounts</h3>
- <table class="accounts-table">
- <thead>
- <tr>
- <th>Type</th>
- <th>Number</th>
- <th>Status</th>
- <th>Expiry</th>
- </tr>
- </thead>
+ <table class="accounts-table" style="position: absolute; top: 60px; width: 100%; left: 10px; " >
  <tbody>
  ${customer.accounts.map(account => `
  <tr>
