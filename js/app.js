@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
   const customerView = document.getElementById('customer-view');
-  const subheader = document.getElementById('subheader'); // fixed subheader
+  const subheader = document.getElementById('subheader');
 
   // ---- Helper to update subheader ----
   function setSubheader(text) {
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   content.innerHTML = `<img src="img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
 
   function showCustomerService() {
-    setSubheader("Customer Service"); // update header text
+    setSubheader("Customer Service");
 
     content.innerHTML = `
  <section>
@@ -294,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Double-click payment table → show Customer View
       detailsRow.addEventListener('dblclick', (e) => {
         if (e.target.closest('.payment-table')) {
           showCustomerView(customer);
@@ -324,11 +323,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     content.innerHTML = `
 <section class="customer-view">
-<div style="display: flex; gap: 10px; margin-bottom: 15px;">
+<div class="top-stuff" style="display: flex; gap: 10px; margin-bottom: 15px;">
  <button id="back-btn" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">← Back</button>
- <button id="memo-btn" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Memo</button>
- <button id="transactions-btn" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Account Transactions</button>
- <button id="card-actions-btn" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Card Actions</button>
+ <button class="right-btn" id="memo-btn" style="position: absolute; right: 180px;background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Memo</button>
+ <button class="right-btn" id="transactions-btn" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Account Transactions</button>
 </div>
 
 <!-- Memo Popup (hidden by default) -->
@@ -341,26 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
  </div>
 </div>
 
-<!-- Card Actions Popup (hidden by default) -->
-<div id="card-actions-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 1000; width: 400px;">
- <h3>Card Actions</h3>
- <div style="margin: 15px 0;">
- <label style="display: block; margin-bottom: 8px;">Select Action:</label>
- <select id="card-action-select" style="width: 100%; padding: 8px;">
- <option value="block">Block Card Temporarily</option>
- <option value="replace">Request Replacement Card</option>
- <option value="limit">Change Credit Limit</option>
- <option value="pin">Reset PIN</option>
- </select>
- </div>
- <div id="action-details" style="margin: 15px 0;"></div>
- <div style="display: flex; justify-content: space-between;">
- <button id="confirm-action" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Confirm</button>
- <button id="cancel-action" style="background: #ccc; color: black; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Cancel</button>
- </div>
-</div>
-
-<div style="background: #092365; color: white; padding: 5px 10px; width: 80%; margin-bottom: 15px;">
+<div class="id">
  Identification
 </div>
 
@@ -425,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </table>
 
 <!-- Third Table: Account Details -->
-<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+<table style="width: cloudflare.com; border-collapse: collapse; margin-bottom: 20px;">
  <tr>
  <th style="border: 1px solid #ddd; padding: 8px; background-color: #e8e6e6; text-align: left; width: 15%;">Embossed Name</th>
  <td style="border: 1px solid #ddd; padding: 8px; width: 18%;">${customer.first_name.charAt(0)}. ${customer.family_name}</td>
@@ -523,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
  <h4>Active Loans</h4>
  <p><strong>Personal Loan:</strong> R 15,000.00 remaining</p>
  <p><strong>Monthly Payment:</strong> R 1,200.00</p>
- <p><strong>Interest Rate:</strong> 11.5%</p>
+ <p><strong>Interest Novak Interest Rate:</strong> 11.5%</p>
  <p><strong>Next Payment Due:</strong> 05/09/2025</p>
  </div>
  <div>
@@ -532,7 +511,6 @@ document.addEventListener('DOMContentLoaded', () => {
  <p><strong>Internet:</strong> R 899.00 (Due: 01/09/2025)</p>
  <p><strong>Insurance:</strong> R 1,250.00 (Due: 05/09/2025)</p>
  <p><strong>Mobile:</strong> R 299.00 (Auto-debit enabled)</p>
- </div>
  </div>
  </div>
  <div id="loyalty" class="tab-pane" style="display: none;">
@@ -551,7 +529,6 @@ document.addEventListener('DOMContentLoaded', () => {
  <p><strong>Partner Offers:</strong> 5 available</p>
  </div>
  </div>
- </div>
  <div id="addon-services" class="tab-pane" style="display: none;">
  <h3>Add-on Services</h3>
  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -566,7 +543,6 @@ document.addEventListener('DOMContentLoaded', () => {
  <p><strong>Concierge Service:</strong> Available</p>
  <p><strong>Roadside Assistance:</strong> Included</p>
  <p><strong>Fraud Monitoring:</strong> 24/7 Active</p>
- </div>
  </div>
  </div>
  <div id="transaction-history" class="tab-pane" style="display: none;">
@@ -648,77 +624,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Card Actions functionality
-    document.getElementById('card-actions-btn').addEventListener('click', () => {
-      document.getElementById('card-actions-popup').style.display = 'block';
-      updateActionDetails();
-    });
-
-    document.getElementById('cancel-action').addEventListener('click', () => {
-      document.getElementById('card-actions-popup').style.display = 'none';
-    });
-
-    document.getElementById('card-action-select').addEventListener('change', updateActionDetails);
-
-    function updateActionDetails() {
-      const action = document.getElementById('card-action-select').value;
-      let detailsHTML = '';
-
-      switch(action) {
-        case 'block':
-          detailsHTML = `
- <p>This will temporarily block the card. The customer will not be able to make any transactions until unblocked.</p>
- <label style="display: block; margin: 10px 0;">
- <input type="checkbox" id="confirm-block"> I confirm I have verified the customer's identity
- </label>
- `;
-          break;
-        case 'replace':
-          detailsHTML = `
- <p>Request a replacement card. The current card will be deactivated once the new card is activated.</p>
- <div style="margin: 10px 0;">
- <label style="display: block; margin-bottom: 5px;">Delivery Address:</label>
- <select style="width: 100%; padding: 5px;">
- <option>Registered Address: ${customer.address}</option>
- <option>Branch Pickup</option>
- </select>
- </div>
- `;
-          break;
-        case 'limit':
-          detailsHTML = `
- <p>Change the credit limit for this account.</p>
- <div style="margin: 10px 0;">
- <label style="display: block; margin-bottom: 5px;">New Credit Limit (ZAR):</label>
- <input type="number" value="10000" style="width: 100%; padding: 5px;">
- </div>
- <label style="display: block; margin: 10px 0;">
- <input type="checkbox" id="confirm-limit"> I confirm this change complies with bank policies
- </label>
- `;
-          break;
-        case 'pin':
-          detailsHTML = `
- <p>Reset the PIN for this card. A new PIN will be sent to the customer via secure mail.</p>
- <label style="display: block; margin: 10px 0;">
- <input type="checkbox" id="confirm-pin"> I confirm the customer has requested a PIN reset
- </label>
- `;
-          break;
-      }
-
-      document.getElementById('action-details').innerHTML = detailsHTML;
-    }
-
-    document.getElementById('confirm-action').addEventListener('click', () => {
-      const action = document.getElementById('card-action-select').value;
-      alert(`Action "${action}" has been submitted for processing.`);
-      document.getElementById('card-actions-popup').style.display = 'none';
-    });
-
     // Transactions button functionality
     document.getElementById('transactions-btn').addEventListener('click', () => {
-      // Switch to the transaction history tab
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(pane => pane.style.display = 'none');
 
@@ -732,14 +639,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tabButtons.forEach(button => {
       button.addEventListener('click', () => {
-        // Remove active class from all buttons and panes
         tabButtons.forEach(btn => btn.classList.remove('active'));
         tabPanes.forEach(pane => pane.style.display = 'none');
 
-        // Add active class to clicked button
         button.classList.add('active');
-
-        // Show corresponding pane
         const tabId = button.getAttribute('data-tab');
         document.getElementById(tabId).style.display = 'block';
       });
