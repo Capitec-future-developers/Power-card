@@ -73,9 +73,14 @@ drops.forEach(drop => {
   });
 });
 
-// === Specific action for "Customer service" ===
-const customerServiceLi = document.getElementById('customer-service');
-customerServiceLi.addEventListener('click', (e) => {
-  e.stopPropagation(); // prevent closing parent
-  showCustomerService();
+document.addEventListener('DOMContentLoaded', () => {
+  const customerServiceLi = document.getElementById('customer-service');
+  customerServiceLi.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (typeof showCustomerService === 'function') {
+      showCustomerService();
+    } else {
+      console.warn('showCustomerService() is not loaded yet');
+    }
+  });
 });
