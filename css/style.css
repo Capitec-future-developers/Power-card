@@ -66,9 +66,9 @@
   align-items: center;
   gap: 10px;
 }
-.issuer-icon{ width: 30px; height: 30px; border-radius: 50%; border: 2px dashed #146; }
-.switch-icon{ width: 30px; height: 30px; border-radius: 50%; }
-
+.issuer-icon{ width: 30px; height: 30px; border-radius: 50%;  cursor: pointer;}
+.switch-icon{ width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+.actives{ border: 2px dashed #146;}
 .profile{
   display: flex;
   align-items: center;
