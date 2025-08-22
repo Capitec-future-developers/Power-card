@@ -503,3 +503,19 @@
 .as-table th, .as-table td{ border:1px solid #ddd; padding:8px 10px; text-align:left; }
 .as-table thead th{ background:#e8e8e8; }
 
+/* Account Financials */
+.af-wrapper{ display:flex; flex-direction:column; gap:14px; }
+.af-grid{ display:flex; flex-direction:column; gap:6px; padding:10px; }
+.af-row{ display:grid; grid-template-columns: 200px 120px 60px 60px 20px 220px 120px 60px 60px 1fr; align-items:center; gap:6px; }
+.af-label{ color:#2f2f2f; }
+.af-value{ background:#eee; border:1px solid #d5d5d5; min-height:26px; display:flex; align-items:center; justify-content:flex-end; padding:4px 8px; }
+.af-suffix{ background:#e9ecef; border:1px solid #cfcfcf; min-height:24px; display:flex; align-items:center; justify-content:center; }
+.af-polarity{ background:#efefef; border:1px solid #d8d8d8; min-height:24px; display:flex; align-items:center; justify-content:center; }
+.af-equals{ text-align:center; font-weight:700; }
+.af-actions{ display:flex; gap:6px; justify-content:flex-end; }
+.af-btn{ background:#0b2a63; color:#fff; border:none; padding:4px 8px; cursor:pointer; }
+.af-colspan{ grid-column: 6 / -1; }
+.af-breakdown{ display:flex; flex-direction:column; gap:4px; }
+.af-break{ display:grid; grid-template-columns: 220px 120px 60px 60px; align-items:center; gap:6px; }
+.af-sub{ color:#444; }
+.af-subv{ background:#eee; border:1px solid #d5d5d5; min-height:24px; display:flex; align-items:center; justify-content:flex-end; padding:2px 6px; }

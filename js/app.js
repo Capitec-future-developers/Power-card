@@ -552,22 +552,110 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
               </div>
             </section>
-          <div id="account-financials" class="tab-pane" style="display: none;">
-            <h3>Account Financials</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div>
-                <p><strong>Current Balance:</strong> R 5,432.10</p>
-                <p><strong>Available Balance:</strong> R 6,000.00</p>
-                <p><strong>Credit Limit:</strong> R 10,000.00</p>
-                <p><strong>Utilization Rate:</strong> 45.3%</p>
+         <div id="account-financials" class="tab-pane" style="display: none;">
+            <section class="af-wrapper">
+              <div class="as-section">
+                <div class="as-title">Account Financials</div>
+                <div class="af-grid">
+                  <div class="af-row">
+                    <div class="af-label">Total account balance</div>
+                    <div class="af-value">15,499.53</div>
+                    <div class="af-suffix">ZAR</div>
+                    <div class="af-polarity">Debit</div>
+                    <div class="af-equals">=</div>
+                    <div class="af-label">Opening balance</div>
+                    <div class="af-value">15,499.53</div>
+                    <div class="af-suffix">ZAR</div>
+                    <div class="af-polarity">Debit</div>
+                    <div class="af-actions"><button class="af-btn">Balance</button><button class="af-btn">Global Summary</button></div>
+                  </div>
+                  <div class="af-row">
+                    <div class="af-label">Available balance</div>
+                    <div class="af-value">4,496.62</div>
+                    <div class="af-suffix">ZAR</div>
+                    <div class="af-polarity">Credit</div>
+                    <div class="af-equals">=</div>
+                    <div class="af-colspan">
+                      <div class="af-breakdown">
+                        <div class="af-break">
+                          <span class="af-sub">Current cycle balance</span>
+                          <span class="af-subv">0.00</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span>
+                        </div>
+                        <div class="af-break">
+                          <span class="af-sub">Total loan balance</span>
+                          <span class="af-subv">0.00</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span>
+                        </div>
+                        <div class="af-break">
+                          <span class="af-sub">Credit limit</span>
+                          <span class="af-subv">20,000.00</span><span class="af-suffix">ZAR</span>
+                        </div>
+                        <div class="af-break">
+                          <span class="af-sub">Total account balance</span>
+                          <span class="af-subv">15,499.53</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span>
+                        </div>
+                        <div class="af-break">
+                          <span class="af-sub">Pending authorizations</span>
+                          <span class="af-subv">3.85</span><span class="af-suffix">ZAR</span>
+                        </div>
+                        <div class="af-break">
+                          <span class="af-sub">Loan contracts in progress</span>
+                          <span class="af-subv">0.00</span><span class="af-suffix">ZAR</span>
+                        </div>
+                        <div class="af-break">
+                          <span class="af-sub">In transit balance</span>
+                          <span class="af-subv">0.00</span><span class="af-suffix">ZAR</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="af-row">
+                    <div class="af-label">Available cash</div>
+                    <div class="af-value">4,496.62</div>
+                    <div class="af-suffix">ZAR</div>
+                    <div class="af-polarity">Credit</div>
+                    <div class="af-equals">=</div>
+                    <div class="af-colspan">
+                      <div class="af-breakdown">
+                        <div class="af-break"><span class="af-sub">Cash limit</span><span class="af-subv">20,000.00</span><span class="af-suffix">ZAR</span></div>
+                        <div class="af-break"><span class="af-sub">Total cash balance</span><span class="af-subv">3,474.62</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span></div>
+                        <div class="af-break"><span class="af-sub">Pending cash authorizations</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="af-row">
+                    <div class="af-label">Available additional loan</div>
+                    <div class="af-value">0.00</div>
+                    <div class="af-suffix">ZAR</div>
+                    <div class="af-polarity">Debit</div>
+                    <div class="af-equals">=</div>
+                    <div class="af-colspan">
+                      <div class="af-breakdown">
+                        <div class="af-break"><span class="af-sub">Additional loan limit</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
+                        <div class="af-break"><span class="af-sub">Additional loans balance</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span></div>
+                        <div class="af-break"><span class="af-sub">Pending additional loans</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
+                        <div class="af-break"><span class="af-sub">Additional loans in progress</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="af-row">
+                    <div class="af-label">Accrued interest</div>
+                    <div class="af-value">89.24</div>
+                    <div class="af-suffix">ZAR</div>
+                    <div class="af-polarity"></div>
+                    <div class="af-equals"></div>
+                    <div class="af-colspan"></div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p><strong>Last Payment:</strong> R 500.00 on 15/08/2025</p>
-                <p><strong>Minimum Payment Due:</strong> R 250.00</p>
-                <p><strong>Payment Due Date:</strong> 05/09/2025</p>
-                <p><strong>Overdraft Protection:</strong> Enabled</p>
+
+              <div class="as-section">
+                <div class="as-title">Turnover</div>
+                <div style="padding:10px;"><button class="af-btn">Turnover</button></div>
               </div>
-            </div>
+            </section>
           </div>
           <div id="bills-loans" class="tab-pane" style="display: none;">
             <h3>Bills & Loans</h3>
