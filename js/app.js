@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
           type: 'Personal Gold Account',
           number: '4140442000004918',
-          status: 'NORMAL', // options: NORMAL, MBOD_3, CANCELED, ICU, SUSPENDED
+          status: 'NORMAL',
           expiry: '01/10/2025',
           pan_status_date: '01/01/2025',
           institution: 'Capitec Bank Limited',
@@ -47,6 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
           loyalty_account_number: '4140442000004918',
           account_owner_type: 'Individual',
           loyalty_status: 'NORMAL'
+        }
+      ],
+      loyalty_accounts: [
+        {
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          client_code: 'C001',
+          catalogue_product: 'Personal Gold Card',
+          product_version: 'v1',
+          loyalty_account_number: '4140442000004918',
+          account_owner_type: 'Individual',
+          loyalty_status: 'NORMAL',
+          exchange_icon: '🔄'
         }
       ]
     },
@@ -90,6 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
           account_owner_type: 'Corporate',
           loyalty_status: 'MBOD_3'
         }
+      ],
+      loyalty_accounts: [
+        {
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          client_code: 'C002',
+          catalogue_product: 'Business Platinum Card',
+          product_version: 'v1',
+          loyalty_account_number: '4140123000005678',
+          account_owner_type: 'Corporate',
+          loyalty_status: 'MBOD_3',
+          exchange_icon: '🔄'
+        }
       ]
     },
     {
@@ -132,9 +158,79 @@ document.addEventListener('DOMContentLoaded', () => {
           account_owner_type: 'Individual',
           loyalty_status: 'ICU'
         }
+      ],
+      loyalty_accounts: [
+        {
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          client_code: 'C003',
+          catalogue_product: 'Entrepreneur Card',
+          product_version: 'v2',
+          loyalty_account_number: '4140442000009876',
+          account_owner_type: 'Individual',
+          loyalty_status: 'ICU',
+          exchange_icon: '🔄'
+        }
+      ]
+    },
+    {
+      pan: '4140987600001098',
+      first_name: 'Dwani',
+      family_name: 'Johnson',
+      corporate_id: 'CORP00987',
+      legal_id: 'L907900',
+      client_host_id: 'CH0092',
+      client_code: '10982',
+      corporate_name: 'Johnsons Family',
+      phone: '0606238529',
+      birth_date: '1997-02-17',
+      address: '18 Forest Road, Johannesburg, SA',
+      created_at: new Date('2025-03-01T10:00:00'),
+      updated_at: new Date('2025-03-01T10:00:00'),
+      payment_instruments: [
+        {
+          type: 'Entrepreneur Card',
+          number: '414098XXXXXX1098',
+          name: 'D. Johnson',
+          full_name: 'DWAIN JOHNSON',
+          status: 'Active',
+          expiry: '12/2028',
+          condition: 'ACTIVE',
+          type_detail: 'Primary'
+        }
+      ],
+      accounts: [
+        {
+          type: 'Credit Account',
+          number: '4140442000009875',
+          status: 'Normal',
+          expiry: '28/12/2028',
+          pan_status_date: '03/01/2025',
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          catalogue_product: 'Entrepreneur Card',
+          loyalty_account_number: '4140442000009875',
+          account_owner_type: 'Individual',
+          loyalty_status: 'Normal'
+        }
+      ],
+      loyalty_accounts: [
+        {
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          client_code: '10982',
+          catalogue_product: 'Entrepreneur Card',
+          product_version: 'v3',
+          loyalty_account_number: '4140442000009875',
+          account_owner_type: 'Individual',
+          loyalty_status: 'Normal',
+          exchange_icon: '🔄'
+        }
       ]
     }
   ];
+
+
 
   // Utility functions
   const isValidPAN = pan => typeof pan === 'string' && pan.length >= 13;

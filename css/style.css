@@ -520,11 +520,9 @@
 .af-sub{ color:#444; }
 .af-subv{ background:#eee; border:1px solid #d5d5d5; min-height:24px; display:flex; align-items:center; justify-content:flex-end; padding:2px 6px; }
 
-
 .styled-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
   margin: 20px 0;
@@ -534,19 +532,20 @@
 }
 
 .styled-table thead {
-  background-color: #f1f1f1; /* Very light grey */
-  color: #000; /* Black text */
+  background-color: #f1f1f1;
+  color: #000;
   text-align: left;
 }
 
 .styled-table thead th {
   padding: 12px 20px;
   font-weight: 600;
+  border: 1px solid #ddd;
 }
 
 .styled-table tbody td {
   padding: 12px 20px;
-  border-bottom: 1px solid #eee;
+  border: 1px solid #ddd;
 }
 
 .styled-table tbody tr {
@@ -558,11 +557,10 @@
 }
 
 .styled-table tbody tr:hover {
-  background-color: #cce0ff; /* light hover effect */
+  background-color: #cce0ff;
   cursor: pointer;
 }
 
-/* Click effect: navy blue */
 .styled-table tbody tr.selected {
   background-color: #001f4d;
   color: #fff;
@@ -589,7 +587,7 @@
   .styled-table tr,
   .styled-table td {
     display: block;
-    width: 100%;
+    width: 80%;
   }
   .styled-table tbody tr {
     margin-bottom: 15px;
