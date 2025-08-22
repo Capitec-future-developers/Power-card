@@ -482,23 +482,76 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </section>
           </div>
-          <div id="account-summary" class="tab-pane" style="display: none;">
-            <h3>Account Summary</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div>
-                <p><strong>Account Number:</strong> ${customer.accounts[0].number}</p>
-                <p><strong>Type:</strong> ${customer.accounts[0].type}</p>
-                <p><strong>Status:</strong> ${customer.accounts[0].status}</p>
-                <p><strong>Expiry:</strong> ${customer.accounts[0].expiry}</p>
+         <div id="account-summary" class="tab-pane" style="display: none;">
+            <section class="as-wrapper">
+              <div class="as-section">
+                <div class="as-title">Account</div>
+                <div class="as-grid">
+                  <div class="as-field"><div class="as-label">Retained administrative ...</div><div class="as-value"></div></div>
+                  <div class="as-field"><div class="as-label">Retained reason code</div><div class="as-value"></div></div>
+                  <div class="as-field"><div class="as-label">Balance status</div><div class="as-value">DEBTOR BALANCE</div></div>
+                  <div class="as-field"><div class="as-label">Cycle</div><div class="as-value">C06</div></div>
+                  <div class="as-field"><div class="as-label">Unpaid status</div><div class="as-value">${customer.accounts[0].status}</div></div>
+                  <div class="as-field"><div class="as-label">Highest balance</div><div class="as-value"></div></div>
+                  <div class="as-field"><div class="as-label">Product name</div><div class="as-value">${customer.accounts[0].type}</div></div>
+                  <div class="as-field"><div class="as-label">Last payment date</div><div class="as-value">${formatDate(customer.updated_at)}</div></div>
+                  <div class="as-field"><div class="as-label">Version</div><div class="as-value">1</div></div>
+                  <div class="as-field"><div class="as-label">Highest payment amount</div><div class="as-value"></div></div>
+                  <div class="as-field"><div class="as-label">Last monthly billing date</div><div class="as-value">${formatDate(customer.created_at)}</div></div>
+                  <div class="as-field"><div class="as-label">Next term due date</div><div class="as-value">${formatDate(customer.accounts[0].expiry)}</div></div>
+                  <div class="as-field"><div class="as-label">Last payment amount</div><div class="as-value">1,500.00 ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Nbr of checks returned</div><div class="as-value">0</div></div>
+                  <div class="as-field"><div class="as-label">Next statement date</div><div class="as-value">${formatDate(customer.accounts[0].pan_status_date)}</div></div>
+                  <div class="as-field"><div class="as-label">Next term over due date</div><div class="as-value">${formatDate(customer.accounts[0].pan_status_date)}</div></div>
+                </div>
               </div>
-              <div>
-                <p><strong>Opening Date:</strong> ${formatDate(customer.created_at)}</p>
-                <p><strong>Currency:</strong> ZAR (South African Rand)</p>
-                <p><strong>Account Owner:</strong> ${customer.first_name} ${customer.family_name}</p>
-                <p><strong>Relationship:</strong> Primary Account Holder</p>
+
+              <div class="as-section">
+                <div class="as-title">Credit limit</div>
+                <div class="as-grid as-grid--four">
+                  <div class="as-field"><div class="as-label">Credit limit</div><div class="as-value">20,000.00</div><div class="as-suffix">ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Cash limit</div><div class="as-value">20,000.00</div><div class="as-suffix">ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Additional loan limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Former credit limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Former cash limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Former loan limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
+                </div>
               </div>
-            </div>
-          </div>
+
+              <div class="as-section">
+                <div class="as-title">Temporary limits</div>
+                <div class="as-grid as-grid--four">
+                  <div class="as-field"><div class="as-label">Start date</div><div class="as-value">${formatDate(customer.accounts[0].pan_status_date)}</div></div>
+                  <div class="as-field"><div class="as-label">End date</div><div class="as-value">${formatDate(customer.accounts[0].expiry)}</div></div>
+                  <div class="as-field"><div class="as-label">Credit limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Cash limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
+                  <div class="as-field"><div class="as-label">Additional loan limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
+                </div>
+              </div>
+
+              <div class="as-section">
+                <div class="as-title">Direct debit accounts</div>
+                <table class="as-table">
+                  <thead>
+                    <tr>
+                      <th>Institution</th>
+                      <th>Branch</th>
+                      <th>Currency</th>
+                      <th>Account number</th>
+                      <th>IBAN</th>
+                      <th>SWIFT code</th>
+                      <th>Account status</th>
+                      <th>Routing number</th>
+                      <th>Start date</th>
+                      <th>End date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="10" style="text-align:left; color:#666; padding:10px;">No records found</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
           <div id="account-financials" class="tab-pane" style="display: none;">
             <h3>Account Financials</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">

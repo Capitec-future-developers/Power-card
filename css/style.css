@@ -490,3 +490,16 @@
   font-size: 12px;
 }
 
+.as-wrapper{ display:flex; flex-direction:column; gap:14px; }
+.as-section{ border:1px solid #c7d0e1; background:#fff; }
+.as-title{ background:#0b2a63; color:#fff; font-weight:600; padding:6px 10px; font-size:14px; }
+.as-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:6px 10px; padding:10px; }
+.as-grid--four{ grid-template-columns: repeat(4, 1fr); }
+.as-field{ display:grid; grid-template-columns: 180px 1fr 60px; align-items:center; }
+.as-label{ color:#2f2f2f; }
+.as-value{ background:#eee; border:1px solid #d5d5d5; min-height:26px; display:flex; align-items:center; padding:4px 8px; }
+.as-suffix{ background:#e9ecef; border:1px solid #cfcfcf; min-height:24px; display:flex; align-items:center; justify-content:center; }
+.as-table{ width:100%; border-collapse:collapse; }
+.as-table th, .as-table td{ border:1px solid #ddd; padding:8px 10px; text-align:left; }
+.as-table thead th{ background:#e8e8e8; }
+
