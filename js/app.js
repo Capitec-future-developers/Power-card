@@ -38,9 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
         {
           type: 'Personal Gold Account',
           number: '4140442000004918',
-          status: 'NORMAL',
+          status: 'NORMAL', // options: NORMAL, MBOD_3, CANCELED, ICU, SUSPENDED
           expiry: '01/10/2025',
-          pan_status_date: '01/01/2025'
+          pan_status_date: '01/01/2025',
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          catalogue_product: 'Personal Gold Card',
+          loyalty_account_number: '4140442000004918',
+          account_owner_type: 'Individual',
+          loyalty_status: 'NORMAL'
         }
       ]
     },
@@ -74,9 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
         {
           type: 'Business Account',
           number: '4140123000005678',
-          status: 'NORMAL',
+          status: 'MBOD_3',
           expiry: '03/15/2026',
-          pan_status_date: '02/01/2025'
+          pan_status_date: '02/01/2025',
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          catalogue_product: 'Business Platinum Card',
+          loyalty_account_number: '4140123000005678',
+          account_owner_type: 'Corporate',
+          loyalty_status: 'MBOD_3'
         }
       ]
     },
@@ -96,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updated_at: new Date('2025-03-01T10:00:00'),
       payment_instruments: [
         {
-          type: 'Personal Silver Credit Card',
+          type: 'Entrepreneur Card',
           number: '464498XXXXXX1098',
           name: 'Z. DUBE',
           full_name: 'ZENZI DUBE',
@@ -110,13 +122,20 @@ document.addEventListener('DOMContentLoaded', () => {
         {
           type: 'Savings Account',
           number: '4140442000009876',
-          status: 'NORMAL',
+          status: 'ICU',
           expiry: '12/12/2024',
-          pan_status_date: '03/01/2025'
+          pan_status_date: '03/01/2025',
+          institution: 'Capitec Bank Limited',
+          branch: 'MIGRATION BRANCH',
+          catalogue_product: 'Entrepreneur Card',
+          loyalty_account_number: '4140442000009876',
+          account_owner_type: 'Individual',
+          loyalty_status: 'ICU'
         }
       ]
     }
   ];
+
   // Utility functions
   const isValidPAN = pan => typeof pan === 'string' && pan.length >= 13;
   // Helper function to format dates
@@ -658,59 +677,282 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </section>
           </div>
-          <div id="bills-loans" class="tab-pane" style="display: none;">
-            <h3>Bills & Loans</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div>
-                <h4>Active Loans</h4>
-                <p><strong>Personal Loan:</strong> R 15,000.00 remaining</p>
-                <p><strong>Monthly Payment:</strong> R 1,200.00</p>
-                <p><strong>Interest Rate:</strong> 11.5%</p>
-                <p><strong>Next Payment Due:</strong> 05/09/2025</p>
+
+
+         <div id="bills-loans" class="tab-pane" style="display: none;">
+            <section class="af-wrapper">
+              <div class="as-section">
+                <div class="as-title" style="background: #1e4a72; color: white; padding: 8px 15px; margin: 0; font-weight: bold;">CURRENT LOANS</div>
+                <div style="overflow-x: auto;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                    <thead>
+                      <tr style="background: #f8f9fa;">
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Financing type</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Loan type</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Acronym</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Transaction amount</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Transaction date</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Installment amount</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Number of terms</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Remaining terms</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Remaining capital balance</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Loan start date</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Loan end date</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Next installment</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Catalogue product</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td colspan="14" style="border: 1px solid #ddd; padding: 20px; text-align: center; color: #666;">No records found</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; border-top: none;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">«</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">‹</button>
+                      <button style="border: 1px solid #007bff; background: #007bff; color: white; padding: 4px 8px;">1</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">›</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">»</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <span>10</span>
+                      <select style="border: 1px solid #ccc; padding: 2px;">
+                        <option>10</option>
+                        <option>25</option>
+                        <option>50</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h4>Bill Payments</h4>
-                <p><strong>Electricity:</strong> R 650.00 (Last paid: 12/08/2025)</p>
-                <p><strong>Internet:</strong> R 899.00 (Due: 01/09/2025)</p>
-                <p><strong>Insurance:</strong> R 1,250.00 (Due: 05/09/2025)</p>
-                <p><strong>Mobile:</strong> R 299.00 (Auto-debit enabled)</p>
+
+              <div class="as-section">
+                <div class="as-title" style="background: #1e4a72; color: white; padding: 8px 15px; margin: 0; font-weight: bold;">STATEMENTS</div>
+                <div style="overflow-x: auto;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                    <thead>
+                      <tr style="background: #f8f9fa;">
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Statement date</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Minimum due</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Total payments posted</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Amount missed payments</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Due date</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Overdue date</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Term status</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Credit limit</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Opening balance</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Closing balance</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Request amount</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">08/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,083.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">09/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">09/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Waiting for payment</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,146.33 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,499.53 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">07/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">942.82 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">942.82 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">08/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">08/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,056.58 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,146.33 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">06/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,021.50 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,021.50 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">07/04/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">07/04/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,906.42 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,056.58 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">05/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,254.41 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,254.41 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">06/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">06/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,682.80 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,906.42 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">04/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,142.58 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,142.58 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">05/04/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">05/04/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">17,812.79 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,682.80 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">03/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,120.37 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,120.37 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">04/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">04/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">14,054.40 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">17,812.79 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">02/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">976.66 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">976.66 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">03/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">03/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,915.70 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">14,054.40 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">01/06/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,333.53 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,333.53 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">3,728.79 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">02/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">02/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,502.84 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,915.70 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">12/06/2024</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,349.14 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,349.14 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">2,379.65 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">01/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">01/03/2025</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,374.02 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,502.84 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 6px;">11/06/2024</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,795.75 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,795.75 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">883.90 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">12/04/2024</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">12/04/2024</td>
+                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,038.08 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,374.02 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; border-top: none;">
+                    <div style="background: #e9ecef; padding: 8px; border: 1px solid #dee2e6;">
+                      <span style="font-weight: bold;">Total terms unpaid amount</span>
+                      <span style="margin-left: 200px; font-weight: bold;">1,083.00</span>
+                      <span style="margin-left: 20px;">ZAR</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">«</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">‹</button>
+                      <button style="border: 1px solid #007bff; background: #007bff; color: white; padding: 4px 8px;">1</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">2</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">3</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">4</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">›</button>
+                      <button style="border: 1px solid #ccc; background: white; padding: 4px 8px;">»</button>
+                      <span style="margin-left: 20px;">10</span>
+                      <select style="border: 1px solid #ccc; padding: 2px;">
+                        <option>10</option>
+                        <option>25</option>
+                        <option>50</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
           </div>
-          <div id="loyalty" class="tab-pane" style="display: none;">
-            <h3>Loyalty Program</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div>
-                <p><strong>Rewards Points:</strong> 1,250 points</p>
-                <p><strong>Points Value:</strong> R 125.00</p>
-                <p><strong>Tier:</strong> Silver Member</p>
-                <p><strong>Annual Spend:</strong> R 45,680.00</p>
-              </div>
-              <div>
-                <p><strong>Points Expiring:</strong> 100 points on 31/12/2025</p>
-                <p><strong>Recent Redemption:</strong> R 50 voucher (15/07/2025)</p>
-                <p><strong>Lifetime Points:</strong> 8,450 points</p>
-                <p><strong>Partner Offers:</strong> 5 available</p>
-              </div>
-            </div>
-          </div>
-          <div id="addon-services" class="tab-pane" style="display: none;">
-            <h3>Add-on Services</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div>
-                <p><strong>Travel Insurance:</strong> Active (Worldwide coverage)</p>
-                <p><strong>Purchase Protection:</strong> Active (90 days)</p>
-                <p><strong>Extended Warranty:</strong> Not subscribed</p>
-                <p><strong>Card Protection:</strong> Active</p>
-              </div>
-              <div>
-                <p><strong>Airport Lounge Access:</strong> 4 visits per year</p>
-                <p><strong>Concierge Service:</strong> Available</p>
-                <p><strong>Roadside Assistance:</strong> Included</p>
-                <p><strong>Fraud Monitoring:</strong> 24/7 Active</p>
-              </div>
-            </div>
-          </div>
+<div id="loyalty" class="tab-pane" style="display: none;">
+  <table class="styled-table">
+    <thead>
+      <tr class="loyalty">
+        <th>Institution</th>
+        <th>Branch</th>
+        <th>Client code</th>
+        <th>Catalogue product</th>
+        <th>Product version</th>
+        <th>Loyalty account nbr</th>
+        <th>Account owner type</th>
+        <th>Loyalty status</th>
+        <th><span class="material-icons-sharp">component_exchange</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      ${customer.accounts.map(account => `
+        <tr>
+          <td>${account.institution}</td>
+          <td>${account.branch}</td>
+          <td>${customer.client_code}</td>
+          <td>${account.catalogue_product}</td>
+          <td>${account.product_version || ''}</td>
+          <td>${account.loyalty_account_number || ''}</td>
+          <td>${account.account_owner_type}</td>
+          <td>${account.loyalty_status}</td>
+          <td>${account.exchange_icon || '—'}</td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+</div>
+
+
           <div id="transaction-history" class="tab-pane" style="display: none;">
             <h3>Recent Transactions</h3>
             <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
