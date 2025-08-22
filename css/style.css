@@ -1,16 +1,21 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Sharp');
+.content{
+
+}
 *{
   font-family: 'Roboto', sans-serif;
+
 }
 .header{
-  position: relative;
+  position: fixed;
   top: 0;
   background-color: #ffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
 }
 
 .side-bar{
-  position: absolute;
+  position: fixed;
   top: 50px;
   left: 0;
   width: 200px;
@@ -44,9 +49,9 @@
 }
 
 .right-side{
-  position: absolute;
+  position: fixed;
   top: -7px;
-  right: 0;
+  left: 910px;
   display: flex;
   align-items: center;
   padding: 10px;
@@ -70,9 +75,9 @@
 }
 
 .subheader{
-  position: absolute;
-  top: 41px;
-  left: 191px;
+  position: inherit;
+  top: 48px;
+  left: 200px;
   width: 88.5%;
   height: 32px;
   background-color: #092365;
@@ -350,7 +355,7 @@
 
 .accounts-section{
   position: absolute;
-  top: 120px;
+  top: 130px;
   left: -30px;
   display: flex;
   flex-direction: column;
