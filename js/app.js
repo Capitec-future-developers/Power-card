@@ -128,43 +128,64 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render Customer Card Section
   function renderCustomerCard(customer) {
     return `
-      <div class="customer-card" style="display: flex; flex-direction: column; gap: 15px; padding: 15px;">
-        <!-- Institution Section -->
-        <div class="card-section" style="display: flex; align-items: center; gap: 10px; position: relative;">
-          <div class="section-title" style="font-weight: bold; font-size: 16px;">Institution</div>
-          <div class="box-section">Capitec Bank Limited</div>
-          <span class="small-box">000010</span>
-        </div>
-        <!-- PAN Section -->
-        <div class="card-section" style="display: flex; align-items: center; gap: 10px; position: relative;">
-          <div class="section-title" style="font-weight: bold; font-size: 16px; width: 120px;">PAN</div>
-          <div class="box-section">${customer.pan}</div>
-        </div>
-        <!-- PAN Status Date Section -->
-        <div class="card-section" style="display: flex; align-items: center; gap: 10px; position: relative;">
-          <div class="section-title" style="font-weight: bold; font-size: 16px; width: 120px;">PAN Status Date</div>
-          <div class="box-section">${formatDate(customer.accounts[0].pan_status_date)}</div>
-        </div>
-        <!-- Client Host ID Section -->
-        <div class="card-section" style="display: flex; align-items: center; gap: 10px; position: relative;">
-          <div class="section-title" style="font-weight: bold; font-size: 16px; width: 120px;">Client Host ID</div>
-          <div class="box-section">${customer.client_host_id}</div>
-        </div>
-        <!-- Phone Section -->
-        <div class="card-section" style="display: flex; align-items: center; gap: 10px; position: relative;">
-          <div class="section-title" style="font-weight: bold; font-size: 16px; width: 120px;">Phone</div>
-          <div class="box-section">${customer.phone}</div>
-        </div>
-        <!-- Birth Date Section -->
-        <div class="card-section" style="display: flex; align-items: center; gap: 10px; position: relative;">
-          <div class="section-title" style="font-weight: bold; font-size: 16px; width: 120px;">Birth Date</div>
-          <div class="box-section">${customer.birth_date}</div>
-        </div>
-        <!-- VIP Level Section -->
-        <div class="card-section" style="display: flex; align-items: center; gap: 10px; position: relative;">
-          <div class="section-title" style="font-weight: bold; font-size: 16px; width: 120px;">VIP Level</div>
-          <div class="box-section">${customer.payment_instruments[0].type.includes('Platinum') ? 'Platinum' : customer.payment_instruments[0].type.includes('Gold') ? 'Gold' : 'Silver'}</div>
-        </div>
+      <div class="customer-card" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; padding: 15px;">
+        ${(() => {
+      const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+      const account = (customer.accounts && customer.accounts[0]) || {};
+      const abbrev = (value) => {
+        if (!value) return '';
+        const map = { 'REPLACED': 'R', 'ACTIVE': 'A', 'NEW': 'N', 'NORMAL': 'N' };
+        return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
+      };
+      const infoDot = '<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0b5ed7;color:#fff;font-size:12px;">i</span>';
+      const box = (text) => `<div class="box-section" style="flex:1; background:#f4f4f4; border:1px solid #ddd; padding:6px 8px; min-height:28px;">${text ?? ''}</div>`;
+      const small = (text) => `<span class="small-box" style="background:#e9ecef; border:1px solid #ccc; padding:6px 8px; min-width:40px; text-align:center;">${text ?? ''}</span>`;
+      const row = (label, value, trailing = '') => `
+            <div class="card-section" style="display:flex; align-items:center; gap:10px; position:relative;">
+              <div class="section-title" style="font-weight:bold; font-size:14px; min-width:140px;">${label}</div>
+              ${box(value)}
+              ${trailing}
+            </div>`;
+      const fullName = `${(customer.first_name || '').toUpperCase()} ${(customer.family_name || '').toUpperCase()}`.trim();
+      const maskedPan = instrument.number || customer.pan || '';
+      const customerType = (instrument.type || '').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
+      const currencyCode = 'ZAR';
+      const currencyNum = '710';
+      return `
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              ${row('Institution', 'Capitec Bank Limited', small('000010'))}
+              ${row('PAN', maskedPan, infoDot)}
+              ${row('PAN status', instrument.condition || 'N/A', small(abbrev(instrument.condition || '')))}
+              ${row('PAN status reason', instrument.condition === 'REPLACED' ? 'LOST REPLACEMENT' : 'N/A', small(instrument.condition === 'REPLACED' ? 'LP' : ''))}
+              ${row('PAN status date', formatDate(account.pan_status_date))}
+              ${row('Client host ID', customer.client_host_id)}
+              ${row('Phone', customer.phone)}
+              ${row('Birth date', formatDate(customer.birth_date))}
+              ${row('VIP level', (instrument.type || '').includes('Platinum') ? 'Platinum' : (instrument.type || '').includes('Gold') ? 'Gold' : 'Silver')}
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              ${row('Full name', `${fullName ? '01 ' + fullName : ''}`)}
+              ${row('Client code', customer.client_code)}
+              ${row('Client status', account.status || 'NORMAL', small(abbrev(account.status || 'NORMAL')))}
+              ${row('Client status reason', '')}
+              ${row('Client status date', formatDate(customer.updated_at))}
+              ${row('Legal ID', customer.legal_id)}
+              ${row('Address', customer.address)}
+              ${row('Member since', formatDate(customer.created_at))}
+              ${row('Customer type', customerType)}
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              ${row('Embossed name', instrument.name || '')}
+              ${row('Account number', account.number || '', infoDot)}
+              ${row('Account status', account.status || 'NORMAL', small('0'))}
+              ${row('Account status reason', '')}
+              ${row('Administrative status date', account.expiry || '')}
+              ${row('Corporate ID', customer.corporate_id)}
+              ${row('Corporate name', customer.corporate_name)}
+              ${row('Currency', currencyCode, small(currencyNum))}
+            </div>
+          `;
+    })()}
       </div>
     `;
   }

@@ -8,7 +8,7 @@
 
 .top-stuff{
   display: flex;
- flex-direction: row;
+  flex-direction: row;
   gap: 10px;
 }
 
@@ -29,40 +29,60 @@
   margin-bottom: 15px;
 }
 
-.box-section {
-  position: absolute;
-  top: 5px;
-  left: 150px;
-  width: 350px;
-  height: 30px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  border: 1px solid #ccc;
-  text-align: left;
-  padding-left: -10px;
-  justify-content: center;
-  align-items: center;
-  background-color: #dddddd;
+/* Customer card layout */
+.customer-card{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 15px 10px;
 }
-.small-box {
-  position: absolute;
-  top: 5px;
-  left: 510px;
-  width: 100px;
-  height: 25px;
+.card-column{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 10px;
-  padding-top: 5px;
+}
+.card-section{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+.section-title{
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 160px;
+}
+.box-section{
+  flex: 1;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+}
+.small-box{
+  background: #e9ecef;
   border: 1px solid #ccc;
-  text-align: left;
-  background-color: #dddddd;
+  padding: 6px 8px;
+  min-width: 40px;
+  text-align: center;
+}
+.info-dot{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5%;
+  background: #0b5ed7;
+  color: #fff;
+  font-size: 12px;
 }
 
 .tabs{
   position: absolute;
-  top: 400px;
+  top: 650px;
   left: 10px;
   width: 100px;
   height: 30px;
@@ -76,7 +96,7 @@
 
 .tab-content{
   position: absolute;
-  top: 430px;
+  top: 700px;
   left: 10px;
   width: 90%;
   height: 30px;
