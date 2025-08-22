@@ -919,7 +919,9 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </section>
           </div>
-<div id="loyalty" class="tab-pane" style="display: none;">
+
+
+          <div id="loyalty" class="tab-pane" style="display: none;">
   <table class="styled-table">
     <thead>
       <tr class="loyalty">
@@ -935,11 +937,11 @@ document.addEventListener('DOMContentLoaded', () => {
       </tr>
     </thead>
     <tbody>
-      ${customer.accounts.map(account => `
+      ${(customer?.loyalty_accounts || []).map(account => `
         <tr>
           <td>${account.institution}</td>
           <td>${account.branch}</td>
-          <td>${customer.client_code}</td>
+          <td>${account.client_code}</td>
           <td>${account.catalogue_product}</td>
           <td>${account.product_version || ''}</td>
           <td>${account.loyalty_account_number || ''}</td>
@@ -951,6 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </tbody>
   </table>
 </div>
+
 
 
           <div id="transaction-history" class="tab-pane" style="display: none;">
