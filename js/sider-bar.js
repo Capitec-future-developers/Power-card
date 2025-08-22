@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const sideBar = document.querySelector('.side-bar');
-  const switchBtn = document.getElementById('switch'); // switch button
-  const issuerBtn = document.getElementById('issuer'); // issuer button
+  const switchBtn = document.getElementById('switch');
+  const issuerBtn = document.getElementById('issuer');
   const content = document.getElementById('content');
 
   // Original sidebar (Workspace: Operation)
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="drop">
       <a><span class="material-icons-sharp" style="color: red; font-size: 15px;">public</span>Authorization</a>
       <ul>
-        <li>Authorization list</li>
+        <li id="authorization-list">Authorization list</li>
         <li>Authorization request</li>
         <li>Authorization request moto</li>
         <li>Authorization Monitoring</li>
@@ -138,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   `;
 
-  // Function to initialize dropdowns
   function initDropdowns() {
     const drops = sideBar.querySelectorAll('.drop');
     drops.forEach(drop => {
@@ -146,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const submenu = drop.querySelector('ul');
       submenu.style.display = "none";
 
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', e => {
         e.preventDefault();
         const isVisible = submenu.style.display === "block";
         drops.forEach(d => d.querySelector('ul').style.display = "none");
@@ -155,38 +154,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Functions to render content
+  function renderSidebar(type) {
+    if (type === 'switch') {
+      sideBar.innerHTML = authorizationSidebar;
+    } else {
+      sideBar.innerHTML = originalSidebar;
+    }
+    initDropdowns();
+  }
+
   function showSwitchFront() {
     content.innerHTML = `<img src="./img/switch-front.png" alt="switch-front" class="issuer-front">`;
-    sideBar.innerHTML = authorizationSidebar;
-    initDropdowns();
+    renderSidebar('switch');
   }
 
   function showIssuerFront() {
     content.innerHTML = `<img src="./img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
-    sideBar.innerHTML = originalSidebar;
-    initDropdowns();
+    renderSidebar('issuer');
   }
 
-  // Render initial sidebar and content
+
   showIssuerFront();
 
-  // Event listeners
+
   if (switchBtn) switchBtn.addEventListener('click', showSwitchFront);
   if (issuerBtn) issuerBtn.addEventListener('click', showIssuerFront);
 
-  // Customer service click (for original sidebar)
-  document.addEventListener('click', () => {
-    const customerServiceLi = document.getElementById('customer-service');
-    if (customerServiceLi) {
-      customerServiceLi.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (typeof showCustomerService === 'function') {
-          showCustomerService();
-        } else {
-          console.warn('showCustomerService() is not loaded yet');
-        }
-      });
+
+  sideBar.addEventListener('click', e => {
+    const target = e.target;
+    if (target.id === 'customer-service' && typeof showCustomerService === 'function') {
+      e.stopPropagation();
+      showCustomerService();
+    }
+
+    if (target.id === 'authorization-list' && typeof showAuthorizationList === 'function') {
+      e.stopPropagation();
+      showAuthorizationList();
     }
   });
 });

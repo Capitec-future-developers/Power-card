@@ -1,0 +1,130 @@
+
+.criteria-container {
+  position: relative;
+  left: 300px;
+  top: 135px;
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  width: 150px;
+  background-color: #ffffff;
+}
+
+
+.criteria-btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #111111;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Dropdown box */
+.criteria-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  max-height: 300px;
+  overflow-y: auto;
+  width: 250px;
+  z-index: 1000;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+
+
+.criteria-dropdown label {
+  display: block;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+
+.styled-table {
+  position: relative;
+  left: 200px;
+  top: 300px;
+  border-collapse: collapse;
+  width: 80%;
+  margin-top: 15px;
+  font-family: Arial, sans-serif;
+}
+
+
+.styled-table th, .styled-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  font-size: 13px;
+}
+
+
+.styled-table th {
+  background-color: #4b5563;
+  color: white;
+  text-align: left;
+}
+
+/*this other thingy*/
+.collapse-search {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-family: Arial, sans-serif;
+}
+
+.advanced-search-header {
+  position: absolute;
+  left: 210px;
+  top: 250px;
+  background-color: #ffffff;
+  color: #111111;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+  border: 1px solid #ccc;
+}
+
+.advanced-search-content {
+  left: 200px;
+  width: 100%;
+  top: 300px;
+  display: none;
+  background-color: #ffffff;
+}
+
+.search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.search-row label {
+  min-width: 120px;
+}
+
+.ui-btn {
+  padding: 5px 10px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ui-btn:hover {
+  background-color: #115293;
+}
+
+.search-actions {
+  margin-top: 10px;
+}

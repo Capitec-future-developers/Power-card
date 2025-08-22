@@ -33,7 +33,7 @@
   left: 0;
   width: 200px;
   height: 100%;
-  background-color: #504f4f;
+  background-color: rgba(64, 60, 60, 0.94);
   color: white;
   overflow: scroll;
   scrollbar-width: none;

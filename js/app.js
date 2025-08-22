@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const customerServiceBtn = document.getElementById('customer-service');
   const customerView = document.getElementById('customer-view');
   const subheader = document.getElementById('subheader');
-  // ---- Helper to update subheader ----
+
+
   function setSubheader(text) {
     if (subheader) subheader.textContent = text;
   }
