@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const issuerBtn = document.getElementById('issuer');
   const authorizationList = document.getElementById('authorization-list');
 
-  // ---------------- Switch / Issuer views ----------------
+
   function showSwitchFront() {
     content.innerHTML = `<img src="./img/switch-front.png" alt="switch-front" class="issuer-front">`;
     console.log('Mock Database:', mockDatabase);
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (switchBtn) switchBtn.addEventListener('click', showSwitchFront);
   if (issuerBtn) issuerBtn.addEventListener('click', showIssuerFront);
 
-  // ---------------- Authorization List ----------------
+
   window.showAuthorizationList = function() {
     content.innerHTML = `
       <div class="file">
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </table>
     `;
 
-    // ---------------- Column Criteria Dropdown ----------------
+
     const fields = [
       "Internal stan","External stan","Reference","Destination","Source","Message",
       "Function","Processing code","Source account","Destination account","Action",
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
       criteriaDropdown.style.display = criteriaDropdown.style.display === 'block' ? 'none' : 'block';
     });
 
-    // ---------------- Advanced Search Toggle ----------------
+
     const advHeader = document.querySelector('.advanced-search-header');
     const advContent = document.querySelector('.advanced-search-content');
     advHeader.addEventListener('click', () => {
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
       advHeader.textContent = visible ? 'Advanced Search ▼' : 'Advanced Search ▲';
     });
 
-    // ---------------- Table Rendering ----------------
+
     function renderTable(filteredData = mockDatabase) {
       const checkboxes = criteriaDropdown.querySelectorAll('input[type=checkbox]');
       const selectedFields = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderTable();
 
-    // ---------------- Search / Filter ----------------
+
     function filterTable() {
       let filtered = mockDatabase.filter(row => {
         return (
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     criteriaDropdown.addEventListener('change', () => renderTable());
   };
 
-  // ---------------- Event delegation ----------------
+
   document.addEventListener('click', e => {
     if (e.target.id === 'authorization-list') {
       e.preventDefault();
@@ -222,6 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initial render
+
   showIssuerFront();
 });
