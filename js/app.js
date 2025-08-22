@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render Customer Card Section
   function renderCustomerCard(customer) {
     return `
-      <div class="customer-card" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; padding: 15px;">
+      <div class="customer-card">
         ${(() => {
       const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
       const account = (customer.accounts && customer.accounts[0]) || {};
@@ -137,12 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const map = { 'REPLACED': 'R', 'ACTIVE': 'A', 'NEW': 'N', 'NORMAL': 'N' };
         return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
       };
-      const infoDot = '<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0b5ed7;color:#fff;font-size:12px;">i</span>';
-      const box = (text) => `<div class="box-section" style="flex:1; background:#f4f4f4; border:1px solid #ddd; padding:6px 8px; min-height:28px;">${text ?? ''}</div>`;
-      const small = (text) => `<span class="small-box" style="background:#e9ecef; border:1px solid #ccc; padding:6px 8px; min-width:40px; text-align:center;">${text ?? ''}</span>`;
+      const infoDot = '<span class="info-dot">i</span>';
+      const box = (text) => `<div class=\"box-section\">${text ?? ''}</div>`;
+      const small = (text) => `<span class=\"small-box\">${text ?? ''}</span>`;
       const row = (label, value, trailing = '') => `
-            <div class="card-section" style="display:flex; align-items:center; gap:10px; position:relative;">
-              <div class="section-title" style="font-weight:bold; font-size:14px; min-width:140px;">${label}</div>
+            <div class="card-section">
+              <div class="section-title">${label}</div>
               ${box(value)}
               ${trailing}
             </div>`;
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const currencyCode = 'ZAR';
       const currencyNum = '710';
       return `
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="card-column">
               ${row('Institution', 'Capitec Bank Limited', small('000010'))}
               ${row('PAN', maskedPan, infoDot)}
               ${row('PAN status', instrument.condition || 'N/A', small(abbrev(instrument.condition || '')))}
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
               ${row('Birth date', formatDate(customer.birth_date))}
               ${row('VIP level', (instrument.type || '').includes('Platinum') ? 'Platinum' : (instrument.type || '').includes('Gold') ? 'Gold' : 'Silver')}
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="card-column">
               ${row('Full name', `${fullName ? '01 ' + fullName : ''}`)}
               ${row('Client code', customer.client_code)}
               ${row('Client status', account.status || 'NORMAL', small(abbrev(account.status || 'NORMAL')))}
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
               ${row('Member since', formatDate(customer.created_at))}
               ${row('Customer type', customerType)}
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="card-column">
               ${row('Embossed name', instrument.name || '')}
               ${row('Account number', account.number || '', infoDot)}
               ${row('Account status', account.status || 'NORMAL', small('0'))}
@@ -395,21 +395,92 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="tab-content" id="tab-content" style="border: 1px solid #ddd; padding: 15px; min-height: 200px;">
           <!-- Tab content will be loaded here -->
           <div id="pan-summary" class="tab-pane active">
-            <h3>PAN Summary</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div>
-                <p><strong>Primary Account Number:</strong> ${customer.pan}</p>
-                <p><strong>Status:</strong> Active</p>
-                <p><strong>Issued:</strong> ${formatDate(customer.created_at)}</p>
-                <p><strong>Last Updated:</strong> ${formatDate(customer.updated_at)}</p>
+            <section class="ps-pan-summary">
+              <div class="ps-row">
+                <div class="ps-panel">
+                  <div class="ps-panel__title">Payment Instruments Information</div>
+                  <div class="ps-panel__body">
+                    <div class="ps-field">
+                      <div class="ps-label">Product name</div>
+                      <div class="ps-value">${customer.payment_instruments[0].type}</div>
+                      <div class="ps-small">PPG001</div>
+                    </div>
+                    <div class="ps-field">
+                      <div class="ps-label">Version</div>
+                      <div class="ps-value">1</div>
+                    </div>
+                    <div class="ps-field">
+                      <div class="ps-label">Expiry</div>
+                      <div class="ps-value">${customer.payment_instruments[0].expiry}</div>
+                      <div class="ps-note">Last transaction date</div>
+                      <div class="ps-value">${new Date(customer.updated_at).toISOString().slice(0,19).replace('T',' ')}.000</div>
+                    </div>
+                    <div class="ps-field">
+                      <div class="ps-label">Renew deli...</div>
+                      <div class="ps-checkbox"><input type="checkbox" disabled></div>
+                      <div class="ps-note">Renewal delivery date</div>
+                      <div class="ps-value"></div>
+                    </div>
+                    <div class="ps-field">
+                      <div class="ps-label">Common.input.renewal_activati...</div>
+                      <div class="ps-checkbox"><input type="checkbox" checked disabled></div>
+                      <div class="ps-note">Common.input.renewal_...</div>
+                      <div class="ps-value">${formatDate(customer.created_at)}</div>
+                    </div>
+                    <div class="ps-field">
+                      <div class="ps-label">3DS Enroll...</div>
+                      <div class="ps-checkbox"><input type="checkbox" disabled></div>
+                      <div class="ps-note">3DS Enrollment date</div>
+                      <div class="ps-value"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ps-panel">
+                  <div class="ps-panel__title">Pending Authorizations</div>
+                  <div class="ps-panel__body ps-auth">
+                    <div class="ps-auth__row">
+                      <div class="ps-label">Credit</div>
+                      <div class="ps-value ps-value--short">3.85</div>
+                      <div class="ps-small">ZAR</div>
+                      <span class="info-dot">i</span>
+                    </div>
+                    <div class="ps-auth__row">
+                      <div class="ps-label">Loan</div>
+                      <div class="ps-value ps-value--short">0.00</div>
+                      <div class="ps-small">ZAR</div>
+                      <span class="info-dot">i</span>
+                    </div>
+                    <div class="ps-auth__row">
+                      <div class="ps-label">Cash/Transfer</div>
+                      <div class="ps-value ps-value--short">0.00</div>
+                      <div class="ps-small">ZAR</div>
+                      <span class="info-dot">i</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p><strong>Card Type:</strong> ${customer.payment_instruments[0].type}</p>
-                <p><strong>Card Condition:</strong> ${customer.payment_instruments[0].condition}</p>
-                <p><strong>Expiry Date:</strong> ${customer.payment_instruments[0].expiry}</p>
-                <p><strong>Cardholder Name:</strong> ${customer.payment_instruments[0].full_name}</p>
+              <div class="ps-panel ps-panel--wide">
+                <div class="ps-panel__title">Annual Membership Fees</div>
+                <div class="ps-panel__body">
+                  <div class="ps-fees">
+                    <div class="ps-fees__row">
+                      <div class="ps-label">Last billing amount</div>
+                      <div class="ps-value ps-value--short">0.00</div>
+                      <div class="ps-small">ZAR</div>
+                      <div class="ps-label">Last billing date</div>
+                      <div class="ps-value">${formatDate(customer.created_at)}</div>
+                    </div>
+                    <div class="ps-fees__row">
+                      <div class="ps-label">Next billing amount</div>
+                      <div class="ps-value ps-value--short">0.00</div>
+                      <div class="ps-small">ZAR</div>
+                      <div class="ps-label">Next billing date</div>
+                      <div class="ps-value">${formatDate(customer.updated_at)}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
           </div>
           <div id="account-summary" class="tab-pane" style="display: none;">
             <h3>Account Summary</h3>
