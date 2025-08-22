@@ -552,6 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
               </div>
             </section>
+            </div>
          <div id="account-financials" class="tab-pane" style="display: none;">
             <section class="af-wrapper">
               <div class="as-section">
