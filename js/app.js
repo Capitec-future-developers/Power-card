@@ -1019,7 +1019,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
           <div id="loyalty" class="tab-pane" style="display: none;">
-  <table class="styled-table">
+  <table class="styleds-table">
     <thead>
       <tr class="loyalty">
         <th>Institution</th>

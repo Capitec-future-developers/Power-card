@@ -1,4 +1,38 @@
-export const mockDatabase = [
+export const fields = [
+  "Internal stan","External stan","Reference","Destination","Source","Message",
+  "Function","Processing code","Source account","Destination account","Action",
+  "Original action","Issuer response","Network","Network id.","Issuing institution",
+  "PAN","Service setup","Local time","Transmission time","Response time",
+  "Internal time","Capture date","Business date","entity code","Entity id.",
+  "Source account type","Source account number","Destination Entity id.",
+  "Destination account type","Destination account number","Transaction amount",
+  "Cash back amount","Transaction currency","Replacement amount","Billing amount",
+  "Billing currency","Issuer amount","Issuer settlement currency","Issuer date",
+  "Acquirer settlement amount","Acquirer settlement ccy","Receiving institution",
+  "Acquiring country","Acquiring institution code","Acquirer institution",
+  "PAN acceptor activity","Terminal no.","Acceptor point","Pos entry mode",
+  "Forwarding country","Forwarding institution code","Forwarding institution",
+  "Authorization reference","Original code","Reason code","Reversal stan",
+  "Authorization flag","Reversal flag","Financial impact","Matching status",
+  "Original table indicator","Current table indicator","Authorization id",
+  "Transaction id","Acronym"
+];
+
+// Helper function to merge fields with existing data
+function mergeFieldsWithData(data) {
+  return data.map(item => {
+    const merged = {};
+    fields.forEach(field => {
+      merged[field] = item[field] || '';
+    });
+    // Merge nested objects like your original properties
+    return { ...merged, ...item };
+  });
+}
+
+// Original data
+const originalData
+ = [
   {
     pan: '4644090987127908',
     first_name: 'Omphile',
@@ -221,3 +255,4 @@ export const mockDatabase = [
   }
 ];
 
+export const mockDatabase = mergeFieldsWithData(originalData);

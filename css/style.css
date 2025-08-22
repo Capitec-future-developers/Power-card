@@ -520,7 +520,7 @@
 .af-sub{ color:#444; }
 .af-subv{ background:#eee; border:1px solid #d5d5d5; min-height:24px; display:flex; align-items:center; justify-content:flex-end; padding:2px 6px; }
 
-.styled-table {
+.styleds-table {
   width: 100%;
   border-collapse: collapse;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -531,43 +531,43 @@
   overflow: hidden;
 }
 
-.styled-table thead {
+.styleds-table thead {
   background-color: #f1f1f1;
   color: #000;
   text-align: left;
 }
 
-.styled-table thead th {
+.styleds-table thead th {
   padding: 12px 20px;
   font-weight: 600;
   border: 1px solid #ddd;
 }
 
-.styled-table tbody td {
+.styleds-table tbody td {
   padding: 12px 20px;
   border: 1px solid #ddd;
 }
 
-.styled-table tbody tr {
+.styleds-table tbody tr {
   transition: background-color 0.3s ease;
 }
 
-.styled-table tbody tr:nth-child(even) {
+.styleds-table tbody tr:nth-child(even) {
   background-color: #fafafa;
 }
 
-.styled-table tbody tr:hover {
+.styleds-table tbody tr:hover {
   background-color: #cce0ff;
   cursor: pointer;
 }
 
-.styled-table tbody tr.selected {
+.styleds-table tbody tr.selected {
   background-color: #001f4d;
   color: #fff;
 }
 
-.styled-table th:last-child,
-.styled-table td:last-child {
+.styleds-table th:last-child,
+.styleds-table td:last-child {
   text-align: center;
   width: 50px;
 }

@@ -1,8 +1,17 @@
+.file{
+  position: absolute;
+  top: 150px;
+  left: 300px;
+  width: 80%;
+}
+
+
+
 
 .criteria-container {
   position: relative;
   left: 300px;
-  top: 135px;
+  top: 235px;
   margin: 15px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -26,7 +35,7 @@
 .criteria-dropdown {
   display: none;
   position: absolute;
-  top: 100%;
+  top: 150%;
   left: 0;
   background-color: #ffffff;
   border: 1px solid #ccc;
@@ -51,9 +60,10 @@
 .styled-table {
   position: relative;
   left: 200px;
-  top: 300px;
+  top: 350px;
   border-collapse: collapse;
   width: 80%;
+  height: 50%;
   margin-top: 15px;
   font-family: Arial, sans-serif;
 }
@@ -83,7 +93,7 @@
 .advanced-search-header {
   position: absolute;
   left: 210px;
-  top: 250px;
+  top: 350px;
   background-color: #ffffff;
   color: #111111;
   padding: 10px;
@@ -94,10 +104,11 @@
 }
 
 .advanced-search-content {
-  left: 200px;
-  width: 100%;
+  padding: 200px 600px;
+  width: 1000px;
   top: 300px;
   display: none;
+  height: 120px;
   background-color: #ffffff;
 }
 
