@@ -1,4 +1,81 @@
-// Helper function to format dates (needs to be available in this module)
+function renderCustomerProfile(customer) {
+  const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+  const account = (customer.accounts && customer.accounts[0]) || {};
+
+  // Helper functions to format the output
+  const box = (label, value) => `
+    <div class="profile-section">
+      <div class="section-label">${label}</div>
+      <div class="section-value">${value ?? ''}</div>
+    </div>
+  `;
+
+  const phoneBox = (label, type, number) => `
+    <div class="phone-section">
+      <div class="section-label">${label}</div>
+      <div class="section-type">${type}</div>
+      <div class="section-value">${number}</div>
+    </div>
+  `;
+
+  const emailBox = (label, email) => `
+    <div class="email-section">
+      <div class="section-label">${label}</div>
+      <div class="section-value">${email}</div>
+    </div>
+  `;
+
+  // Demographic information
+  const demographicSection = `
+    <div class="demographic-section">
+      ${box('Birth date', customer.birth_date)}
+      ${box('Nationality', 'South Africa')}
+      ${box('Customer type', instrument.type === 'Business Platinum Card' ? 'CORPORATE' : 'INDIVIDUAL')}
+      ${box('Job title', customer.corporate_name ? 'ENTREPRENEUR' : '')}
+      ${box('Relationship', 'Not applicable')}
+      ${box('Birth country', 'ENG')}
+      ${box('Language', 'ENG')}
+      ${box('Activity', 'Default')}
+      ${box('Channel', '0000')}
+      ${box('Disclosure flag', 'No choice')}
+      ${box('VIP level', account.loyalty_status === 'NORMAL' ? 'Normal' : account.loyalty_status)}
+      ${box('Customer segment', 'default valu')}
+      ${box('Employee number', '')}
+      ${box('Co-brander', '')}
+      ${box('Birth city', '')}
+    </div>
+  `;
+
+  // Contact information
+  const contactSection = `
+    <div class="contact-section">
+      <h2>Phones</h2>
+      ${phoneBox('Phone 1', 'Personal mobile phone', customer.phone)}
+      ${phoneBox('Phone 2', 'Home phone', '00000000000')}
+      ${phoneBox('Phone 3', 'Home phone', '0117849514')}
+      ${phoneBox('Phone 4', 'Others', customer.phone)}
+      <h2>Emails</h2>
+      ${emailBox('Email 1', customer.client_code + '@wol.co.za')}
+      ${emailBox('Email 2', 'email@address.com')}
+    </div>
+  `;
+
+  // Render the customer profile page
+  return `
+    <div class="customer-profile">
+      <div class="demographic-header">DEMOGRAPHIC</div>
+      ${demographicSection}
+      <div class="contact-header">CONTACT</div>
+      ${contactSection}
+    </div>
+  `;
+}
+
+// Example usage:
+const customer = mockDatabase[0];
+console.log(renderCustomerProfile(customer));
+
+
 function formatDate(date) {
   if (!date) return 'N/A';
   const d = new Date(date);
@@ -97,7 +174,7 @@ export function showPaymentInstrument(customer) {
         <!-- RIGHT BODY -->
         <div class="payment-body" style="flex: 1; height: 500px; overflow-y: auto; scroll-behavior: smooth; padding-left: 20px;">
           <section id="Identification" ><h2 class="ID">Identification</h2>${renderCustomerCard(customer)}</section>
-          <section id="Demographic"><h2 class="ID">Demographic</h2><p>Demographic content goes here...</p></section>
+          <section id="Demographic"><h2 class="ID">Demographic</h2><p>${renderCustomerProfile(customer)}</p></section>
           <section id="Embossing"><h2 class="ID">Embossing</h2><p>Embossing content...</p></section>
           <section id="Address"><h2 class="ID">Address</h2><p>Address content...</p></section>
           <section id="Additional"><h2 class="ID">Additional Fields</h2><p>Additional fields content...</p></section>
