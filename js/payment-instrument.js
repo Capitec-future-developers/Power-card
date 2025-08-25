@@ -37,7 +37,7 @@ export function renderCustomerCard(customer) {
     <div class="customer-card">
       <div class="card-column">
         ${row('Institution','Capitec Bank Limited',small('000010'))}
-        ${row('PAN',maskedPan, infoDot)}
+        ${row('PAN',maskedPan)}
         ${row('Client code', customer.client_code)}
         ${row('Gender', customer.gender)}
         ${row('Family name', customer.family_name)}
@@ -59,19 +59,28 @@ export function renderCustomerCard(customer) {
         ${row('Payment instrument', '')}
         ${row('Primary PAN', '')}
         ${row('Corporate ID', '')}
+        ${row('', '')}
+
         ${row('Madine name', '')}
         ${row('Legal ID', customer.legal_id)}
         ${row('Status date', formatDate(account.pan_status_date))}
       </div>
     </div>
+     <div class="customer-profile">
+      <div class="ID" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
+      ${renderCustomerProfile(customer)}
+
+    </div>
   `;
+
+
 }
 
 // Render additional customer profile info (demographic + contact)
 export function renderCustomerProfile(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
-  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
+
   const box = (label,value) => `
     <div class="profile-section">
       <div class="section-label">${label}</div>
@@ -99,7 +108,7 @@ export function renderCustomerProfile(customer) {
     <div class="card-columns">
       ${box('Birth date', customer.birth_date)}
       ${box('Nationality', 'South Africa')}
-      ${box('Customer type', instrument.type === 'Business Platinum Card' ? 'CORPORATE' : 'INDIVIDUAL', small(01))}
+      ${box('Customer type', instrument.type === 'Business Platinum Card' ? 'CORPORATE' : 'INDIVIDUAL')}
       ${box('Job title', customer.corporate_name ? 'ENTREPRENEUR' : '')}
       ${box('Relationship', 'Not applicable')}
       </div>
@@ -112,8 +121,8 @@ export function renderCustomerProfile(customer) {
       </div>
       <div class="card-columns">
        ${box('Birth city', '')}
-      ${box('VIP level', account.loyalty_status === 'NORMAL' ? 'Normal' : account.loyalty_status, small(1))}
-      ${box('Customer segment', 'default valu', small(001))}
+      ${box('VIP level', account.loyalty_status === 'NORMAL' ? 'Normal' : account.loyalty_status)}
+      ${box('Customer segment', 'default valu')}
       ${box('Employee number', '')}
       ${box('Co-brander', '')}
       </div>
