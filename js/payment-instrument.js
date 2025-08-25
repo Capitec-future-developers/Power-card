@@ -1,4 +1,71 @@
-function renderCustomerProfile(customer) {
+
+function formatDate(date) {
+  if (!date) return 'N/A';
+  const d = new Date(date);
+  return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+}
+
+ function renderCustomerCard(customer) {
+  const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+  const account = (customer.accounts && customer.accounts[0]) || {};
+
+  const abbrev = (value) => {
+    if (!value) return '';
+    const map = { 'REPLACED': 'R', 'ACTIVE': 'A', 'NEW': 'N', 'NORMAL': 'N' };
+    return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
+  };
+
+  const infoDot = `<button class="info-dot" data-customer-id="${customer.id || ''}">i</button>`;
+  const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
+  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
+  const row = (label, value, trailing = '') => `
+    <div class="card-section">
+      <div class="section-title">${label}</div>
+      ${box(value)}
+      ${trailing}
+    </div>`;
+
+  const fullName = `${(customer.first_name || '').toUpperCase()} ${(customer.family_name || '').toUpperCase()}`.trim();
+  const maskedPan = instrument.number || customer.pan || '';
+  const customerType = (instrument.type || '').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
+  const currencyCode = 'ZAR';
+  const currencyNum = '710';
+
+  return `
+    <div class="customer-card">
+      <div class="card-column">
+        ${row('Institution', 'Capitec Bank Limited', small('000010'))}
+        ${row('PAN', maskedPan)}
+        ${row('Client code', customer.client_code)}
+        ${row('Gender', customer.gender)}
+        ${row('Family name', customer.family_name)}
+        ${row('Second name', customer.family_name)}
+        ${row('Status', instrument.condition || 'N/A', small(abbrev(instrument.condition || ''))) }
+        ${row('Application ID', customer.application_ID)}
+      </div>
+      <div class="card-column">
+        ${row('Branch', instrument.branch)}
+        ${row('PAN sequence', instrument.sequence)}
+        ${row('Client host ID', customer.client_host_id)}
+        ${row('Title', customer.title, small('01'))}
+        ${row('First Name', customer.first_name)}
+        ${row('Second first name',  customer.first_name)}
+        ${row('Status reason', instrument.status_reason)}
+        ${row('Contract element ID', '')}
+      </div>
+      <div class="card-column">
+        ${row('Payment instrume....',  '')}
+        ${row('Primary PAN', '')}
+        ${row('Corporate ID', '')}
+        ${row('') }
+        ${row('Madine name',  '')}
+        ${row('Legal ID', customer.legal_id)}
+        ${row('Status date', formatDate(account.pan_status_date))}
+      </div>
+    </div>
+  `;
+}
+export function renderCustomerProfile(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
 
@@ -74,74 +141,6 @@ function renderCustomerProfile(customer) {
 // Example usage:
 const customer = mockDatabase[0];
 console.log(renderCustomerProfile(customer));
-
-
-function formatDate(date) {
-  if (!date) return 'N/A';
-  const d = new Date(date);
-  return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-}
-
- function renderCustomerCard(customer) {
-  const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
-  const account = (customer.accounts && customer.accounts[0]) || {};
-
-  const abbrev = (value) => {
-    if (!value) return '';
-    const map = { 'REPLACED': 'R', 'ACTIVE': 'A', 'NEW': 'N', 'NORMAL': 'N' };
-    return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
-  };
-
-  const infoDot = `<button class="info-dot" data-customer-id="${customer.id || ''}">i</button>`;
-  const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
-  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
-  const row = (label, value, trailing = '') => `
-    <div class="card-section">
-      <div class="section-title">${label}</div>
-      ${box(value)}
-      ${trailing}
-    </div>`;
-
-  const fullName = `${(customer.first_name || '').toUpperCase()} ${(customer.family_name || '').toUpperCase()}`.trim();
-  const maskedPan = instrument.number || customer.pan || '';
-  const customerType = (instrument.type || '').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
-  const currencyCode = 'ZAR';
-  const currencyNum = '710';
-
-  return `
-    <div class="customer-card">
-      <div class="card-column">
-        ${row('Institution', 'Capitec Bank Limited', small('000010'))}
-        ${row('PAN', maskedPan)}
-        ${row('Client code', customer.client_code)}
-        ${row('Gender', customer.gender)}
-        ${row('Family name', customer.family_name)}
-        ${row('Second name', customer.family_name)}
-        ${row('Status', instrument.condition || 'N/A', small(abbrev(instrument.condition || ''))) }
-        ${row('Application ID', customer.application_ID)}
-      </div>
-      <div class="card-column">
-        ${row('Branch', instrument.branch)}
-        ${row('PAN sequence', instrument.sequence)}
-        ${row('Client host ID', customer.client_host_id)}
-        ${row('Title', customer.title, small('01'))}
-        ${row('First Name', customer.first_name)}
-        ${row('Second first name',  customer.first_name)}
-        ${row('Status reason', instrument.status_reason)}
-        ${row('Contract element ID', '')}
-      </div>
-      <div class="card-column">
-        ${row('Payment instrume....',  '')}
-        ${row('Primary PAN', '')}
-        ${row('Corporate ID', '')}
-        ${row('') }
-        ${row('Madine name',  '')}
-        ${row('Legal ID', customer.legal_id)}
-        ${row('Status date', formatDate(account.pan_status_date))}
-      </div>
-    </div>
-  `;
-}
 
 export function showPaymentInstrument(customer) {
   const content = document.getElementById("content");

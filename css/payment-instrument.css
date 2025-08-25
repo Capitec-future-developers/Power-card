@@ -105,3 +105,35 @@ position: absolute;
   );
   border-radius: 10px;
 }
+
+.customer-profile {
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.demographic-header,
+.contact-header {
+  background-color: #0000ff;
+  color: #ffffff;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.demographic-section,
+.contact-section {
+  padding: 20px;
+}
+
+.profile-section,
+.phone-section,
+.email-section {
+  margin-bottom: 20px;
+}
+
+.section-label {
+  font-weight: bold;
+}
+
+.section-value {
+  color: #666666;
+}
