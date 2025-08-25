@@ -1,312 +1,30 @@
+import { mockDatabase } from './mockDatabase.js';
+import { renderCustomerCard, showPaymentInstrument } from './payment-instrument.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
   const customerServiceBtn = document.getElementById('customer-service');
   const customerView = document.getElementById('customer-view');
   const subheader = document.getElementById('subheader');
-
+  const paymentInstruments = document.getElementById('payment-instruments');
 
   function setSubheader(text) {
     if (subheader) subheader.textContent = text;
   }
-  const mockDatabase = [
-    {
-      pan: '4644090987127908',
-      first_name: 'Omphile',
-      family_name: 'Mohlala',
-      corporate_id: 'CORP001',
-      legal_id: 'L12345',
-      client_host_id: 'CH001',
-      client_code: 'C001',
-      corporate_name: 'Mz stark Tech',
-      phone: '0825511132',
-      birth_date: '1990-01-01',
-      address: '12 Rose Street, Johannesburg, SA',
-      created_at: new Date('2025-01-01T10:00:00'),
-      updated_at: new Date('2025-01-01T10:00:00'),
-      payment_instruments: [
-        {
-          type: 'Personal Gold Credit Card',
-          number: '464479XXXXXX6088',
-          name: 'O. MOHLALA',
-          full_name: 'OMPHILE MOHLALA',
-          status: 'Not applicable',
-          expiry: '05/2025',
-          condition: 'REPLACED',
-          type_detail: 'Primary'
-        }
-      ],
-      accounts: [
-        {
-          type: 'Personal Gold Account',
-          number: '4140442000004918',
-          status: 'NORMAL',
-          expiry: '01/10/2025',
-          pan_status_date: '01/01/2025',
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          catalogue_product: 'Personal Gold Card',
-          loyalty_account_number: '4140442000004918',
-          account_owner_type: 'Individual',
-          loyalty_status: 'NORMAL'
-        }
-      ],
-      loyalty_accounts: [
-        {
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          client_code: 'C001',
-          catalogue_product: 'Personal Gold Card',
-          product_version: 'v1',
-          loyalty_account_number: '4140442000004918',
-          account_owner_type: 'Individual',
-          loyalty_status: 'NORMAL',
-          exchange_icon: '🔄'
-        }
-      ]
-    },
-    {
-      pan: '4140123456789012',
-      first_name: 'Spencer',
-      family_name: 'Nong',
-      corporate_id: 'CORP002',
-      legal_id: 'L67890',
-      client_host_id: 'CH002',
-      client_code: 'C002',
-      corporate_name: 'Cape Innovations',
-      phone: '0815522233',
-      birth_date: '1995-05-05',
-      address: '45 Oak Avenue, Cape Town, SA',
-      created_at: new Date('2025-02-01T10:00:00'),
-      updated_at: new Date('2025-02-01T10:00:00'),
-      payment_instruments: [
-        {
-          type: 'Business Platinum Card',
-          number: '414012XXXXXX9012',
-          name: 'S. NONG',
-          full_name: 'SPENCER NONG',
-          status: 'Active',
-          expiry: '08/2026',
-          condition: 'NEW',
-          type_detail: 'Primary'
-        }
-      ],
-      accounts: [
-        {
-          type: 'Business Account',
-          number: '4140123000005678',
-          status: 'MBOD_3',
-          expiry: '03/15/2026',
-          pan_status_date: '02/01/2025',
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          catalogue_product: 'Business Platinum Card',
-          loyalty_account_number: '4140123000005678',
-          account_owner_type: 'Corporate',
-          loyalty_status: 'MBOD_3'
-        }
-      ],
-      loyalty_accounts: [
-        {
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          client_code: 'C002',
-          catalogue_product: 'Business Platinum Card',
-          product_version: 'v1',
-          loyalty_account_number: '4140123000005678',
-          account_owner_type: 'Corporate',
-          loyalty_status: 'MBOD_3',
-          exchange_icon: '🔄'
-        }
-      ]
-    },
-    {
-      pan: '4644987654321098',
-      first_name: 'Zenzi',
-      family_name: 'Dube',
-      corporate_id: 'CORP003',
-      legal_id: 'L54321',
-      client_host_id: 'CH003',
-      client_code: 'C003',
-      corporate_name: 'Durban Solutions',
-      phone: '0835533344',
-      birth_date: '1985-12-15',
-      address: '78 Pine Road, Durban, SA',
-      created_at: new Date('2025-03-01T10:00:00'),
-      updated_at: new Date('2025-03-01T10:00:00'),
-      payment_instruments: [
-        {
-          type: 'Entrepreneur Card',
-          number: '464498XXXXXX1098',
-          name: 'Z. DUBE',
-          full_name: 'ZENZI DUBE',
-          status: 'Active',
-          expiry: '11/2024',
-          condition: 'ACTIVE',
-          type_detail: 'Primary'
-        }
-      ],
-      accounts: [
-        {
-          type: 'Savings Account',
-          number: '4140442000009876',
-          status: 'ICU',
-          expiry: '12/12/2024',
-          pan_status_date: '03/01/2025',
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          catalogue_product: 'Entrepreneur Card',
-          loyalty_account_number: '4140442000009876',
-          account_owner_type: 'Individual',
-          loyalty_status: 'ICU'
-        }
-      ],
-      loyalty_accounts: [
-        {
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          client_code: 'C003',
-          catalogue_product: 'Entrepreneur Card',
-          product_version: 'v2',
-          loyalty_account_number: '4140442000009876',
-          account_owner_type: 'Individual',
-          loyalty_status: 'ICU',
-          exchange_icon: '🔄'
-        }
-      ]
-    },
-    {
-      pan: '4140987600001098',
-      first_name: 'Dwani',
-      family_name: 'Johnson',
-      corporate_id: 'CORP00987',
-      legal_id: 'L907900',
-      client_host_id: 'CH0092',
-      client_code: '10982',
-      corporate_name: 'Johnsons Family',
-      phone: '0606238529',
-      birth_date: '1997-02-17',
-      address: '18 Forest Road, Johannesburg, SA',
-      created_at: new Date('2025-03-01T10:00:00'),
-      updated_at: new Date('2025-03-01T10:00:00'),
-      payment_instruments: [
-        {
-          type: 'Entrepreneur Card',
-          number: '414098XXXXXX1098',
-          name: 'D. Johnson',
-          full_name: 'DWAIN JOHNSON',
-          status: 'Active',
-          expiry: '12/2028',
-          condition: 'ACTIVE',
-          type_detail: 'Primary'
-        }
-      ],
-      accounts: [
-        {
-          type: 'Credit Account',
-          number: '4140442000009875',
-          status: 'Normal',
-          expiry: '28/12/2028',
-          pan_status_date: '03/01/2025',
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          catalogue_product: 'Entrepreneur Card',
-          loyalty_account_number: '4140442000009875',
-          account_owner_type: 'Individual',
-          loyalty_status: 'Normal'
-        }
-      ],
-      loyalty_accounts: [
-        {
-          institution: 'Capitec Bank Limited',
-          branch: 'MIGRATION BRANCH',
-          client_code: '10982',
-          catalogue_product: 'Entrepreneur Card',
-          product_version: 'v3',
-          loyalty_account_number: '4140442000009875',
-          account_owner_type: 'Individual',
-          loyalty_status: 'Normal',
-          exchange_icon: '🔄'
-        }
-      ]
-    }
-  ];
-
-
 
   // Utility functions
   const isValidPAN = pan => typeof pan === 'string' && pan.length >= 13;
+
   // Helper function to format dates
   function formatDate(date) {
     if (!date) return 'N/A';
     const d = new Date(date);
     return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
   }
-  // Render Customer Card Section
-  function renderCustomerCard(customer) {
-    return `
-      <div class="customer-card">
-        ${(() => {
-      const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
-      const account = (customer.accounts && customer.accounts[0]) || {};
-      const abbrev = (value) => {
-        if (!value) return '';
-        const map = { 'REPLACED': 'R', 'ACTIVE': 'A', 'NEW': 'N', 'NORMAL': 'N' };
-        return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
-      };
-      const infoDot = '<span class="info-dot">i</span>';
-      const box = (text) => `<div class=\"box-section\">${text ?? ''}</div>`;
-      const small = (text) => `<span class=\"small-box\">${text ?? ''}</span>`;
-      const row = (label, value, trailing = '') => `
-            <div class="card-section">
-              <div class="section-title">${label}</div>
-              ${box(value)}
-              ${trailing}
-            </div>`;
-      const fullName = `${(customer.first_name || '').toUpperCase()} ${(customer.family_name || '').toUpperCase()}`.trim();
-      const maskedPan = instrument.number || customer.pan || '';
-      const customerType = (instrument.type || '').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
-      const currencyCode = 'ZAR';
-      const currencyNum = '710';
-      return `
-            <div class="card-column">
-              ${row('Institution', 'Capitec Bank Limited', small('000010'))}
-              ${row('PAN', maskedPan, infoDot)}
-              ${row('PAN status', instrument.condition || 'N/A', small(abbrev(instrument.condition || '')))}
-              ${row('PAN status reason', instrument.condition === 'REPLACED' ? 'LOST REPLACEMENT' : 'N/A', small(instrument.condition === 'REPLACED' ? 'LP' : ''))}
-              ${row('PAN status date', formatDate(account.pan_status_date))}
-              ${row('Client host ID', customer.client_host_id)}
-              ${row('Phone', customer.phone)}
-              ${row('Birth date', formatDate(customer.birth_date))}
-              ${row('VIP level', (instrument.type || '').includes('Platinum') ? 'Platinum' : (instrument.type || '').includes('Gold') ? 'Gold' : 'Silver')}
-            </div>
-            <div class="card-column">
-              ${row('Full name', `${fullName ? '01 ' + fullName : ''}`)}
-              ${row('Client code', customer.client_code)}
-              ${row('Client status', account.status || 'NORMAL', small(abbrev(account.status || 'NORMAL')))}
-              ${row('Client status reason', '')}
-              ${row('Client status date', formatDate(customer.updated_at))}
-              ${row('Legal ID', customer.legal_id)}
-              ${row('Address', customer.address)}
-              ${row('Member since', formatDate(customer.created_at))}
-              ${row('Customer type', customerType)}
-            </div>
-            <div class="card-column">
-              ${row('Embossed name', instrument.name || '')}
-              ${row('Account number', account.number || '', infoDot)}
-              ${row('Account status', account.status || 'NORMAL', small('0'))}
-              ${row('Account status reason', '')}
-              ${row('Administrative status date', account.expiry || '')}
-              ${row('Corporate ID', customer.corporate_id)}
-              ${row('Corporate name', customer.corporate_name)}
-              ${row('Currency', currencyCode, small(currencyNum))}
-            </div>
-          `;
-    })()}
-      </div>
-    `;
-  }
+
   // Show initial image
   content.innerHTML = `<img src="img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
+
   function showCustomerService() {
     setSubheader("Customer Service");
     content.innerHTML = `
@@ -350,19 +68,24 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </section>
     `;
+
     const searchBtn = document.querySelector('.search-btn');
     const clearBtn = document.querySelector('.clear');
     const errorMessage = document.getElementById('error-message');
+
     searchBtn.addEventListener('click', () => {
       const pan = document.getElementById('pan').value.trim();
       const fname = document.getElementById('fname').value.trim();
       const clientId = document.getElementById('clientId').value.trim();
+
       if (!pan && !fname && !clientId) {
         showError('Please enter at least one search criteria (PAN, First Name, or Client Host ID)');
         return;
       }
+
       hideError();
       let customer = null;
+
       if (pan) {
         if (!isValidPAN(pan)) {
           showError('PAN must be at least 13 characters');
@@ -376,21 +99,26 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (clientId) {
         customer = mockDatabase.find(c => c.client_host_id === clientId);
       }
+
       if (!customer) {
         showError('No customer found with the provided criteria');
         document.getElementById('client-table-body').innerHTML = '';
         return;
       }
+
       renderCustomerTable(customer);
     });
+
     clearBtn.addEventListener('click', () => {
       document.querySelectorAll('.customer-details input').forEach(input => input.value = '');
       document.getElementById('client-table-body').innerHTML = '';
       hideError();
     });
+
     function renderCustomerTable(customer) {
       const tableBody = document.getElementById('client-table-body');
       tableBody.innerHTML = '';
+
       const row = document.createElement('tr');
       row.className = 'collapsible-row';
       row.innerHTML = `
@@ -403,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${customer.address.substring(0, 20)}...</td>
         <td><span class="material-icons-sharp expand-icon">expand_more</span></td>
       `;
+
       const detailsRow = document.createElement('tr');
       detailsRow.className = 'details-row';
       detailsRow.innerHTML = `
@@ -447,7 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </td>
       `;
+
       detailsRow.style.display = 'none';
+
       row.addEventListener('click', () => {
         if (detailsRow.style.display === 'none') {
           detailsRow.style.display = 'table-row';
@@ -457,25 +188,31 @@ document.addEventListener('DOMContentLoaded', () => {
           row.querySelector('.expand-icon').textContent = 'expand_more';
         }
       });
+
       detailsRow.addEventListener('dblclick', (e) => {
         if (e.target.closest('.payment-table')) {
           showCustomerView(customer);
         }
       });
+
       tableBody.appendChild(row);
       tableBody.appendChild(detailsRow);
     }
+
     function showError(message) {
       errorMessage.textContent = message;
       errorMessage.style.display = 'block';
     }
+
     function hideError() {
       errorMessage.style.display = 'none';
     }
   }
+
   if (customerServiceBtn) {
     customerServiceBtn.addEventListener('click', showCustomerService);
   }
+
   function showCustomerView(customer) {
     setSubheader("Customer View");
     content.innerHTML = `
@@ -775,7 +512,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </section>
           </div>
 
-
          <div id="bills-loans" class="tab-pane" style="display: none;">
             <section class="af-wrapper">
               <div class="as-section">
@@ -859,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,146.33 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,499.53 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;"> </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 6px;">07/06/2025</td>
@@ -873,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,056.58 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,146.33 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;"> </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 6px;">06/06/2025</td>
@@ -887,105 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,906.42 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,056.58 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">05/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,254.41 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,254.41 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">06/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">06/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,682.80 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,906.42 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">04/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,142.58 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,142.58 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">05/04/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">05/04/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">17,812.79 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,682.80 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">03/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,120.37 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,120.37 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">04/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">04/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">14,054.40 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">17,812.79 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">02/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">976.66 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">976.66 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">03/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">03/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,915.70 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">14,054.40 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">01/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,333.53 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,333.53 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">3,728.79 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">02/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">02/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,502.84 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,915.70 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">12/06/2024</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,349.14 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,349.14 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">2,379.65 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">01/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">01/03/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,374.02 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,502.84 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">11/06/2024</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,795.75 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,795.75 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">883.90 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">12/04/2024</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">12/04/2024</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,038.08 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">19,374.02 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⚙️</td>
+                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;"> </td>
                       </tr>
                     </tbody>
                   </table>
@@ -1017,41 +655,43 @@ document.addEventListener('DOMContentLoaded', () => {
             </section>
           </div>
 
-
           <div id="loyalty" class="tab-pane" style="display: none;">
-  <table class="styleds-table">
-    <thead>
-      <tr class="loyalty">
-        <th>Institution</th>
-        <th>Branch</th>
-        <th>Client code</th>
-        <th>Catalogue product</th>
-        <th>Product version</th>
-        <th>Loyalty account nbr</th>
-        <th>Account owner type</th>
-        <th>Loyalty status</th>
-        <th><span class="material-icons-sharp">component_exchange</span></th>
-      </tr>
-    </thead>
-    <tbody>
-      ${(customer?.loyalty_accounts || []).map(account => `
-        <tr>
-          <td>${account.institution}</td>
-          <td>${account.branch}</td>
-          <td>${account.client_code}</td>
-          <td>${account.catalogue_product}</td>
-          <td>${account.product_version || ''}</td>
-          <td>${account.loyalty_account_number || ''}</td>
-          <td>${account.account_owner_type}</td>
-          <td>${account.loyalty_status}</td>
-          <td>${account.exchange_icon || '—'}</td>
-        </tr>
-      `).join('')}
-    </tbody>
-  </table>
-</div>
+            <table class="styleds-table">
+              <thead>
+                <tr class="loyalty">
+                  <th>Institution</th>
+                  <th>Branch</th>
+                  <th>Client code</th>
+                  <th>Catalogue product</th>
+                  <th>Product version</th>
+                  <th>Loyalty account nbr</th>
+                  <th>Account owner type</th>
+                  <th>Loyalty status</th>
+                  <th><span class="material-icons-sharp">component_exchange</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(customer?.loyalty_accounts || []).map(account => `
+                  <tr>
+                    <td>${account.institution}</td>
+                    <td>${account.branch}</td>
+                    <td>${account.client_code}</td>
+                    <td>${account.catalogue_product}</td>
+                    <td>${account.product_version || ''}</td>
+                    <td>${account.loyalty_account_number || ''}</td>
+                    <td>${account.account_owner_type}</td>
+                    <td>${account.loyalty_status}</td>
+                    <td>${account.exchange_icon || '—'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
 
-
+          <div id="addon-services" class="tab-pane" style="display: none;">
+            <h3>Add-on Services</h3>
+            <p>No add-on services available for this customer.</p>
+          </div>
 
           <div id="transaction-history" class="tab-pane" style="display: none;">
             <h3>Recent Transactions</h3>
@@ -1100,16 +740,20 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </section>
     `;
+
     // Back button functionality
     document.getElementById('back-btn').addEventListener('click', showCustomerService);
+
     // Memo button functionality
     document.getElementById('memo-btn').addEventListener('click', () => {
       document.getElementById('memo-popup').style.display = 'block';
     });
+
     document.getElementById('cancel-memo').addEventListener('click', () => {
       document.getElementById('memo-popup').style.display = 'none';
       document.getElementById('memo-text').value = '';
     });
+
     document.getElementById('save-memo').addEventListener('click', () => {
       const memoText = document.getElementById('memo-text').value;
       if (memoText.trim()) {
@@ -1120,6 +764,14 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Please enter memo text');
       }
     });
+
+    // Handle clicks on info-dot buttons to show payment instrument view
+    content.addEventListener('click', (e) => {
+      if (e.target.classList.contains('info-dot')) {
+        showPaymentInstrument(customer);
+      }
+    });
+
     // Transactions button functionality
     document.getElementById('transactions-btn').addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1127,13 +779,16 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('[data-tab="transaction-history"]').classList.add('active');
       document.getElementById('transaction-history').style.display = 'block';
     });
+
     // Tab functionality
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabPanes = document.querySelectorAll('.tab-pane');
+
     tabButtons.forEach(button => {
       button.addEventListener('click', () => {
         tabButtons.forEach(btn => btn.classList.remove('active'));
         tabPanes.forEach(pane => pane.style.display = 'none');
+
         button.classList.add('active');
         const tabId = button.getAttribute('data-tab');
         document.getElementById(tabId).style.display = 'block';

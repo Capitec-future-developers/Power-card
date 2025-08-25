@@ -607,3 +607,7 @@
     font-weight: 600;
   }
 }
+
+.info-dot{
+  cursor: pointer;
+}
