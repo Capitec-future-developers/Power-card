@@ -71,7 +71,7 @@ export function renderCustomerCard(customer) {
 export function renderCustomerProfile(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
-
+  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
   const box = (label,value) => `
     <div class="profile-section">
       <div class="section-label">${label}</div>
@@ -99,7 +99,7 @@ export function renderCustomerProfile(customer) {
     <div class="card-columns">
       ${box('Birth date', customer.birth_date)}
       ${box('Nationality', 'South Africa')}
-      ${box('Customer type', instrument.type === 'Business Platinum Card' ? 'CORPORATE' : 'INDIVIDUAL')}
+      ${box('Customer type', instrument.type === 'Business Platinum Card' ? 'CORPORATE' : 'INDIVIDUAL', small(01))}
       ${box('Job title', customer.corporate_name ? 'ENTREPRENEUR' : '')}
       ${box('Relationship', 'Not applicable')}
       </div>
@@ -107,15 +107,15 @@ export function renderCustomerProfile(customer) {
       ${box('Birth country', 'ENG')}
       ${box('Language', 'ENG')}
       ${box('Activity', 'Default')}
-      ${box('Channel', '0000')}
+      ${box('Channel', '')}
       ${box('Disclosure flag', 'No choice')}
       </div>
       <div class="card-columns">
-      ${box('VIP level', account.loyalty_status === 'NORMAL' ? 'Normal' : account.loyalty_status)}
-      ${box('Customer segment', 'default value')}
+       ${box('Birth city', '')}
+      ${box('VIP level', account.loyalty_status === 'NORMAL' ? 'Normal' : account.loyalty_status, small(1))}
+      ${box('Customer segment', 'default valu', small(001))}
       ${box('Employee number', '')}
       ${box('Co-brander', '')}
-      ${box('Birth city', '')}
       </div>
     </div>
   `;
@@ -135,9 +135,9 @@ export function renderCustomerProfile(customer) {
 
   return `
     <div class="customer-profile">
-      <div class="demographic-header" style="background-color: blue; color: white; padding: 10px;">DEMOGRAPHIC</div>
+      <div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">DEMOGRAPHIC</div>
       ${demographicSection}
-      <div class="contact-header" style="background-color: blue; color: white; padding: 10px;">CONTACT</div>
+      <div class="contact-header" style="background-color: #092365; color: white; padding: 10px;">CONTACT</div>
       ${contactSection}
     </div>
   `;
