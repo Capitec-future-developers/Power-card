@@ -113,7 +113,7 @@ position: absolute;
 
 .demographic-header,
 .contact-header {
-  background-color: #0000ff;
+  background-color: #001f4d;
   color: #ffffff;
   padding: 10px;
   font-weight: bold;
@@ -136,4 +136,43 @@ position: absolute;
 
 .section-value {
   color: #666666;
+}
+
+.demographic-section{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 15px 10px;
+}
+.card-columns{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.profile-section{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+.section-label{
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 160px;
+}
+.section-value{
+  flex: 1;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+}
+.small-box{
+  background: #e9ecef;
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  min-width: 40px;
+  text-align: center;
 }
