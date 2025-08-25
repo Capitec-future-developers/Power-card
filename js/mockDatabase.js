@@ -34,12 +34,14 @@ function mergeFieldsWithData(data) {
 const originalData
  = [
   {
+    title: 'MR',
     pan: '4644090987127908',
     first_name: 'Omphile',
     family_name: 'Mohlala',
     corporate_id: 'CORP001',
     legal_id: 'L12345',
     gender: 'Male',
+    application_ID: '',
     client_host_id: 'CH001',
     client_code: 'C001',
     corporate_name: 'Mz stark Tech',
@@ -57,7 +59,9 @@ const originalData
         status: 'Not applicable',
         expiry: '05/2025',
         condition: 'REPLACED',
-        type_detail: 'Primary'
+        status_reason: 'LOST REPLACE',
+        type_detail: 'Primary',
+        branch: 'Sandton'
       }
     ],
     accounts: [

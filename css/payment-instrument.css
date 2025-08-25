@@ -10,6 +10,13 @@
   position: absolute;
   top: 100px;
   left: 190px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+.left-section .options.active {
+  background: #ff0000;
+  color: white;
+  font-weight: 600;
 }
 
 .ID{
@@ -67,4 +74,34 @@ position: absolute;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.left-section .options {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
+
+/* For Chrome, Edge, Safari */
+.payment-body::-webkit-scrollbar {
+  width: 8px;   /* scrollbar width */
+}
+
+.payment-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.payment-body::-webkit-scrollbar-thumb {
+  background: repeating-linear-gradient(
+    to bottom,
+    #092365,
+    #092365 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  border-radius: 10px;
 }

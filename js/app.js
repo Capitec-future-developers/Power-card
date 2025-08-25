@@ -1,5 +1,5 @@
 import { mockDatabase } from './mockDatabase.js';
-import { renderCustomerCard, showPaymentInstrument } from './payment-instrument.js';
+import { showPaymentInstrument } from './payment-instrument.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
@@ -7,6 +7,71 @@ document.addEventListener('DOMContentLoaded', () => {
   const customerView = document.getElementById('customer-view');
   const subheader = document.getElementById('subheader');
   const paymentInstruments = document.getElementById('payment-instruments');
+
+  function renderCustomerCard(customer) {
+    const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+    const account = (customer.accounts && customer.accounts[0]) || {};
+
+    const abbrev = (value) => {
+      if (!value) return '';
+      const map = { 'REPLACED': 'R', 'ACTIVE': 'A', 'NEW': 'N', 'NORMAL': 'N' };
+      return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
+    };
+
+    const infoDot = `<button class="info-dot" data-customer-id="${customer.id || ''}">i</button>`;
+    const infoDot2 = '<span class="info-dot">i</span>';
+    const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
+    const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
+    const row = (label, value, trailing = '') => `
+    <div class="card-section">
+      <div class="section-title">${label}</div>
+      ${box(value)}
+      ${trailing}
+    </div>`;
+
+    const fullName = `${(customer.first_name || '').toUpperCase()} ${(customer.family_name || '').toUpperCase()}`.trim();
+    const maskedPan = instrument.number || customer.pan || '';
+    const customerType = (instrument.type || '').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
+    const currencyCode = 'ZAR';
+    const currencyNum = '710';
+
+    return `
+    <div class="customer-card">
+      <div class="card-column">
+        ${row('Institution', 'Capitec Bank Limited', small('000010'))}
+        ${row('PAN', maskedPan, infoDot)}
+        ${row('PAN status', instrument.condition || 'N/A', small(abbrev(instrument.condition || '')))}
+        ${row('PAN status reason', instrument.condition === 'REPLACED' ? 'LOST REPLACEMENT' : 'N/A', small(instrument.condition === 'REPLACED' ? 'LP' : ''))}
+        ${row('PAN status date', formatDate(account.pan_status_date))}
+        ${row('Client host ID', customer.client_host_id)}
+        ${row('Phone', customer.phone)}
+        ${row('Birth date', formatDate(customer.birth_date))}
+        ${row('VIP level', (instrument.type || '').includes('Platinum') ? 'Platinum' : (instrument.type || '').includes('Gold') ? 'Gold' : 'Silver')}
+      </div>
+      <div class="card-column">
+        ${row('Full name', `${fullName ? '01 ' + fullName : ''}`)}
+        ${row('Client code', customer.client_code)}
+        ${row('Client status', account.status || 'NORMAL', small(abbrev(account.status || 'NORMAL')))}
+        ${row('Client status reason', '')}
+        ${row('Client status date', formatDate(customer.updated_at))}
+        ${row('Legal ID', customer.legal_id)}
+        ${row('Address', customer.address)}
+        ${row('Member since', formatDate(customer.created_at))}
+        ${row('Customer type', customerType)}
+      </div>
+      <div class="card-column">
+        ${row('Embossed name', instrument.name || '')}
+        ${row('Account number', account.number || '', infoDot2)}
+        ${row('Account status', account.status || 'NORMAL', small('0'))}
+        ${row('Account status reason', '')}
+        ${row('Administrative status date', account.expiry || '')}
+        ${row('Corporate ID', customer.corporate_id)}
+        ${row('Corporate name', customer.corporate_name)}
+        ${row('Currency', currencyCode, small(currencyNum))}
+      </div>
+    </div>
+  `;
+  }
 
   function setSubheader(text) {
     if (subheader) subheader.textContent = text;
