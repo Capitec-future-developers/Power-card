@@ -158,7 +158,7 @@ const originalData
     gender: 'Female',
     client_host_id: 'CH003',
     client_code: 'C003',
-    corporate_name: 'Durban Solutions',
+    corporate_name: 'Black Apple',
     phone: '0835533344',
     birth_date: '1985-12-15',
     address: '78 Pine Road, Durban, SA',
@@ -188,7 +188,7 @@ const originalData
         catalogue_product: 'Entrepreneur Card',
         loyalty_account_number: '4140442000009876',
         account_owner_type: 'Individual',
-        loyalty_status: 'ICU'
+        loyalty_status: 'Normal'
       }
     ],
     loyalty_accounts: [
@@ -200,7 +200,7 @@ const originalData
         product_version: 'v2',
         loyalty_account_number: '4140442000009876',
         account_owner_type: 'Individual',
-        loyalty_status: 'ICU',
+        loyalty_status: 'Normal',
         exchange_icon: '🔄'
       }
     ]
