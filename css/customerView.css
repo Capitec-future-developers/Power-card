@@ -98,3 +98,113 @@
   color: #1f2937;
   border-bottom: 1px solid #ffffff;
 }
+
+
+.operations-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  width: 800px;
+  max-height: 600px;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.close-btn {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: red;
+}
+
+.pan-info, .pan-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.pan-info label, .pan-status label {
+  width: 100px;
+}
+
+.pan-info input, .pan-status input {
+  width: 200px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+.pan-operations {
+  margin-bottom: 20px;
+}
+
+.operation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.operation label {
+  width: 150px;
+}
+
+.operation button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+}
+
+.operation button:hover {
+  background-color: #3e8e41;
+}
+
+.pending-operations {
+  margin-bottom: 20px;
+}
+
+.pending-operations button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.pending-operations button:hover {
+  background-color: #3e8e41;
+}
+
+.pan-production-queue table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pan-production-queue th, .pan-production-queue td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.pan-production-queue th {
+  background-color: #f0f0f0;
+}

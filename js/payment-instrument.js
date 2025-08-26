@@ -309,7 +309,7 @@ export function showPaymentInstrument(customer) {
           <button class="operate yo">Operations history</button>
           <button class="Memo yo">Memo</button>
           <button class="lost-stolen yo">Lost/stolen</button>
-          <button class="operations yo">Operations</button>
+          <button class="operations yo" id="operations">Operations</button>
           <button class="Save-all yo">Save all</button>
         </div>
       </div>
@@ -340,6 +340,100 @@ export function showPaymentInstrument(customer) {
     </div>
   `;
 
+  // Operations button click event
+  document.getElementById('operations').addEventListener('click', () => {
+    const operationsPopup = document.createElement('div');
+    operationsPopup.classList.add('operations-popup');
+    operationsPopup.innerHTML = `
+      <div class="popup-header">
+        <span>PAYMENT INSTRUMENTS OPERATIONS</span>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="popup-content">
+        <div class="pan-info">
+          <label>PAN:</label>
+          <input type="text" value="${customer.pan || ''}" disabled>
+          <label>Embossed name:</label>
+          <input type="text" value="${customer.first_name + ' ' + customer.family_name}" disabled>
+          <label>Expiry date:</label>
+          <input type="text" value="${customer.expiry_date || ''}" disabled>
+        </div>
+        <div class="pan-status">
+          <label>Status:</label>
+          <input type="text" value="${customer.instrument.condition || ''}" disabled>
+          <label>Status reason:</label>
+          <input type="text" value="${customer.instrument.status_reason || ''}" disabled>
+        </div>
+        <div class="pan-operations">
+          <h2>PAN operations</h2>
+          <div class="operation">
+            <label>PAN deactivation</label>
+            <button>Deactivate</button>
+          </div>
+          <div class="operation">
+            <label>PAN delivery</label>
+            <label>Delivery date:</label>
+            <input type="date" value="${new Date().toISOString().split('T')[0]}">
+            <button>Deliver</button>
+          </div>
+          <div class="operation">
+            <label>Renewal request</label>
+            <label>Batch number:</label>
+            <select>
+              <option value="">Select batch number</option>
+            </select>
+            <button>Send</button>
+          </div>
+          <div class="operation">
+            <label>Expiry</label>
+            <input type="text" value="${customer.expiry_date || ''}" disabled>
+            <button>Send</button>
+          </div>
+          <div class="operation">
+            <label>Unstop renewal</label>
+            <button>Unstop</button>
+          </div>
+        </div>
+        <div class="pending-operations">
+          <h2>PENDING OPERATIONS</h2>
+          <button>Validate all</button>
+          <button>Cancel all</button>
+          <button>Clear all</button>
+        </div>
+        <div class="pan-production-queue">
+          <h2>PAN PRODUCTION QUEUE</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>User</th>
+                <th>Operation type</th>
+                <th>Operation status</th>
+                <th>PAN perso</th>
+                <th>PIN perso</th>
+                <th>PIN delay</th>
+                <th>PIN hold status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="8">No records found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    // Add event listener to close button
+    operationsPopup.querySelector('.close-btn').addEventListener('click', () => {
+      operationsPopup.remove();
+    });
+
+    // Add popup to body
+    document.body.appendChild(operationsPopup);
+  });
+
   // Back button
   document.getElementById('payment-back-btn').addEventListener('click', () => {
     window.history.back();
@@ -369,3 +463,4 @@ export function showPaymentInstrument(customer) {
   window.currentView = "payment-instrument";
   window.currentCustomer = customer;
 }
+
