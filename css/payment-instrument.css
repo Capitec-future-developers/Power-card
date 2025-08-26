@@ -176,3 +176,30 @@ position: absolute;
   min-width: 40px;
   text-align: center;
 }
+
+.address-content{
+  border: 1px solid #ccc;
+  height: 500px;
+  width: 100%;
+  padding-top: 50px;
+}
+
+.address-tabs{
+display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.address-tab{
+  border: 1px solid #ddd;
+  height: 30px;
+  font-size: 13px;
+  align-content: center;
+  width: 400px;
+  cursor: pointer;
+  background-color: #dddddd;
+}
+
+.tabactive{
+  background-color: #ffffff;
+}
