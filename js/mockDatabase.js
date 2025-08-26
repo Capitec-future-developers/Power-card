@@ -76,6 +76,7 @@ const originalData
         catalogue_product: 'Personal Gold Card',
         loyalty_account_number: '4140442000004918',
         account_owner_type: 'Individual',
+        plastic_code: 'ENTREPRENEUR CR',
         loyalty_status: 'NORMAL'
       }
     ],
@@ -132,6 +133,7 @@ const originalData
         catalogue_product: 'Business Platinum Card',
         loyalty_account_number: '4140123000005678',
         account_owner_type: 'Corporate',
+        plastic_code: 'ENTREPRENEUR CR',
         loyalty_status: 'MBOD_3'
       }
     ],
@@ -188,6 +190,7 @@ const originalData
         catalogue_product: 'Entrepreneur Card',
         loyalty_account_number: '4140442000009876',
         account_owner_type: 'Individual',
+        plastic_code: 'ENTREPRENEUR CR',
         loyalty_status: 'Normal'
       }
     ],
@@ -244,6 +247,7 @@ const originalData
         catalogue_product: 'Entrepreneur Card',
         loyalty_account_number: '4140442000009875',
         account_owner_type: 'Individual',
+        plastic_code: 'ENTREPRENEUR CR',
         loyalty_status: 'Normal'
       }
     ],

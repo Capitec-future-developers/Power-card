@@ -1,11 +1,11 @@
-// Helper function to format dates
+
 function formatDate(date) {
   if (!date) return 'N/A';
   const d = new Date(date);
   return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
 }
 
-// Render main customer card
+
 export function renderCustomerCard(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
@@ -34,6 +34,7 @@ export function renderCustomerCard(customer) {
   const currencyNum = '710';
 
   return `
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
     <div class="customer-card">
       <div class="card-column">
         ${row('Institution','Capitec Bank Limited',small('000010'))}
@@ -68,7 +69,6 @@ export function renderCustomerCard(customer) {
     </div>
      <div class="customer-profile">
       <div class="ID" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
-      ${renderCustomerProfile(customer)}
 
     </div>
   `;
@@ -76,7 +76,93 @@ export function renderCustomerCard(customer) {
 
 }
 
-// Render additional customer profile info (demographic + contact)
+function renderCustomerEmbossing(customer) {
+  const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+  const account = (customer.accounts && customer.accounts[0]) || {};
+
+  const abbrev = (value) => {
+    if (!value) return '';
+    const map = { 'REPLACED':'R','ACTIVE':'A','NEW':'N','NORMAL':'N' };
+    return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
+  };
+
+  const infoDot = `<button class="info-dot" data-customer-id="${customer.id || ''}">i</button>`;
+  const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
+  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
+  const row = (label,value,trailing='') => `
+<div class="ID">Identification</div>
+    <div class="card-section">
+      <div class="section-title">${label}</div>
+      ${box(value)}
+      ${trailing}
+    </div>
+  `;
+
+  const fullName = `${(customer.first_name||'').toUpperCase()} ${(customer.family_name||'').toUpperCase()}`.trim();
+  const maskedPan = instrument.number || customer.pan || '';
+  const customerType = (instrument.type||'').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
+  const currencyCode = 'ZAR';
+  const currencyNum = '710';
+
+  return `
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
+    <div class="customer-card">
+      <div class="card-column">
+
+        ${row('Institution','Capitec Bank Limited',small('000010'))}
+        ${row('PAN',maskedPan)}
+        ${row('Client code', customer.client_code)}
+        ${row('Gender', customer.gender)}
+        ${row('Family name', customer.family_name)}
+        ${row('Second name', customer.family_name)}
+        ${row('Status', instrument.condition||'N/A', small(abbrev(instrument.condition||'')))}
+        ${row('Application ID', customer.application_ID)}
+      </div>
+      <div class="card-column">
+        ${row('Branch', instrument.branch)}
+        ${row('PAN sequence', instrument.sequence)}
+        ${row('Client host ID', customer.client_host_id)}
+        ${row('Title', customer.title, small('01'))}
+        ${row('First Name', customer.first_name)}
+        ${row('Second first name',  customer.first_name)}
+        ${row('Status reason', instrument.status_reason)}
+        ${row('Contract element ID', '')}
+      </div>
+      <div class="card-column">
+        ${row('Payment instrument', '')}
+        ${row('Primary PAN', '')}
+        ${row('Corporate ID', '')}
+        ${row('', '')}
+
+        ${row('Madine name', '')}
+        ${row('Legal ID', customer.legal_id)}
+        ${row('Status date', formatDate(account.pan_status_date))}
+      </div>
+    </div>
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Embossing</div>
+<div class="embossing customer-card">
+
+<div class="card-column" style="width: 500px;">
+${row('File reference', '')}
+${row('*Embossed name', instrument.full_name)}
+${row('promotion code', '')}
+${row('Plastic code', account.plastic_code, small(''))}
+${row('Plastic delivery method', '', small('002'))}
+${row('Photo', '', small(''))}
+</div>
+<div class="card-column" style="padding-left: 200px; width: 500px">
+${row('Second embossed name', '')}
+${row('Encoded name', instrument.full_name)}
+${row('Priority code', '', small(''))}
+${row('', '')}
+${row('PIN delivery method', '', small(''))}
+${row('Photo reference', '')}
+</div>
+</div>
+  `;
+}
+
+
 export function renderCustomerProfile(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
@@ -182,7 +268,7 @@ export function showPaymentInstrument(customer) {
         <div class="payment-body" style="flex:1;height:500px;overflow-y:auto;scroll-behavior:smooth;padding-left:20px;">
           <section id="Identification">${renderCustomerCard(customer)}</section>
           <section id="Demographic">${renderCustomerProfile(customer)}</section>
-          <section id="Embossing"><p>Embossing content...</p></section>
+          <section id="Embossing"><p>${renderCustomerEmbossing(customer)}</p></section>
           <section id="Address"><p>Address content...</p></section>
           <section id="Additional"><p>Additional fields content...</p></section>
           <section id="AddOn"><p>Add-on services content...</p></section>
@@ -240,6 +326,7 @@ const mockDatabase = [
     corporate_name:"Mzansi Tech",
     legal_id:"L12345",
     gender:"Male",
+    plastic_code: 'ENTREPRENEUR CR',
     client_host_id:"CH001"
   }
 ];
