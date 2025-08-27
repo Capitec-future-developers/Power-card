@@ -1,5 +1,6 @@
 import { mockDatabase } from './mockDatabase.js';
 import { showPaymentInstrument } from './payment-instrument.js';
+import { getTransactionHistory } from './mockDatabase.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
@@ -23,11 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
     const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
     const row = (label, value, trailing = '') => `
-    <div class="card-section">
-      <div class="section-title">${label}</div>
-      ${box(value)}
-      ${trailing}
-    </div>`;
+      <div class="card-section">
+        <div class="section-title">${label}</div>
+        ${box(value)}
+        ${trailing}
+      </div>
+    `;
 
     const fullName = `${(customer.first_name || '').toUpperCase()} ${(customer.family_name || '').toUpperCase()}`.trim();
     const maskedPan = instrument.number || customer.pan || '';
@@ -36,41 +38,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const currencyNum = '710';
 
     return `
-    <div class="customer-card">
-      <div class="card-column">
-        ${row('Institution', 'Capitec Bank Limited', small('000010'))}
-        ${row('PAN', maskedPan, infoDot)}
-        ${row('PAN status', instrument.condition || 'N/A', small(abbrev(instrument.condition || '')))}
-        ${row('PAN status reason', instrument.condition === 'REPLACED' ? 'LOST REPLACEMENT' : 'N/A', small(instrument.condition === 'REPLACED' ? 'LP' : ''))}
-        ${row('PAN status date', formatDate(account.pan_status_date))}
-        ${row('Client host ID', customer.client_host_id)}
-        ${row('Phone', customer.phone)}
-        ${row('Birth date', formatDate(customer.birth_date))}
-        ${row('VIP level', (instrument.type || '').includes('Platinum') ? 'Platinum' : (instrument.type || '').includes('Gold') ? 'Gold' : 'Silver')}
+      <div class="customer-card">
+        <div class="card-column">
+          ${row('Institution', 'Capitec Bank Limited', small('000010'))}
+          ${row('PAN', maskedPan, infoDot)}
+          ${row('PAN status', instrument.condition || 'N/A', small(abbrev(instrument.condition || '')))}
+          ${row('PAN status reason', instrument.condition === 'REPLACED' ? 'LOST REPLACEMENT' : 'N/A', small(instrument.condition === 'REPLACED' ? 'LP' : ''))}
+          ${row('PAN status date', formatDate(account.pan_status_date))}
+          ${row('Client host ID', customer.client_host_id)}
+          ${row('Phone', customer.phone)}
+          ${row('Birth date', formatDate(customer.birth_date))}
+          ${row('VIP level', (instrument.type || '').includes('Platinum') ? 'Platinum' : (instrument.type || '').includes('Gold') ? 'Gold' : 'Silver')}
+        </div>
+        <div class="card-column">
+          ${row('Full name', `${fullName ? '01 ' + fullName : ''}`)}
+          ${row('Client code', customer.client_code)}
+          ${row('Client status', account.status || 'NORMAL', small(abbrev(account.status || 'NORMAL')))}
+          ${row('Client status reason', '')}
+          ${row('Client status date', formatDate(customer.updated_at))}
+          ${row('Legal ID', customer.legal_id)}
+          ${row('Address', customer.address)}
+          ${row('Member since', formatDate(customer.created_at))}
+          ${row('Customer type', customerType)}
+        </div>
+        <div class="card-column">
+          ${row('Embossed name', instrument.name || '')}
+          ${row('Account number', account.number || '', infoDot2)}
+          ${row('Account status', account.status || 'NORMAL', small('0'))}
+          ${row('Account status reason', '')}
+          ${row('Administrative status date', account.expiry || '')}
+          ${row('Corporate ID', customer.corporate_id)}
+          ${row('Corporate name', customer.corporate_name)}
+          ${row('Currency', currencyCode, small(currencyNum))}
+        </div>
+        ${customer.payment_instruments.length > 1 ? `
+          <div class="card-column">
+            ${customer.payment_instruments.slice(1).map((secInstrument, index) => `
+              ${row(`Secondary PAN ${index + 1}`, secInstrument.number || '', infoDot)}
+              ${row(`Secondary Name ${index + 1}`, secInstrument.full_name || '')}
+              ${row(`Secondary Status ${index + 1}`, secInstrument.condition || 'N/A', small(abbrev(secInstrument.condition || '')))}
+            `).join('')}
+          </div>
+        ` : ''}
       </div>
-      <div class="card-column">
-        ${row('Full name', `${fullName ? '01 ' + fullName : ''}`)}
-        ${row('Client code', customer.client_code)}
-        ${row('Client status', account.status || 'NORMAL', small(abbrev(account.status || 'NORMAL')))}
-        ${row('Client status reason', '')}
-        ${row('Client status date', formatDate(customer.updated_at))}
-        ${row('Legal ID', customer.legal_id)}
-        ${row('Address', customer.address)}
-        ${row('Member since', formatDate(customer.created_at))}
-        ${row('Customer type', customerType)}
-      </div>
-      <div class="card-column">
-        ${row('Embossed name', instrument.name || '')}
-        ${row('Account number', account.number || '', infoDot2)}
-        ${row('Account status', account.status || 'NORMAL', small('0'))}
-        ${row('Account status reason', '')}
-        ${row('Administrative status date', account.expiry || '')}
-        ${row('Corporate ID', customer.corporate_id)}
-        ${row('Corporate name', customer.corporate_name)}
-        ${row('Currency', currencyCode, small(currencyNum))}
-      </div>
-    </div>
-  `;
+    `;
   }
 
   function setSubheader(text) {
@@ -200,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const detailsRow = document.createElement('tr');
       detailsRow.className = 'details-row';
       detailsRow.innerHTML = `
-        <td colspan="8" style="position: relative; height: 200px;">
+        <td colspan="8" style="position: relative; height: 275px;">
           <div class="customer-detail-container">
             <!-- Payment Instruments Section -->
             <div class="payment-section">
@@ -284,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <section class="customer-view">
         <div class="top-stuff" style="display: flex; gap: 10px; margin-bottom: 15px;">
           <button id="back-btn" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">← Back</button>
-          <button class="right-btn" id="memo-btn" style="position: absolute; right: 180px;background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Memo</button>
+          <button class="right-btn" id="memo-btn" style="position: absolute; right: 180px; background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Memo</button>
           <button class="right-btn" id="transactions-btn" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Account Transactions</button>
         </div>
         <!-- Memo Popup (hidden by default) -->
@@ -318,39 +329,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="ps-panel">
                   <div class="ps-panel__title">Payment Instruments Information</div>
                   <div class="ps-panel__body">
-                    <div class="ps-field">
-                      <div class="ps-label">Product name</div>
-                      <div class="ps-value">${customer.payment_instruments[0].type}</div>
-                      <div class="ps-small">PPG001</div>
-                    </div>
-                    <div class="ps-field">
-                      <div class="ps-label">Version</div>
-                      <div class="ps-value">1</div>
-                    </div>
-                    <div class="ps-field">
-                      <div class="ps-label">Expiry</div>
-                      <div class="ps-value">${customer.payment_instruments[0].expiry}</div>
-                      <div class="ps-note">Last transaction date</div>
-                      <div class="ps-value">${new Date(customer.updated_at).toISOString().slice(0,19).replace('T',' ')}.000</div>
-                    </div>
-                    <div class="ps-field">
-                      <div class="ps-label">Renew deli...</div>
-                      <div class="ps-checkbox"><input type="checkbox" disabled></div>
-                      <div class="ps-note">Renewal delivery date</div>
-                      <div class="ps-value"></div>
-                    </div>
-                    <div class="ps-field">
-                      <div class="ps-label">Common.input.renewal_activati...</div>
-                      <div class="ps-checkbox"><input type="checkbox" checked disabled></div>
-                      <div class="ps-note">Common.input.renewal_...</div>
-                      <div class="ps-value">${formatDate(customer.created_at)}</div>
-                    </div>
-                    <div class="ps-field">
-                      <div class="ps-label">3DS Enroll...</div>
-                      <div class="ps-checkbox"><input type="checkbox" disabled></div>
-                      <div class="ps-note">3DS Enrollment date</div>
-                      <div class="ps-value"></div>
-                    </div>
+                    ${customer.payment_instruments.map((instrument, index) => `
+                      <div class="ps-field">
+                        <div class="ps-label">${index === 0 ? 'Product name' : `Secondary Product ${index}`}</div>
+                        <div class="ps-value">${instrument.type}</div>
+                        <div class="ps-small">PPG001</div>
+                      </div>
+                      <div class="ps-field">
+                        <div class="ps-label">${index === 0 ? 'PAN' : `Secondary PAN ${index}`}</div>
+                        <div class="ps-value">${instrument.number}</div>
+                      </div>
+                      <div class="ps-field">
+                        <div class="ps-label">${index === 0 ? 'Embossed name' : `Secondary Name ${index}`}</div>
+                        <div class="ps-value">${instrument.full_name}</div>
+                      </div>
+                      <div class="ps-field">
+                        <div class="ps-label">${index === 0 ? 'Expiry' : `Secondary Expiry ${index}`}</div>
+                        <div class="ps-value">${instrument.expiry}</div>
+                        <div class="ps-note">Last transaction date</div>
+                        <div class="ps-value">${new Date(customer.updated_at).toISOString().slice(0,19).replace('T',' ')}.000</div>
+                      </div>
+                    `).join('')}
                   </div>
                 </div>
                 <div class="ps-panel">
@@ -400,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </section>
           </div>
-         <div id="account-summary" class="tab-pane" style="display: none;">
+          <div id="account-summary" class="tab-pane" style="display: none;">
             <section class="as-wrapper">
               <div class="as-section">
                 <div class="as-title">Account</div>
@@ -470,8 +469,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
               </div>
             </section>
-            </div>
-         <div id="account-financials" class="tab-pane" style="display: none;">
+          </div>
+          <div id="account-financials" class="tab-pane" style="display: none;">
             <section class="af-wrapper">
               <div class="as-section">
                 <div class="as-title">Account Financials</div>
@@ -493,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="af-value">4,496.62</div>
                     <div class="af-suffix">ZAR</div>
                     <div class="af-polarity">Credit</div>
-                    <div class="af-equals">=</div>
+                    <div class="af-equals">-</div>
                     <div class="af-colspan">
                       <div class="af-breakdown">
                         <div class="af-break">
@@ -533,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="af-value">4,496.62</div>
                     <div class="af-suffix">ZAR</div>
                     <div class="af-polarity">Credit</div>
-                    <div class="af-equals">=</div>
+                    <div class="af-equals">-</div>
                     <div class="af-colspan">
                       <div class="af-breakdown">
                         <div class="af-break"><span class="af-sub">Cash limit</span><span class="af-subv">20,000.00</span><span class="af-suffix">ZAR</span></div>
@@ -548,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="af-value">0.00</div>
                     <div class="af-suffix">ZAR</div>
                     <div class="af-polarity">Debit</div>
-                    <div class="af-equals">=</div>
+                    <div class="af-equals">-</div>
                     <div class="af-colspan">
                       <div class="af-breakdown">
                         <div class="af-break"><span class="af-sub">Additional loan limit</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
@@ -577,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </section>
           </div>
 
-         <div id="bills-loans" class="tab-pane" style="display: none;">
+          <div id="bills-loans" class="tab-pane" style="display: none;">
             <section class="af-wrapper">
               <div class="as-section">
                 <div class="as-title" style="background: #1e4a72; color: white; padding: 8px 15px; margin: 0; font-weight: bold;">CURRENT LOANS</div>
@@ -672,22 +671,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,056.58 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,146.33 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: center;"> </td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 6px;">06/06/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,021.50 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">1,021.50 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">07/04/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">07/04/2025</td>
-                        <td style="border: 1px solid #ddd; padding: 6px;">Term closed</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">20,000.00 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">15,906.42 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">16,056.58 ZAR</td>
-                        <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">0.00 ZAR</td>
                         <td style="border: 1px solid #ddd; padding: 6px; text-align: center;"> </td>
                       </tr>
                     </tbody>

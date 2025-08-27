@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   header.innerHTML = `
     <div class="header-bar">
       <div class="logo">
-        <img src="./img/Logo.png" alt="logo" class="logo-img">
+      <a href="https://capitec-future-developers.github.io/The-Hub-Ecosytsem/#simulators">
+        <img src="./img/Logo.png" alt="logo" class="logo-img"></a>
         <span class="material-icons-sharp menu-btn">menu</span>
       </div>
       <div class="right-side">
