@@ -71,15 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ${row('Corporate name', customer.corporate_name)}
           ${row('Currency', currencyCode, small(currencyNum))}
         </div>
-        ${customer.payment_instruments.length > 1 ? `
-          <div class="card-column">
-            ${customer.payment_instruments.slice(1).map((secInstrument, index) => `
-              ${row(`Secondary PAN ${index + 1}`, secInstrument.number || '', infoDot)}
-              ${row(`Secondary Name ${index + 1}`, secInstrument.full_name || '')}
-              ${row(`Secondary Status ${index + 1}`, secInstrument.condition || 'N/A', small(abbrev(secInstrument.condition || '')))}
-            `).join('')}
-          </div>
-        ` : ''}
+
       </div>
     `;
   }

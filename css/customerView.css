@@ -33,7 +33,7 @@
 .customer-card{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  gap: 5px;
   padding: 15px 10px;
 }
 .card-column{
@@ -51,7 +51,7 @@
 .section-title{
   font-weight: bold;
   font-size: 14px;
-  min-width: 160px;
+  min-width: 100px;
   text-align: -moz-left;
 }
 .box-section, .box-section2{
@@ -110,102 +110,307 @@
   border: 1px solid #ddd;
   padding: 20px;
   width: 800px;
-  max-height: 600px;
+  height: 1200px;
   overflow-y: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  scrollbar-width: none;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+
 .popup-header {
+  background-color: #7d7d7e !important;
+  color: white;
+  padding: 15px 10px !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  font-size: 13px;
+  width: 100%;
+  font-family: Arial, sans-serif;
 }
 
 .close-btn {
-  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
   cursor: pointer;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn:hover {
-  color: red;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
 }
 
-.pan-info, .pan-status {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+/* Popup content */
+.popup-content {
+  position: relative;
+  padding: 20px;
+  background-color: white;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+/* PAN Info section */
+.pan-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 15px;
   margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
 }
 
-.pan-info label, .pan-status label {
-  width: 100px;
+/* PAN Status section */
+.pan-status {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
 }
 
-.pan-info input, .pan-status input {
-  width: 200px;
-  padding: 5px;
-  border: 1px solid #ccc;
+/* Form styling */
+.pan-info label,
+.pan-status label {
+  display: block;
+  font-weight: 500 !important;
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 4px;
+  text-transform: uppercase;
 }
 
+.pan-info input,
+.pan-status input {
+  width: 100%;
+  padding: 8px 10px !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: #f9fafb;
+  color: #6b7280;
+}
+
+/* PAN Operations section */
 .pan-operations {
   margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 70%;
 }
 
+.pan-operations h2 {
+  background-color: #e2e8f0;
+  padding: 10px 15px;
+  margin: 0 !important;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #d1d5db !important;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.pan-operations h2:after {
+  content: "−";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Operation rows */
 .operation {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 10px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #f1f5f9;
+  background-color: #fefefe;
+  align-items: center !important;
+}
+
+.operation:last-child {
+  border-bottom: none;
 }
 
 .operation label {
-  width: 150px;
+  font-size: 12px;
+  color: #374151;
+  font-weight: 500;
+  margin: 0;
+}
+
+.operation input,
+.operation select {
+  width: 100%;
+  padding: 6px 8px !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.operation input:disabled {
+  background-color: #f9fafb;
+  color: #6b7280;
+}
+
+.operation div label {
+  font-size: 10px;
+  color: #64748b;
+  margin-bottom: 3px;
+  display: block;
 }
 
 .operation button {
-  padding: 5px 10px;
+  padding: 6px 14px !important;
+  background-color: #0a2281 !important;
+  color: white;
   border: none;
-  border-radius: 5px;
-  background-color: #4CAF50;
-  color: #fff;
+  border-radius: 3px !important;
   cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 50px;
+  height: 28px;
+  transition: background-color 0.2s;
 }
 
 .operation button:hover {
-  background-color: #3e8e41;
+  background-color: #1d4ed8 !important;
 }
 
+/* Pending operations section */
 .pending-operations {
-  margin-bottom: 20px;
+  position: absolute;
+  top: 230px;
+  width: 30%;
+  right: -10px;
+  text-wrap: nowrap;
+}
+
+.pending-operations h2 {
+  background-color: #e2e8f0;
+  padding: 8px 0;
+  margin: 0 0 15px 0 !important;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #d1d5db !important;
+  text-align: center;
+}
+
+.pending-operations div {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .pending-operations button {
-  padding: 5px 10px;
+  padding: 5px 12px !important;
+  background-color: #043270 !important;
+  color: white;
   border: none;
-  border-radius: 5px;
-  background-color: #4CAF50;
-  color: #fff;
+  border-radius: 3px !important;
   cursor: pointer;
-  margin-right: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
 .pending-operations button:hover {
-  background-color: #3e8e41;
+  background-color: #4b5563 !important;
+}
+
+/* PAN Production Queue */
+.pan-production-queue h2 {
+  background-color: #1e40af;
+  color: white;
+  padding: 8px 0;
+  margin-bottom: -170px; !important;
+  font-size: 11px;
+  font-weight: 600;
+  border-bottom: none !important;
+  text-align: center;
 }
 
 .pan-production-queue table {
-  border-collapse: collapse;
   width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-top: 200px;
+  margin-bottom: -170px; !important;
 }
 
-.pan-production-queue th, .pan-production-queue td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
+.pan-production-queue thead tr {
+  background-color: #f1f5f9 !important;
 }
 
 .pan-production-queue th {
-  background-color: #f0f0f0;
+  padding: 6px 8px !important;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border: 1px solid #d1d5db !important;
+  font-size: 10px;
+}
+
+.pan-production-queue td {
+  padding: 8px !important;
+  border: 1px solid #d1d5db !important;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pan-info {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pan-status {
+    grid-template-columns: 1fr;
+  }
+
+  .operation {
+    display: flex !important;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch !important;
+  }
+}
+
+/* Add collapsible functionality styles */
+.pan-operations.collapsed h2:after {
+  content: "+";
+}
+
+.pan-operations.collapsed .operation {
+  display: none;
+}
+
+.card-columnss{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
