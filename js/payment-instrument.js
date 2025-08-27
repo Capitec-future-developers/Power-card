@@ -143,6 +143,19 @@ ${row('Start date', '')}
 ${row('Sending mode', 'Email')}
 ${row('End date', '')}
 </div>
+<div class="address-customer-card">
+<div class="demographic-header" style="position: absolute; background-color: #092365; color: white; padding-top: 10px; width: 500px; height: 10px; left: 20px;">Addresses</div>
+<div class="card-column" style="position: absolute; top: 70px; width: 550px;">
+${row('Line 1', customer.address)}
+${row('Line 2', customer.suburb)}
+${row('Line 3', '')}
+${row('Line 4', '')}
+${row('*Country', customer.country, small('710'))}
+${row('Zip code', customer.postal_code)}
+${row('*Region', customer.province, small('003'))}
+${row('City', customer.city, small('01546'))}
+</div>
+</div>
 </div>
 </div>
     `;

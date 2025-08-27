@@ -179,14 +179,16 @@ position: absolute;
 }
 
 .address-content{
+  position: relative;
   border: 1px solid #ccc;
   height: 500px;
   width: 100%;
-  padding-top: 50px;
+  top:1px;
+  overflow: scroll;
 }
 
 .address-tabs{
-display: flex;
+  display: flex;
   flex-direction: row;
   gap: 10px;
 }
@@ -203,4 +205,16 @@ display: flex;
 
 .tabactive{
   background-color: #ffffff;
+}
+
+.address-customer-card{
+  position: absolute;
+  border: 1px solid #ddd;
+  height: 450px;
+  left: 10px;
+  margin-top: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 600px;
 }
