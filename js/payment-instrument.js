@@ -80,6 +80,7 @@ export function renderCustomerAddress(customer) {
     return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
   };
 
+  const box2 = (text) => `<span class="box-section2">${text ?? ''}</span>`;
   const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
   const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
   const row = (label, value, trailing='') => `
@@ -87,6 +88,7 @@ export function renderCustomerAddress(customer) {
       <div class="section-title">${label}</div>
       ${box(value)}
       ${trailing}
+
     </div>
   `;
 
@@ -136,7 +138,7 @@ ${row('Card of', instrument.full_name || customer.first_name + ' ' + customer.fa
 
 </div>
 <div class="card-column">
-${row('Usage', 'Primary')}
+${row('Usage', 'Statement')}
 ${row('Start date', '')}
 </div>
 <div class="card-column">
@@ -154,6 +156,23 @@ ${row('*Country', customer.country, small('710'))}
 ${row('Zip code', customer.postal_code)}
 ${row('*Region', customer.province, small('003'))}
 ${row('City', customer.city, small('01546'))}
+</div>
+</div>
+<div class="phones-customer-card" style="position: absolute; left: 650px; top: 130px;">
+<div class="demographic-header" style="position: absolute; background-color: #092365; color: white; padding-top: 10px; width: 500px; height: 10px; left: 20px;">Phones</div>
+<div class="card-column" style="position: absolute; top: 70px; width: 550px;">
+${row('Phone 1','Personal mobile phone', box2(customer.phone))}
+${row('Phone 2','Home phone',box2(customer.home_phone || '00000000000'))}
+${row('Phone 3','Work phone',box2(customer.work_phone || '0117849514'))}
+${row('Phone 4','Others',box2(customer.other_phone || customer.phone))}
+${row('Fax', 'EX: 0117849514' )}
+</div>
+</div>
+<div class="web-customer-card" style="position: absolute; left: 650px; top: 200px;">
+<div class="demographic-header" style="position: absolute; background-color: #092365; color: white; padding-top: 10px; width: 500px; height: 10px; left: 20px;">Web</div>
+<div class="card-column" style="position: absolute; absolute; top: 50px; display: flex; flex-direction: row; gap: 1px;">
+${row('Email', customer.email || customer.client_code+'@wol.co.za')}
+${row('URL', 'htp://')}
 </div>
 </div>
 </div>

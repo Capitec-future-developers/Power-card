@@ -212,9 +212,26 @@ position: absolute;
   border: 1px solid #ddd;
   height: 450px;
   left: 10px;
-  margin-top: 180px;
+  margin-top: 130px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 600px;
+}
+
+.phones-customer-card{
+  border: 1px solid #ddd;
+  height: 300px;
+  width: 550px;
+}
+
+.web-customer-card{
+  position: absolute;
+  margin-top: 250px;
+  left: 10px;
+  border: 1px solid #ddd;
+  height: 100px;
+  width: 550px;
+  overflow: scroll;
+  scrollbar-width: none;
 }

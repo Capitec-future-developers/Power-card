@@ -54,7 +54,7 @@
   min-width: 160px;
   text-align: -moz-left;
 }
-.box-section{
+.box-section, .box-section2{
   flex: 1;
   background: #f4f4f4;
   border: 1px solid #ddd;
