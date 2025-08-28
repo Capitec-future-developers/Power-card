@@ -433,7 +433,7 @@ ${renderLostStolen(customer)}
 </div>
 `;
 
-// Add event listener to back button
+
   document.getElementById('lost-stolen-back-btn').addEventListener('click', () => {
     showClient(customer);
   });

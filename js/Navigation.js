@@ -1,39 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* ------------ CONFIG ------------ */
+
   const navigationOptions = [
-    { name: "Customer Service", steps: [
+    {
+      name: "Customer Service",
+      steps: [
         "Click Customer Service button to begin",
         "Enter customer PAN (at least 13 digits)",
         "Click Search button to find customer",
         "Click on customer row to expand details",
         "Double-click payment instruments to view customer details"
-      ]},
-    { name: "Customer Search", steps: [
+      ],
+      automation: automateCustomerService
+    },
+    {
+      name: "Customer Search",
+      steps: [
         "Navigate to Customer Service section",
         "Fill in search criteria (PAN, First Name, or Client Host ID)",
         "Review search results in the table",
         "Expand customer details by clicking the row",
         "Access full customer view by double-clicking"
-      ]},
-    { name: "Customer Details", steps: [
+      ],
+      automation: automateCustomerSearch
+    },
+    {
+      name: "Customer Details",
+      steps: [
         "View customer identification information",
         "Navigate through different tabs (PAN Summary, Account Summary, etc.)",
         "Use Memo button to add customer notes",
         "Access Account Transactions for transaction history",
         "Use info buttons (i) for additional details"
-      ]},
-    { name: "Payment Instruments", steps: [
+      ],
+      automation: automateCustomerDetails
+    },
+    {
+      name: "Payment Instruments",
+      steps: [
         "Click info button (i) next to PAN field",
         "Review payment instrument details",
         "Check card status and conditions",
         "Verify expiry dates and limits",
         "Navigate back to customer view when done"
-      ]}
+      ],
+      automation: automatePaymentInstruments
+    }
   ];
 
   const frequentOptions = ["Customer Service", "Customer Search"];
   let bubbles = [];
   let currentAutomation = null;
+  let currentAutomationInterval = null;
 
   /* ------------ CREATE BUTTON ------------ */
   const navContainer = document.createElement("div");
@@ -172,12 +189,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const style = document.createElement("style");
       style.id = "nav-pulse-style";
       style.textContent = `
-        @keyframes pulse {
-          0% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.05); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-      `;
+ @keyframes pulse {
+ 0% { opacity: 1; transform: scale(1); }
+ 50% { opacity: 0.7; transform: scale(1.05); }
+ 100% { opacity: 1; transform: scale(1); }
+ }
+ `;
       document.head.appendChild(style);
     }
 
@@ -191,10 +208,166 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
   }
 
+  /* ------------ AUTOMATION FUNCTIONS ------------ */
+  function automateCustomerService() {
+    // Click Customer Service button
+    const customerServiceBtn = document.getElementById('customer-service');
+    if (customerServiceBtn) {
+      customerServiceBtn.click();
+
+      // Wait for the content to load
+      setTimeout(() => {
+        // Enter PAN
+        const panInput = document.getElementById('pan');
+        if (panInput) {
+          panInput.value = '4644090987127908'; // Sample PAN
+
+          // Click Search button
+          setTimeout(() => {
+            const searchBtn = document.querySelector('.search-btn');
+            if (searchBtn) {
+              searchBtn.click();
+
+              // Wait for results and click on customer row
+              setTimeout(() => {
+                const customerRow = document.querySelector('.collapsible-row');
+                if (customerRow) {
+                  customerRow.click();
+
+                  // Wait for details to expand and double-click payment instruments
+                  setTimeout(() => {
+                    const paymentTable = document.querySelector('.payment-table');
+                    if (paymentTable) {
+                      // Simulate double-click
+                      const event = new MouseEvent('dblclick', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                      });
+                      paymentTable.dispatchEvent(event);
+                    }
+                  }, 1000);
+                }
+              }, 1000);
+            }
+          }, 500);
+        }
+      }, 500);
+    }
+  }
+
+  function automateCustomerSearch() {
+    // Click Customer Service button
+    const customerServiceBtn = document.getElementById('customer-service');
+    if (customerServiceBtn) {
+      customerServiceBtn.click();
+
+      // Wait for the content to load
+      setTimeout(() => {
+        // Enter First Name
+        const fnameInput = document.getElementById('fname');
+        if (fnameInput) {
+          fnameInput.value = 'Omphile'; // Sample first name
+
+          // Click Search button
+          setTimeout(() => {
+            const searchBtn = document.querySelector('.search-btn');
+            if (searchBtn) {
+              searchBtn.click();
+
+              // Wait for results and click on customer row
+              setTimeout(() => {
+                const customerRow = document.querySelector('.collapsible-row');
+                if (customerRow) {
+                  customerRow.click();
+
+                  // Wait for details to expand and double-click payment instruments
+                  setTimeout(() => {
+                    const paymentTable = document.querySelector('.payment-table');
+                    if (paymentTable) {
+                      // Simulate double-click
+                      const event = new MouseEvent('dblclick', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                      });
+                      paymentTable.dispatchEvent(event);
+                    }
+                  }, 1000);
+                }
+              }, 1000);
+            }
+          }, 500);
+        }
+      }, 500);
+    }
+  }
+
+  function automateCustomerDetails() {
+    // This assumes we're already in the customer view
+    // Navigate through tabs
+    setTimeout(() => {
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      if (tabButtons.length > 1) {
+        // Click on Account Summary tab
+        tabButtons[1].click();
+
+        // Continue through other tabs
+        setTimeout(() => {
+          tabButtons[2].click();
+
+          setTimeout(() => {
+            // Click Memo button
+            const memoBtn = document.getElementById('memo-btn');
+            if (memoBtn) memoBtn.click();
+
+            setTimeout(() => {
+              // Close memo popup
+              const cancelMemo = document.getElementById('cancel-memo');
+              if (cancelMemo) cancelMemo.click();
+
+              setTimeout(() => {
+                // Click Transactions button
+                const transactionsBtn = document.getElementById('transactions-btn');
+                if (transactionsBtn) transactionsBtn.click();
+
+                setTimeout(() => {
+                  // Click on info button
+                  const infoBtn = document.querySelector('.info-dot');
+                  if (infoBtn) infoBtn.click();
+                }, 500);
+              }, 500);
+            }, 500);
+          }, 500);
+        }, 1000);
+      }
+    }, 500);
+  }
+
+  function automatePaymentInstruments() {
+    // Click on info button next to PAN
+    setTimeout(() => {
+      const infoBtn = document.querySelector('.info-dot');
+      if (infoBtn) {
+        infoBtn.click();
+
+        // After viewing payment instruments, go back
+        setTimeout(() => {
+          const backBtn = document.getElementById('back-btn');
+          if (backBtn) backBtn.click();
+        }, 2000);
+      }
+    }, 500);
+  }
+
   /* ------------ AUTOMATION SYSTEM ------------ */
   function startAutomation(option) {
     if (currentAutomation) {
       document.body.removeChild(currentAutomation);
+      if (currentAutomationInterval) {
+        clearInterval(currentAutomationInterval);
+        currentAutomationInterval = null;
+      }
     }
 
     let stepIndex = 0;
@@ -263,18 +436,18 @@ document.addEventListener("DOMContentLoaded", () => {
     nextBtn.style.background = "#4caf50";
     nextBtn.style.color = "white";
 
-    const skipBtn = document.createElement("button");
-    skipBtn.innerText = "Skip";
-    skipBtn.style.padding = "12px 20px";
-    skipBtn.style.border = "1px solid #ccc";
-    skipBtn.style.borderRadius = "6px";
-    skipBtn.style.cursor = "pointer";
-    skipBtn.style.fontSize = "14px";
-    skipBtn.style.background = "white";
-    skipBtn.style.color = "#666";
+    const autoBtn = document.createElement("button");
+    autoBtn.innerText = "Auto Run";
+    autoBtn.style.padding = "12px 20px";
+    autoBtn.style.border = "none";
+    autoBtn.style.borderRadius = "6px";
+    autoBtn.style.cursor = "pointer";
+    autoBtn.style.fontSize = "14px";
+    autoBtn.style.background = "#2196f3";
+    autoBtn.style.color = "white";
 
     const closeBtn = document.createElement("button");
-    closeBtn.innerText = "✖ Close";
+    closeBtn.innerText = " Close";
     closeBtn.style.padding = "12px 20px";
     closeBtn.style.border = "none";
     closeBtn.style.borderRadius = "6px";
@@ -288,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.appendChild(progressBar);
     modal.appendChild(buttonContainer);
     buttonContainer.appendChild(nextBtn);
-    buttonContainer.appendChild(skipBtn);
+    buttonContainer.appendChild(autoBtn);
     buttonContainer.appendChild(closeBtn);
     overlay.appendChild(modal);
 
@@ -364,15 +537,34 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    skipBtn.addEventListener("click", () => {
-      if (stepIndex < option.steps.length - 1) {
-        stepIndex = option.steps.length - 1;
-        updateStep();
+    autoBtn.addEventListener("click", () => {
+      // Start the automation
+      if (option.automation) {
+        option.automation();
+
+        // Auto-advance through steps
+        if (currentAutomationInterval) {
+          clearInterval(currentAutomationInterval);
+        }
+
+        currentAutomationInterval = setInterval(() => {
+          if (stepIndex < option.steps.length - 1) {
+            stepIndex++;
+            updateStep();
+          } else {
+            clearInterval(currentAutomationInterval);
+            currentAutomationInterval = null;
+          }
+        }, 3000);
       }
     });
 
     closeBtn.addEventListener("click", () => {
       removeHighlights();
+      if (currentAutomationInterval) {
+        clearInterval(currentAutomationInterval);
+        currentAutomationInterval = null;
+      }
       document.body.removeChild(overlay);
       currentAutomation = null;
     });
@@ -381,6 +573,10 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) {
         removeHighlights();
+        if (currentAutomationInterval) {
+          clearInterval(currentAutomationInterval);
+          currentAutomationInterval = null;
+        }
         document.body.removeChild(overlay);
         currentAutomation = null;
       }
@@ -411,6 +607,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && currentAutomation) {
       removeHighlights();
+      if (currentAutomationInterval) {
+        clearInterval(currentAutomationInterval);
+        currentAutomationInterval = null;
+      }
       document.body.removeChild(currentAutomation);
       currentAutomation = null;
     }

@@ -778,7 +778,7 @@ const originalData = [
   }
 ];
 
-// Create enhanced database with merged fields
+
 export const mockDatabase = mergeFieldsWithData(originalData);
 
 // Generate transaction histories for each customer and their secondary pan owners
