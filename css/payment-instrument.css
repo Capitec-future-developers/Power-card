@@ -1,3 +1,8 @@
+.main-content{
+  position: relative;
+  scroll-behavior: smooth;
+
+}
 .payment-instrument{
   position: absolute;
   top: 110px;
@@ -234,4 +239,58 @@ position: absolute;
   width: 550px;
   overflow: scroll;
   scrollbar-width: none;
+}
+
+.lost-stolen-body{
+  position: absolute;
+  top: 180px;
+  left: 240px;
+  width: 80%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding-top: 20px;
+}
+
+.lost-stolen-header{
+  position: absolute;
+  top: 100px;
+  left: 260px;
+  display: flex;
+  flex-direction: row;
+  gap: 1000px;
+}
+
+.declaration-card{
+  position: absolute;
+  top: 230px;
+  left: 10px;
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding-top: 20px;
+  font-weight: 200;
+}
+
+.this{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+.inputbox{
+  width: 500px;
+  height: 110px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.replacement{
+  position: absolute;
+  top: 230px;
+  left: 10px;
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
 }

@@ -70,6 +70,92 @@ ${row('Status date', formatDate(account.pan_status_date))}
 `;
 }
 
+export function renderLostStolen(customer) {
+  const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+  const account = (customer.accounts && customer.accounts[0]) || {};
+
+  const abbrev = (value) => {
+    if (!value) return '';
+    const map = { 'REPLACED':'R','ACTIVE':'A','NEW':'N','NORMAL':'N' };
+    return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
+  };
+
+  const infoDot = `<button class="info-dot" data-customer-id="${customer.id || ''}">i</button>`;
+  const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
+  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
+  const row = (label, value, trailing='') => `
+<div class="card-section">
+<div class="section-title">${label}</div>
+${box(value)}
+${trailing}
+</div>
+`;
+
+  const fullName = `${(customer.first_name||'').toUpperCase()} ${(customer.family_name||'').toUpperCase()}`.trim();
+  const maskedPan = instrument.number || customer.pan || '';
+  const customerType = (instrument.type||'').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
+
+  return `
+
+<div class="customer-card">
+<div class="card-column">
+${row('Institution','Capitec Bank Limited',small('000010'))}
+${row('PAN',maskedPan)}
+</div>
+<div class="card-column">
+${row('Client code', customer.client_code)}
+${row('Family name', customer.family_name)}
+</div>
+<div class="card-column">
+${row('Network', 'VISA', small('01'))}
+</div>
+<div class="customer-profile">
+<div class="ID" style="background-color: #092365; color: white; margin-top: 20px; padding: 10px;">Identification</div>
+</div>
+</div>
+
+<div class="declaration-card customer-card">
+<div class="ID" style="background-color: #092365; color: white; margin-top: 20px; padding: 10px;">Declaration</div>
+<div class="card-column">
+${row('Declaration status', '')}
+${row('Status', '', small(''))}
+${row('Stop list start date', "<input type='date' id='stop-list-start-date' value='${formatDate(account.pan_status_date)}' />")}
+${row('reported by cardholder', "<input type='checkbox' id='stop-list-check' checked>")}
+${row('Country' , '', small(''))}
+${row('Police declaration', "<input type='checkbox' id='stop-list-check' >")}
+${row('Police declaration', '')}
+</div>
+<div class="card-column">
+${row('Declaration date', formatDate(account.pan_status_date))}
+${row('Status reason', "<input type='text' id='stop-list-reason' />", small(''))}
+${row('Stop list end date', "<input type='date' id='stop-list-end-date' value='${formatDate(account.pan_status_date)}' />")}
+${row('Reporter name', '')}
+${row('City' , '', small('HOWARD RABINS'))}
+${row('', '')}
+${row('Police declaration', "<input type='checkbox' id='stop-list-check' >")}
+</div>
+<div class="card-column">
+${row('Incident date', formatDate(account.pan_status_date))}
+${row('Stop list reason', '', small(''))}
+${row('Priority code', 'PG Embossing', small('003'))}
+${row('', '')}
+${row('State/Province', '')}
+${row('', '')}
+${row('Location', '')}
+</div>
+<div class="this"><span>Reporter Comment</span> <div class="inputbox"><input type="text" style="height: 100px; width: 500px;"></div></div>
+</div>
+
+<div class="replacement customer-card">
+<div class="ID" style="background-color: #092365; color: white; margin-top: 20px; padding: 10px;">Replacement</div>
+<div class="card-column">
+${row('Replacement option', '')}
+${row('PAN numbering', '', small("<button></button>"))}
+</div>
+</div>
+`;
+}
+
 export function renderCustomerAddress(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
@@ -331,6 +417,28 @@ ${contactSection}
 `;
 }
 
+function showLostStolen(customer) {
+  const content = document.getElementById("content");
+  content.innerHTML = `
+<div class="lost-stolen">
+<div class="lost-stolen-header">
+<button class="back-btn yo" id="lost-stolen-back-btn">← Back</button>
+<button class="save-all yo">Save all</button>
+</div>
+<div class="lost-stolen-body">
+<div class="lost-stolen-section">
+${renderLostStolen(customer)}
+</div>
+</div>
+</div>
+`;
+
+// Add event listener to back button
+  document.getElementById('lost-stolen-back-btn').addEventListener('click', () => {
+    showPaymentInstrument(customer);
+  });
+}
+
 export function showPaymentInstrument(customer) {
   const content = document.getElementById("content");
   content.innerHTML = `
@@ -339,11 +447,20 @@ export function showPaymentInstrument(customer) {
 <button class="back-btn yo" id="payment-back-btn">← Back</button>
 <div class="rigth-sides">
 <button class="operate yo">Operations history</button>
-<button class="Memo yo">Memo</button>
-<button class="lost-stolen yo">Lost/stolen</button>
+<button class="Memo yo" id="memo-btn">Memo</button>
+<button class="lost-stolen yo" id="lost-stolen-btn">Lost/stolen</button>
 <button class="operations yo" id="operations">Operations</button>
 <button class="Save-all yo">Save all</button>
 </div>
+<!-- Memo Popup (hidden by default) -->
+        <div id="memo-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 1000; width: 400px;">
+          <h3>Add Memo</h3>
+          <textarea id="memo-text" style="width: 100%; height: 100px; margin: 10px 0; padding: 8px;"></textarea>
+          <div style="display: flex; justify-content: space-between;">
+            <button id="save-memo" style="background: #092365; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Save</button>
+            <button id="cancel-memo" style="background: #ccc; color: black; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Cancel</button>
+          </div>
+        </div>
 </div>
 <div class="payment-content" style="display:flex;flex-direction:row;gap:20px;">
 <div class="left-section" style="width:200px; display:flex; flex-direction:column; gap:10px;">
@@ -372,11 +489,30 @@ export function showPaymentInstrument(customer) {
 </div>
 `;
 
+  const memoPopup = document.getElementById('memo-popup');
+  document.getElementById('memo-btn').addEventListener('click', () => {
+    memoPopup.style.display = 'block';
+  });
+
+  document.getElementById('cancel-memo').addEventListener('click', () => {
+    memoPopup.style.display = 'none';
+  });
+
+  document.getElementById('save-memo').addEventListener('click', () => {
+    const memoText = document.getElementById('memo-text').value;
+    console.log("Saved memo:", memoText);
+    memoPopup.style.display = 'none';
+  });
+
+
+  document.getElementById('lost-stolen-btn').addEventListener('click', () => {
+    showLostStolen(customer);
+  });
 
   document.getElementById('operations').addEventListener('click', () => {
     const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
 
-// Create and show the operations popup
+
     const popupOverlay = document.createElement('div');
     popupOverlay.className = 'popup-overlay';
     popupOverlay.style.cssText = `
@@ -503,24 +639,22 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 </div>
 `;
 
-
     operationsPopup.querySelector('.close-btn').addEventListener('click', () => {
       popupOverlay.remove();
     });
+
 
 
     popupOverlay.appendChild(operationsPopup);
     document.body.appendChild(popupOverlay);
   });
 
-
   document.getElementById('payment-back-btn').addEventListener('click', () => {
-    window.history.back();
+    showCustomerView();
   });
 
-
   const options = document.querySelectorAll('.left-section .options');
-  const body = document.getElementById('customerview');
+  const body = document.querySelector('.payment-body');
   options.forEach(option => {
     option.addEventListener('click', () => {
       const targetId = option.getAttribute('data-target');
@@ -529,7 +663,7 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     });
   });
 
-// Scroll listener to highlight active option
+
   body.addEventListener('scroll', () => {
     let currentSection = null;
     document.querySelectorAll('.payment-body section').forEach(sec => {
