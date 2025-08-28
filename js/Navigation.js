@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Configuration
+  const AUTOMATION_STEP_DELAY = 100000; // 30 seconds between steps
+  const BUBBLE_DISPLAY_TIME = 12000;
 
   const navigationOptions = [
     {
@@ -44,20 +47,75 @@ document.addEventListener("DOMContentLoaded", () => {
         "Navigate back to customer view when done"
       ],
       automation: automatePaymentInstruments
+    },
+    {
+      name: "Transaction History",
+      steps: [
+        "Navigate to Account Transactions tab",
+        "Filter transactions by date range",
+        "Search for specific transaction types",
+        "View detailed transaction information",
+        "Export transaction data if needed"
+      ],
+      automation: automateTransactionHistory
+    },
+    {
+      name: "Account Management",
+      steps: [
+        "Access account details from customer view",
+        "Review account status and limits",
+        "Check loyalty program information",
+        "View associated payment instruments",
+        "Manage account preferences"
+      ],
+      automation: automateAccountManagement
     }
   ];
 
-  const frequentOptions = ["Customer Service", "Customer Search"];
+  const frequentOptions = ["Customer Service", "Customer Search", "Transaction History"];
   let bubbles = [];
   let currentAutomation = null;
   let currentAutomationInterval = null;
+  let isDragging = false;
+  let dragOffset = { x: 0, y: 0 };
 
-  /* ------------ CREATE BUTTON ------------ */
+
   const navContainer = document.createElement("div");
+  navContainer.id = "nav-help-container";
   navContainer.style.position = "fixed";
   navContainer.style.bottom = "30px";
   navContainer.style.right = "30px";
   navContainer.style.zIndex = "9999";
+  navContainer.style.cursor = "move";
+
+
+  navContainer.addEventListener('mousedown', startDrag);
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', stopDrag);
+
+  function startDrag(e) {
+    if (e.target === navContainer || e.target === navButton) {
+      isDragging = true;
+      const rect = navContainer.getBoundingClientRect();
+      dragOffset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+  }
+
+  function drag(e) {
+    if (!isDragging) return;
+
+    navContainer.style.left = (e.clientX - dragOffset.x) + 'px';
+    navContainer.style.top = (e.clientY - dragOffset.y) + 'px';
+    navContainer.style.right = 'auto';
+    navContainer.style.bottom = 'auto';
+  }
+
+  function stopDrag() {
+    isDragging = false;
+  }
 
   const navButton = document.createElement("button");
   navButton.innerText = "☰ Navigation Help";
@@ -85,6 +143,20 @@ document.addEventListener("DOMContentLoaded", () => {
   dropdown.style.boxShadow = "0 4px 6px rgba(0,0,0,0.2)";
   dropdown.style.minWidth = "200px";
   dropdown.style.overflow = "hidden";
+  dropdown.style.zIndex = "10000";
+
+  // Add settings option to customize dropdown
+  const settingsItem = document.createElement("div");
+  settingsItem.innerText = "Customize Options...";
+  settingsItem.style.padding = "12px 15px";
+  settingsItem.style.cursor = "pointer";
+  settingsItem.style.borderBottom = "1px solid #eee";
+  settingsItem.style.background = "#f8f8f8";
+  settingsItem.style.fontWeight = "bold";
+  settingsItem.addEventListener("mouseenter", () => settingsItem.style.background = "#e0e0e0");
+  settingsItem.addEventListener("mouseleave", () => settingsItem.style.background = "#f8f8f8");
+  settingsItem.addEventListener("click", showCustomizationDialog);
+  dropdown.appendChild(settingsItem);
 
   navigationOptions.forEach(opt => {
     const item = document.createElement("div");
@@ -110,6 +182,83 @@ document.addEventListener("DOMContentLoaded", () => {
     hideBubbles();
   });
 
+  /* ------------ CUSTOMIZATION DIALOG ------------ */
+  function showCustomizationDialog() {
+    dropdown.style.display = "none";
+
+    const dialog = document.createElement("div");
+    dialog.style.position = "fixed";
+    dialog.style.top = "50%";
+    dialog.style.left = "50%";
+    dialog.style.transform = "translate(-50%, -50%)";
+    dialog.style.background = "white";
+    dialog.style.padding = "20px";
+    dialog.style.borderRadius = "10px";
+    dialog.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    dialog.style.zIndex = "10001";
+    dialog.style.minWidth = "300px";
+
+    const title = document.createElement("h3");
+    title.innerText = "Customize Navigation Options";
+    title.style.marginTop = "0";
+    dialog.appendChild(title);
+
+    const instructions = document.createElement("p");
+    instructions.innerText = "Select which options should appear in the dropdown:";
+    instructions.style.marginBottom = "15px";
+    dialog.appendChild(instructions);
+
+    const optionsContainer = document.createElement("div");
+    optionsContainer.style.maxHeight = "300px";
+    optionsContainer.style.overflowY = "auto";
+
+    navigationOptions.forEach(opt => {
+      const label = document.createElement("label");
+      label.style.display = "flex";
+      label.style.alignItems = "center";
+      label.style.marginBottom = "10px";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      checkbox.style.marginRight = "10px";
+
+      const text = document.createElement("span");
+      text.innerText = opt.name;
+
+      label.appendChild(checkbox);
+      label.appendChild(text);
+      optionsContainer.appendChild(label);
+    });
+
+    dialog.appendChild(optionsContainer);
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.justifyContent = "flex-end";
+    buttonContainer.style.marginTop = "20px";
+    buttonContainer.style.gap = "10px";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.innerText = "Cancel";
+    cancelBtn.addEventListener("click", () => document.body.removeChild(dialog));
+
+    const saveBtn = document.createElement("button");
+    saveBtn.innerText = "Save";
+    saveBtn.style.background = "#092365";
+    saveBtn.style.color = "white";
+    saveBtn.addEventListener("click", () => {
+      // In a real implementation, you would save these preferences
+      document.body.removeChild(dialog);
+    });
+
+    buttonContainer.appendChild(cancelBtn);
+    buttonContainer.appendChild(saveBtn);
+    dialog.appendChild(buttonContainer);
+
+    document.body.appendChild(dialog);
+  }
+
   /* ------------ FREQUENT OPTIONS AS SPEECH BUBBLES ------------ */
   frequentOptions.forEach((freq, i) => {
     const bubble = document.createElement("div");
@@ -127,6 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bubble.style.opacity = "0";
     bubble.style.transition = "opacity 1s ease";
     bubble.style.whiteSpace = "nowrap";
+    bubble.style.zIndex = "9998";
 
     bubble.addEventListener("click", () => {
       const opt = navigationOptions.find(o => o.name === freq);
@@ -143,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
         b.style.opacity = "1";
         setTimeout(() => {
           b.style.opacity = "0";
-        }, 12000);
+        }, BUBBLE_DISPLAY_TIME);
       }, i * 600);
     });
   }
@@ -208,7 +358,62 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
   }
 
-  /* ------------ AUTOMATION FUNCTIONS ------------ */
+  /* ------------ NEW AUTOMATION FUNCTIONS ------------ */
+  function automateTransactionHistory() {
+    // Navigate to Account Transactions tab
+    setTimeout(() => {
+      const transactionsTab = document.querySelector('[data-tab="transactions"]');
+      if (transactionsTab) {
+        transactionsTab.click();
+
+        // Wait for transactions to load
+        setTimeout(() => {
+          // Show date filter
+          const dateFilter = document.querySelector('.date-filter');
+          if (dateFilter) {
+            highlightElement('.date-filter', 'Filter transactions by date range');
+
+            // After delay, show transaction details
+            setTimeout(() => {
+              const firstTransaction = document.querySelector('.transaction-row');
+              if (firstTransaction) {
+                highlightElement('.transaction-row', 'Click on any transaction to view details');
+              }
+            }, 10000);
+          }
+        }, 2000);
+      }
+    }, 1000);
+  }
+
+  function automateAccountManagement() {
+    // Navigate to Account Summary tab
+    setTimeout(() => {
+      const accountTab = document.querySelector('[data-tab="account-summary"]');
+      if (accountTab) {
+        accountTab.click();
+
+        // Wait for account details to load
+        setTimeout(() => {
+          // Show account status
+          const accountStatus = document.querySelector('.account-status');
+          if (accountStatus) {
+            highlightElement('.account-status', 'View account status and limits here');
+
+            // After delay, show loyalty information
+            setTimeout(() => {
+              const loyaltyInfo = document.querySelector('.loyalty-info');
+              if (loyaltyInfo) {
+                highlightElement('.loyalty-info', 'Check loyalty program details');
+              }
+            }, 10000);
+          }
+        }, 2000);
+      }
+    }, 1000);
+  }
+
+  /* ------------ EXISTING AUTOMATION FUNCTIONS (UPDATED) ------------ */
   function automateCustomerService() {
     // Click Customer Service button
     const customerServiceBtn = document.getElementById('customer-service');
@@ -360,7 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 500);
   }
 
-  /* ------------ AUTOMATION SYSTEM ------------ */
+  /* ------------ AUTOMATION SYSTEM (UPDATED) ------------ */
   function startAutomation(option) {
     if (currentAutomation) {
       document.body.removeChild(currentAutomation);
@@ -373,44 +578,53 @@ document.addEventListener("DOMContentLoaded", () => {
     let stepIndex = 0;
     removeHighlights();
 
-    const overlay = document.createElement("div");
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.zIndex = "10000";
-    overlay.style.display = "flex";
-    overlay.style.flexDirection = "column";
-    overlay.style.justifyContent = "center";
-    overlay.style.alignItems = "center";
+    const guidePanel = document.createElement("div");
+    guidePanel.id = "nav-guide-panel";
+    guidePanel.style.position = "fixed";
+    guidePanel.style.top = "20px";
+    guidePanel.style.right = "20px";
+    guidePanel.style.background = "white";
+    guidePanel.style.borderRadius = "10px";
+    guidePanel.style.padding = "15px";
+    guidePanel.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+    guidePanel.style.zIndex = "10000";
+    guidePanel.style.minWidth = "300px";
+    guidePanel.style.maxWidth = "400px";
+    guidePanel.style.cursor = "move";
 
-    const modal = document.createElement("div");
-    modal.style.background = "white";
-    modal.style.borderRadius = "15px";
-    modal.style.padding = "25px";
-    modal.style.maxWidth = "500px";
-    modal.style.width = "90%";
-    modal.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+    // Make panel draggable
+    guidePanel.addEventListener('mousedown', function(e) {
+      if (e.target.tagName !== 'BUTTON') {
+        startDragPanel(e, guidePanel);
+      }
+    });
 
     const title = document.createElement("h3");
     title.innerText = `${option.name} Guide`;
-    title.style.margin = "0 0 15px 0";
+    title.style.margin = "0 0 10px 0";
     title.style.color = "#092365";
-    title.style.textAlign = "center";
+    title.style.fontSize = "16px";
 
     const message = document.createElement("div");
-    message.style.fontSize = "16px";
-    message.style.marginBottom = "20px";
-    message.style.lineHeight = "1.5";
-    message.style.textAlign = "center";
+    message.style.fontSize = "14px";
+    message.style.marginBottom = "15px";
+    message.style.lineHeight = "1.4";
+
+    const progressContainer = document.createElement("div");
+    progressContainer.style.display = "flex";
+    progressContainer.style.alignItems = "center";
+    progressContainer.style.marginBottom = "15px";
+    progressContainer.style.gap = "10px";
+
+    const progressText = document.createElement("span");
+    progressText.style.fontSize = "12px";
+    progressText.style.color = "#666";
 
     const progressBar = document.createElement("div");
-    progressBar.style.width = "100%";
+    progressBar.style.flexGrow = "1";
     progressBar.style.height = "6px";
     progressBar.style.background = "#eee";
     progressBar.style.borderRadius = "3px";
-    progressBar.style.marginBottom = "20px";
     progressBar.style.overflow = "hidden";
 
     const progress = document.createElement("div");
@@ -420,52 +634,65 @@ document.addEventListener("DOMContentLoaded", () => {
     progress.style.transition = "width 0.3s ease";
 
     progressBar.appendChild(progress);
+    progressContainer.appendChild(progressText);
+    progressContainer.appendChild(progressBar);
 
     const buttonContainer = document.createElement("div");
     buttonContainer.style.display = "flex";
-    buttonContainer.style.gap = "10px";
-    buttonContainer.style.justifyContent = "center";
+    buttonContainer.style.gap = "8px";
+    buttonContainer.style.justifyContent = "space-between";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.innerText = "← Previous";
+    prevBtn.style.padding = "8px 12px";
+    prevBtn.style.border = "1px solid #ccc";
+    prevBtn.style.borderRadius = "4px";
+    prevBtn.style.cursor = "pointer";
+    prevBtn.style.fontSize = "12px";
+    prevBtn.style.background = "white";
+    prevBtn.disabled = true;
 
     const nextBtn = document.createElement("button");
-    nextBtn.innerText = "Next Step →";
-    nextBtn.style.padding = "12px 20px";
+    nextBtn.innerText = "Next →";
+    nextBtn.style.padding = "8px 12px";
     nextBtn.style.border = "none";
-    nextBtn.style.borderRadius = "6px";
+    nextBtn.style.borderRadius = "4px";
     nextBtn.style.cursor = "pointer";
-    nextBtn.style.fontSize = "14px";
+    nextBtn.style.fontSize = "12px";
     nextBtn.style.background = "#4caf50";
     nextBtn.style.color = "white";
 
     const autoBtn = document.createElement("button");
     autoBtn.innerText = "Auto Run";
-    autoBtn.style.padding = "12px 20px";
+    autoBtn.style.padding = "8px 12px";
     autoBtn.style.border = "none";
-    autoBtn.style.borderRadius = "6px";
+    autoBtn.style.borderRadius = "4px";
     autoBtn.style.cursor = "pointer";
-    autoBtn.style.fontSize = "14px";
+    autoBtn.style.fontSize = "12px";
     autoBtn.style.background = "#2196f3";
     autoBtn.style.color = "white";
 
     const closeBtn = document.createElement("button");
-    closeBtn.innerText = " Close";
-    closeBtn.style.padding = "12px 20px";
+    closeBtn.innerText = "Close";
+    closeBtn.style.padding = "8px 12px";
     closeBtn.style.border = "none";
-    closeBtn.style.borderRadius = "6px";
+    closeBtn.style.borderRadius = "4px";
     closeBtn.style.cursor = "pointer";
-    closeBtn.style.fontSize = "14px";
+    closeBtn.style.fontSize = "12px";
     closeBtn.style.background = "#f44336";
     closeBtn.style.color = "white";
 
-    modal.appendChild(title);
-    modal.appendChild(message);
-    modal.appendChild(progressBar);
-    modal.appendChild(buttonContainer);
+    buttonContainer.appendChild(prevBtn);
     buttonContainer.appendChild(nextBtn);
     buttonContainer.appendChild(autoBtn);
     buttonContainer.appendChild(closeBtn);
-    overlay.appendChild(modal);
 
-    currentAutomation = overlay;
+    guidePanel.appendChild(title);
+    guidePanel.appendChild(message);
+    guidePanel.appendChild(progressContainer);
+    guidePanel.appendChild(buttonContainer);
+
+    currentAutomation = guidePanel;
 
     function updateStep() {
       const currentStep = option.steps[stepIndex];
@@ -473,14 +700,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const progressPercent = ((stepIndex + 1) / option.steps.length) * 100;
       progress.style.width = progressPercent + "%";
+      progressText.innerText = `${stepIndex + 1}/${option.steps.length}`;
+
+      // Enable/disable navigation buttons
+      prevBtn.disabled = stepIndex === 0;
+      nextBtn.innerText = stepIndex >= option.steps.length - 1 ? "Finish" : "Next →";
+      nextBtn.style.background = stepIndex >= option.steps.length - 1 ? "#092365" : "#4caf50";
 
       // Highlight relevant elements based on the step
       highlightCurrentStep(option.name, stepIndex);
-
-      if (stepIndex >= option.steps.length - 1) {
-        nextBtn.innerText = "Complete ✓";
-        nextBtn.style.background = "#092365";
-      }
     }
 
     function highlightCurrentStep(optionName, step) {
@@ -521,10 +749,35 @@ document.addEventListener("DOMContentLoaded", () => {
             case 4: highlightElement("#back-btn", "Return to customer view"); break;
           }
           break;
+        case "Transaction History":
+          switch(step) {
+            case 0: highlightElement('[data-tab="transactions"]', "Click to view transactions"); break;
+            case 1: highlightElement('.date-filter', "Filter by date range"); break;
+            case 2: highlightElement('.transaction-search', "Search for specific transactions"); break;
+            case 3: highlightElement('.transaction-details', "View detailed information"); break;
+            case 4: highlightElement('.export-btn', "Export data if needed"); break;
+          }
+          break;
+        case "Account Management":
+          switch(step) {
+            case 0: highlightElement('[data-tab="account-summary"]', "View account details"); break;
+            case 1: highlightElement('.account-status', "Check account status and limits"); break;
+            case 2: highlightElement('.loyalty-info', "Review loyalty program"); break;
+            case 3: highlightElement('.payment-instruments', "Manage payment methods"); break;
+            case 4: highlightElement('.preferences', "Adjust account preferences"); break;
+          }
+          break;
       }
     }
 
     updateStep();
+
+    prevBtn.addEventListener("click", () => {
+      if (stepIndex > 0) {
+        stepIndex--;
+        updateStep();
+      }
+    });
 
     nextBtn.addEventListener("click", () => {
       if (stepIndex < option.steps.length - 1) {
@@ -532,7 +785,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStep();
       } else {
         removeHighlights();
-        document.body.removeChild(overlay);
+        document.body.removeChild(guidePanel);
         currentAutomation = null;
       }
     });
@@ -555,7 +808,7 @@ document.addEventListener("DOMContentLoaded", () => {
             clearInterval(currentAutomationInterval);
             currentAutomationInterval = null;
           }
-        }, 3000);
+        }, AUTOMATION_STEP_DELAY);
       }
     });
 
@@ -565,24 +818,47 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(currentAutomationInterval);
         currentAutomationInterval = null;
       }
-      document.body.removeChild(overlay);
+      document.body.removeChild(guidePanel);
       currentAutomation = null;
     });
 
-    // Close on backdrop click
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) {
-        removeHighlights();
-        if (currentAutomationInterval) {
-          clearInterval(currentAutomationInterval);
-          currentAutomationInterval = null;
-        }
-        document.body.removeChild(overlay);
-        currentAutomation = null;
+    document.body.appendChild(guidePanel);
+
+    // Panel dragging functions
+    let isPanelDragging = false;
+    let panelDragOffset = { x: 0, y: 0 };
+
+    function startDragPanel(e, panel) {
+      isPanelDragging = true;
+      const rect = panel.getBoundingClientRect();
+      panelDragOffset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+      panel.style.cursor = "grabbing";
+    }
+
+    function dragPanel(e) {
+      if (!isPanelDragging) return;
+
+      guidePanel.style.left = (e.clientX - panelDragOffset.x) + 'px';
+      guidePanel.style.top = (e.clientY - panelDragOffset.y) + 'px';
+      guidePanel.style.right = 'auto';
+    }
+
+    function stopDragPanel() {
+      isPanelDragging = false;
+      guidePanel.style.cursor = "move";
+    }
+
+    guidePanel.addEventListener('mousedown', (e) => {
+      if (e.target.tagName !== 'BUTTON') {
+        startDragPanel(e, guidePanel);
       }
     });
 
-    document.body.appendChild(overlay);
+    document.addEventListener('mousemove', dragPanel);
+    document.addEventListener('mouseup', stopDragPanel);
   }
 
   // Clean up highlights when page changes
@@ -590,9 +866,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentAutomation) {
       // Re-highlight current step if DOM changes
       setTimeout(() => {
-        const currentStepIndex = parseInt(currentAutomation.querySelector(".progress").style.width) / (100 / navigationOptions[0].steps.length) - 1;
-        if (currentStepIndex >= 0) {
-          highlightCurrentStep("Customer Service", Math.floor(currentStepIndex));
+        const progressText = currentAutomation.querySelector("span");
+        if (progressText) {
+          const [current, total] = progressText.innerText.split('/').map(Number);
+          if (current > 0) {
+            const optionName = currentAutomation.querySelector("h3").innerText.replace(" Guide", "");
+            highlightCurrentStep(optionName, current - 1);
+          }
         }
       }, 100);
     }
@@ -615,4 +895,11 @@ document.addEventListener("DOMContentLoaded", () => {
       currentAutomation = null;
     }
   });
+
+  // Helper function for panel dragging
+  function highlightCurrentStep(optionName, stepIndex) {
+    // This would be implemented based on your specific UI elements
+    // The implementation would vary based on your actual HTML structure
+    console.log(`Highlighting step ${stepIndex + 1} for ${optionName}`);
+  }
 });
