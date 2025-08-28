@@ -447,7 +447,7 @@ export function showClient(customer) {
 <button class="back-btn yo" id="payment-back-btn">← Back</button>
 <div class="rigth-sides">
 <button class="Memo yo" id="memo-btn">Memo</button>
-<button class="operations yo" id="operations">change status</button>
+<button class="operations yo" id="change-status">change status</button>
 <button class="Save-all yo">Save all</button>
 </div>
 <!-- Memo Popup (hidden by default) -->
@@ -506,7 +506,7 @@ export function showClient(customer) {
     showLostStolen(customer);
   });
 
-  document.getElementById('operations').addEventListener('click', () => {
+  document.getElementById('change-status').addEventListener('click', () => {
     const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
 
 
@@ -525,9 +525,9 @@ align-items: center;
 z-index: 1000;
 `;
 
-    const operationsPopup = document.createElement('div');
-    operationsPopup.className = 'operations-popup';
-    operationsPopup.style.cssText = `
+    const changeStatusPopup = document.createElement('div');
+    changeStatusPopup.className = 'change-status-popup';
+    changeStatusPopup.style.cssText = `
 background-color: white;
 width: 80%;
 max-width: 1000px;
@@ -537,7 +537,7 @@ border-radius: 5px;
 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
-    operationsPopup.innerHTML = `
+    changeStatusPopup.innerHTML = `
 <div class="popup-header" style="background-color: #092365; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
 <span style="font-weight: bold;">PAYMENT INSTRUMENTS OPERATIONS</span>
 <button class="close-btn" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">&times;</button>
@@ -636,13 +636,13 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 </div>
 `;
 
-    operationsPopup.querySelector('.close-btn').addEventListener('click', () => {
+    changeStatusPopup.querySelector('.close-btn').addEventListener('click', () => {
       popupOverlay.remove();
     });
 
 
 
-    popupOverlay.appendChild(operationsPopup);
+    popupOverlay.appendChild(changeStatusPopup);
     document.body.appendChild(popupOverlay);
   });
 
