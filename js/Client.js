@@ -290,13 +290,13 @@ ${trailing}
 <div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
 <div class="customer-card">
 <div class="card-column">
-${row('Institution','Capitec Bank Limited',small('000010'))}
-${row('PAN', instrument.number || customer.pan)}
-${row('Client code', customer.client_code)}
-${row('Gender', customer.gender)}
-${row('Family name', customer.family_name)}
-${row('Second name', customer.family_name)}
-${row('Status', instrument.condition||'N/A', small(abbrev(instrument.condition||'')))}
+${row('Institution','')}
+${row('PAN', '')}
+${row('Client code', '')}
+${row('Gender', '')}
+${row('Family name', '')}
+${row('Second name', '')}
+${row('Status', '')}
 ${row('Application ID', customer.application_ID)}
 </div>
 <div class="card-column">
@@ -435,21 +435,19 @@ ${renderLostStolen(customer)}
 
 // Add event listener to back button
   document.getElementById('lost-stolen-back-btn').addEventListener('click', () => {
-    showPaymentInstrument(customer);
+    showClient(customer);
   });
 }
 
-export function showPaymentInstrument(customer) {
+export function showClient(customer) {
   const content = document.getElementById("content");
   content.innerHTML = `
 <div class="payment-instrument">
 <div class="payment-instrument-header">
 <button class="back-btn yo" id="payment-back-btn">← Back</button>
 <div class="rigth-sides">
-<button class="operate yo">Operations history</button>
 <button class="Memo yo" id="memo-btn">Memo</button>
-<button class="lost-stolen yo" id="lost-stolen-btn">Lost/stolen</button>
-<button class="operations yo" id="operations">Operations</button>
+<button class="operations yo" id="operations">change status</button>
 <button class="Save-all yo">Save all</button>
 </div>
 <!-- Memo Popup (hidden by default) -->
@@ -466,13 +464,12 @@ export function showPaymentInstrument(customer) {
 <div class="left-section" style="width:200px; display:flex; flex-direction:column; gap:10px;">
 <div class="Id options" data-target="Identification">Identification</div>
 <div class="demo options" data-target="Demographic">Demographic</div>
-<div class="Emb options" data-target="Embossing">Embossing</div>
 <div class="address options" data-target="Address">Address</div>
-<div class="Add options" data-target="Additional">Additional fields</div>
-<div class="add-on options" data-target="AddOn">Add on services</div>
-<div class="Acc options" data-target="Accounts">Accounts/ posting rules</div>
-<div class="comms options" data-target="Comms">Communication strategy</div>
-<div class="pan options" data-target="Pan">Pan indicators</div>
+<div class="Add options" data-target="Additional">Documents</div>
+<div class="add-on options" data-target="AddOn">Financials</div>
+<div class="Acc options" data-target="Accounts">Additionals</div>
+<div class="comms options" data-target="Comms">Additional fields</div>
+<div class="pan options" data-target="Pan">Communication strategy</div>
 </div>
 <div class="payment-body" style="flex:1;height:500px;overflow-y:auto;scroll-behavior:smooth;padding-left:20px;">
 <section id="Identification">${renderCustomerCard(customer)}</section>

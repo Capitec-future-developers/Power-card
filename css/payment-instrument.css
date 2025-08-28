@@ -288,6 +288,9 @@ position: absolute;
 
 .replacement{
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   top: 680px;
   left: 10px;
   width: 100%;

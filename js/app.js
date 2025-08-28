@@ -1,6 +1,7 @@
 import { mockDatabase } from './mockDatabase.js';
 import { showPaymentInstrument } from './payment-instrument.js';
 import { getTransactionHistory } from './mockDatabase.js';
+import { showClient } from './Client.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
@@ -8,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const customerView = document.getElementById('customer-view');
   const subheader = document.getElementById('subheader');
   const paymentInstruments = document.getElementById('payment-instruments');
+  const accounts = document.getElementById('client');
 
   function renderCustomerCard(customer) {
     const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const infoDot = `<button class="info-dot" data-customer-id="${customer.id || ''}">i</button>`;
-    const infoDot2 = '<span class="info-dot">i</span>';
+    const infoDot2 = `<span class="info-dot2" data-customer-id="${customer.id || ''}">i</span>`;
     const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
     const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
     const row = (label, value, trailing = '') => `
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="card-column">
           ${row('Full name', `${fullName ? '01 ' + fullName : ''}`)}
-          ${row('Client code', customer.client_code)}
+          ${row('Client code', customer.client_code, infoDot2)}
           ${row('Client status', account.status || 'NORMAL', small(abbrev(account.status || 'NORMAL')))}
           ${row('Client status reason', '')}
           ${row('Client status date', formatDate(customer.updated_at))}
@@ -809,6 +811,12 @@ document.addEventListener('DOMContentLoaded', () => {
     content.addEventListener('click', (e) => {
       if (e.target.classList.contains('info-dot')) {
         showPaymentInstrument(customer);
+      }
+    });
+
+    content.addEventListener('click', (e) => {
+      if (e.target.classList.contains('info-dot2')) {
+        showClient(customer);
       }
     });
 
