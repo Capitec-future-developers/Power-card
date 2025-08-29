@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Load saved options or use defaults
   const savedOptions = JSON.parse(localStorage.getItem('navHelpOptions')) || {};
   const savedEnabledOptions = savedOptions.enabledOptions || {};
-  const savedPosition = savedOptions.position || { bottom: '40px', right: '40px' };
+  const savedPosition = savedOptions.position || { bottom: '30px', right: '30px' };
   const savedNavigationOptions = savedOptions.navigationOptions || null;
 
 // Use saved navigation options if available, otherwise use defaults
@@ -98,6 +98,88 @@ document.addEventListener("DOMContentLoaded", () => {
   let isDragging = false;
   let dragOffset = { x: 0, y: 0 };
 
+  /* ------------ ELEMENT DISCOVERY AND INTERACTION FUNCTIONS ------------ */
+
+// Function to find elements by various selectors
+  function findElement(selectors) {
+    for (const selector of selectors) {
+      const element = document.querySelector(selector);
+      if (element) return element;
+    }
+    return null;
+  }
+
+// Function to simulate a click on an element
+  function clickElement(element) {
+    if (!element) return false;
+
+    try {
+// Create and dispatch a mouse event
+      const mouseEvent = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+      });
+      element.dispatchEvent(mouseEvent);
+
+// Also trigger the native click method
+      if (typeof element.click === 'function') {
+        element.click();
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error clicking element:', error);
+      return false;
+    }
+  }
+
+// Function to simulate typing into an input field
+  function typeInInput(selector, text) {
+    const input = findElement(selector);
+    if (!input) return false;
+
+    try {
+      input.focus();
+      input.value = text;
+
+// Trigger input events
+      const inputEvent = new Event('input', { bubbles: true });
+      input.dispatchEvent(inputEvent);
+
+      const changeEvent = new Event('change', { bubbles: true });
+      input.dispatchEvent(changeEvent);
+
+      return true;
+    } catch (error) {
+      console.error('Error typing in input:', error);
+      return false;
+    }
+  }
+
+// Function to wait for an element to appear
+  function waitForElement(selectors, timeout = 5000) {
+    return new Promise((resolve) => {
+      const startTime = Date.now();
+
+      function check() {
+        const element = findElement(selectors);
+        if (element) {
+          resolve(element);
+          return;
+        }
+
+        if (Date.now() - startTime < timeout) {
+          setTimeout(check, 100);
+        } else {
+          resolve(null);
+        }
+      }
+
+      check();
+    });
+  }
+
   /* ------------ CREATE BUTTON ------------ */
   const navContainer = document.createElement("div");
   navContainer.id = "nav-help-container";
@@ -153,40 +235,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navButton = document.createElement("button");
   navButton.innerText = "☰ Navigation Help";
-  navButton.style.padding = "10px 20px";
-  navButton.style.borderRadius = "20px";
-  navButton.style.border = "none";
-  navButton.style.background = "#092365";
-  navButton.style.color = "white";
-  navButton.style.cursor = "pointer";
-  navButton.style.fontSize = "16px";
-  navButton.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
-
   navContainer.appendChild(navButton);
   document.body.appendChild(navContainer);
 
   /* ------------ DROPDOWN MENU ------------ */
   const dropdown = document.createElement("div");
   dropdown.style.display = "none";
-  dropdown.style.position = "absolute";
-  dropdown.style.bottom = "50px";
-  dropdown.style.right = "0";
-  dropdown.style.background = "white";
-  dropdown.style.border = "1px solid #ccc";
-  dropdown.style.borderRadius = "8px";
-  dropdown.style.boxShadow = "0 4px 6px rgba(0,0,0,0.2)";
-  dropdown.style.minWidth = "200px";
-  dropdown.style.overflow = "hidden";
-  dropdown.style.zIndex = "10000";
 
 // Add settings option to customize dropdown
   const settingsItem = document.createElement("div");
   settingsItem.innerText = "Customize Options...";
-  settingsItem.style.padding = "12px 15px";
-  settingsItem.style.cursor = "pointer";
-  settingsItem.style.borderBottom = "1px solid #eee";
-  settingsItem.style.background = "#f8f8f8";
-  settingsItem.style.fontWeight = "bold";
   settingsItem.addEventListener("mouseenter", () => settingsItem.style.background = "#e0e0e0");
   settingsItem.addEventListener("mouseleave", () => settingsItem.style.background = "#f8f8f8");
   settingsItem.addEventListener("click", showCustomizationDialog);
@@ -195,11 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // Add admin option to edit use cases
   const adminItem = document.createElement("div");
   adminItem.innerText = "Admin: Edit Use Cases";
-  adminItem.style.padding = "12px 15px";
-  adminItem.style.cursor = "pointer";
-  adminItem.style.borderBottom = "1px solid #eee";
-  adminItem.style.background = "#f8f8f8";
-  adminItem.style.fontWeight = "bold";
   adminItem.style.color = "#d32f2f";
   adminItem.addEventListener("mouseenter", () => adminItem.style.background = "#ffcdd2");
   adminItem.addEventListener("mouseleave", () => adminItem.style.background = "#f8f8f8");
@@ -219,12 +272,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .forEach(opt => {
         const item = document.createElement("div");
         item.innerText = opt.name;
-        item.style.padding = "12px 15px";
-        item.style.cursor = "pointer";
-        item.style.borderBottom = "1px solid #eee";
         item.addEventListener("mouseenter", () => item.style.background = "#f0f0f0");
         item.addEventListener("mouseleave", () => item.style.background = "white");
-
         item.addEventListener("click", () => {
           dropdown.style.display = "none";
           startAutomation(opt);
@@ -250,35 +299,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dialog = document.createElement("div");
     dialog.id = "nav-admin-dialog";
-    dialog.style.position = "fixed";
-    dialog.style.top = "50%";
-    dialog.style.left = "50%";
-    dialog.style.transform = "translate(-50%, -50%)";
-    dialog.style.background = "white";
-    dialog.style.padding = "20px";
-    dialog.style.borderRadius = "10px";
-    dialog.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    dialog.style.zIndex = "10001";
-    dialog.style.minWidth = "500px";
-    dialog.style.maxWidth = "700px";
-    dialog.style.maxHeight = "80vh";
-    dialog.style.overflowY = "auto";
 
     const title = document.createElement("h3");
     title.innerText = "Admin: Edit Navigation Use Cases";
-    title.style.marginTop = "0";
-    title.style.color = "#d32f2f";
     dialog.appendChild(title);
 
     const instructions = document.createElement("p");
     instructions.innerText = "Add, edit, or remove navigation use cases. Each use case requires a name and step-by-step instructions.";
-    instructions.style.marginBottom = "15px";
-    instructions.style.color = "#666";
     dialog.appendChild(instructions);
 
     const useCasesContainer = document.createElement("div");
     useCasesContainer.id = "use-cases-container";
-    useCasesContainer.style.marginBottom = "20px";
 
 // Add existing use cases
     navigationOptions.forEach((option, index) => {
@@ -291,14 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // Add new use case button
     const addButton = document.createElement("button");
     addButton.innerText = "+ Add New Use Case";
-    addButton.style.padding = "8px 12px";
-    addButton.style.marginBottom = "20px";
-    addButton.style.border = "1px dashed #092365";
-    addButton.style.background = "transparent";
-    addButton.style.color = "#092365";
-    addButton.style.cursor = "pointer";
-    addButton.style.borderRadius = "4px";
-    addButton.style.width = "100%";
     addButton.addEventListener("click", () => {
       const newUseCase = {
         name: "New Use Case",
@@ -323,21 +346,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cancelBtn = document.createElement("button");
     cancelBtn.innerText = "Cancel";
-    cancelBtn.style.padding = "8px 16px";
-    cancelBtn.style.border = "1px solid #ccc";
-    cancelBtn.style.background = "white";
-    cancelBtn.style.borderRadius = "4px";
-    cancelBtn.style.cursor = "pointer";
     cancelBtn.addEventListener("click", () => document.body.removeChild(dialog));
 
     const saveBtn = document.createElement("button");
     saveBtn.innerText = "Save All Changes";
-    saveBtn.style.padding = "8px 16px";
-    saveBtn.style.border = "none";
     saveBtn.style.background = "#4caf50";
     saveBtn.style.color = "white";
-    saveBtn.style.borderRadius = "4px";
-    saveBtn.style.cursor = "pointer";
     saveBtn.addEventListener("click", () => {
 // Collect all use case data
       const useCaseEditors = dialog.querySelectorAll('.use-case-editor');
@@ -390,46 +404,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const useCaseDiv = document.createElement("div");
     useCaseDiv.className = "use-case-editor";
     useCaseDiv.dataset.index = index;
-    useCaseDiv.style.border = "1px solid #ddd";
-    useCaseDiv.style.borderRadius = "8px";
-    useCaseDiv.style.padding = "15px";
-    useCaseDiv.style.marginBottom = "15px";
-    useCaseDiv.style.background = "#f9f9f9";
 
 // Use case name
     const nameLabel = document.createElement("label");
     nameLabel.innerText = "Use Case Name:";
-    nameLabel.style.display = "block";
-    nameLabel.style.marginBottom = "5px";
-    nameLabel.style.fontWeight = "bold";
 
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.value = option.name;
     nameInput.className = "use-case-name";
-    nameInput.style.width = "100%";
-    nameInput.style.padding = "8px";
-    nameInput.style.marginBottom = "10px";
-    nameInput.style.border = "1px solid #ccc";
-    nameInput.style.borderRadius = "4px";
 
 // Use case steps
     const stepsLabel = document.createElement("label");
     stepsLabel.innerText = "Steps (one per line):";
-    stepsLabel.style.display = "block";
-    stepsLabel.style.marginBottom = "5px";
-    stepsLabel.style.fontWeight = "bold";
 
     const stepsTextarea = document.createElement("textarea");
     stepsTextarea.value = option.steps.join('\n');
     stepsTextarea.className = "use-case-steps";
-    stepsTextarea.style.width = "100%";
-    stepsTextarea.style.height = "100px";
-    stepsTextarea.style.padding = "8px";
-    stepsTextarea.style.marginBottom = "10px";
-    stepsTextarea.style.border = "1px solid #ccc";
-    stepsTextarea.style.borderRadius = "4px";
-    stepsTextarea.style.resize = "vertical";
 
 // Enabled checkbox
     const enabledContainer = document.createElement("div");
@@ -453,13 +444,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // Delete button
     const deleteButton = document.createElement("button");
     deleteButton.innerText = "Delete";
-    deleteButton.style.padding = "6px 12px";
-    deleteButton.style.border = "none";
     deleteButton.style.background = "#f44336";
     deleteButton.style.color = "white";
-    deleteButton.style.borderRadius = "4px";
-    deleteButton.style.cursor = "pointer";
-    deleteButton.style.float = "right";
     deleteButton.addEventListener("click", () => {
       if (confirm("Are you sure you want to delete this use case?")) {
         navigationOptions.splice(index, 1);
@@ -483,26 +469,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dialog = document.createElement("div");
     dialog.id = "nav-custom-dialog";
-    dialog.style.position = "fixed";
-    dialog.style.top = "50%";
-    dialog.style.left = "50%";
-    dialog.style.transform = "translate(-50%, -50%)";
-    dialog.style.background = "white";
-    dialog.style.padding = "20px";
-    dialog.style.borderRadius = "10px";
-    dialog.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    dialog.style.zIndex = "10001";
-    dialog.style.minWidth = "300px";
-    dialog.style.maxWidth = "400px";
 
     const title = document.createElement("h3");
     title.innerText = "Customize Navigation Options";
-    title.style.marginTop = "0";
     dialog.appendChild(title);
 
     const instructions = document.createElement("p");
     instructions.innerText = "Select which options should appear in the dropdown:";
-    instructions.style.marginBottom = "15px";
     dialog.appendChild(instructions);
 
     const optionsContainer = document.createElement("div");
@@ -586,17 +559,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bubble.style.position = "absolute";
     bubble.style.bottom = `${60 + (i * 45)}px`;
     bubble.style.right = "150px";
-    bubble.style.background = "#ffffff";
-    bubble.style.color = "black";
-    bubble.style.padding = "8px 12px";
-    bubble.style.borderRadius = "20px";
-    bubble.style.fontSize = "13px";
-    bubble.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
-    bubble.style.cursor = "pointer";
-    bubble.style.opacity = "0";
-    bubble.style.transition = "opacity 1s ease";
-    bubble.style.whiteSpace = "nowrap";
-    bubble.style.zIndex = "9998";
+    bubble.className = "speech-bubble";
 
     bubble.addEventListener("click", () => {
       const opt = navigationOptions.find(o => o.name === freq && o.enabled);
@@ -626,7 +589,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setTimeout(showBubbles, 1500);
 
-
+  /* ------------ ELEMENT HIGHLIGHTING ------------ */
   function highlightElement(selector, message) {
     removeHighlights();
 
@@ -635,13 +598,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const highlight = document.createElement("div");
     highlight.className = "nav-highlight";
-    highlight.style.position = "absolute";
-    highlight.style.border = "3px solid #ff6b6b";
-    highlight.style.borderRadius = "8px";
-    highlight.style.pointerEvents = "none";
-    highlight.style.zIndex = "9998";
-    highlight.style.boxShadow = "0 0 20px rgba(255, 107, 107, 0.5)";
-    highlight.style.animation = "pulse 2s infinite";
 
     const rect = element.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -654,20 +610,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.appendChild(highlight);
 
-
-    if (!document.getElementById("nav-pulse-style")) {
-      const style = document.createElement("style");
-      style.id = "nav-pulse-style";
-      style.textContent = `
-@keyframes pulse {
-0% { opacity: 1; transform: scale(1); }
-50% { opacity: 0.7; transform: scale(1.05); }
-100% { opacity: 1; transform: scale(1); }
-}
-`;
-      document.head.appendChild(style);
-    }
-
 // Scroll element into view
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -678,35 +620,188 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
   }
 
-
+  /* ------------ UPDATED AUTOMATION FUNCTIONS WITH ELEMENT INTERACTION ------------ */
   function automateCustomerService() {
     console.log("Automating Customer Service workflow");
-// Implementation would go here
+
+// Step 1: Find and click Customer Service button
+    const customerServiceBtn = findElement([
+      '#customer-service-btn',
+      'button:contains("Customer Service")',
+      '[data-testid="customer-service-button"]',
+      '.customer-service-button'
+    ]);
+
+    if (customerServiceBtn) {
+      clickElement(customerServiceBtn);
+      console.log("Clicked Customer Service button");
+    }
+
+// Step 2: Find PAN input and enter test data
+    setTimeout(() => {
+      const panInput = findElement([
+        '#pan-input',
+        'input[placeholder*="PAN"]',
+        'input[name*="pan"]',
+        '[data-testid="pan-input"]'
+      ]);
+
+      if (panInput) {
+        typeInInput([
+          '#pan-input',
+          'input[placeholder*="PAN"]',
+          'input[name*="pan"]',
+          '[data-testid="pan-input"]'
+        ], "1234567890123");
+        console.log("Entered PAN number");
+      }
+    }, 2000);
+
+// Step 3: Find and click Search button
+    setTimeout(() => {
+      const searchBtn = findElement([
+        '#search-btn',
+        'button:contains("Search")',
+        '[data-testid="search-button"]',
+        '.search-button'
+      ]);
+
+      if (searchBtn) {
+        clickElement(searchBtn);
+        console.log("Clicked Search button");
+      }
+    }, 4000);
   }
 
   function automateCustomerSearch() {
     console.log("Automating Customer Search workflow");
 
+// Step 1: Find and click Customer Service button
+    const customerServiceBtn = findElement([
+      '#customer-service-btn',
+      'button:contains("Customer Service")',
+      '[data-testid="customer-service-button"]',
+      '.customer-service-button'
+    ]);
+
+    if (customerServiceBtn) {
+      clickElement(customerServiceBtn);
+      console.log("Clicked Customer Service button");
+    }
+
+// Step 2: Find search input and enter test data
+    setTimeout(() => {
+      const searchInput = findElement([
+        '.search-box',
+        'input[placeholder*="Search"]',
+        'input[name*="search"]',
+        '[data-testid="search-input"]'
+      ]);
+
+      if (searchInput) {
+        typeInInput([
+          '.search-box',
+          'input[placeholder*="Search"]',
+          'input[name*="search"]',
+          '[data-testid="search-input"]'
+        ], "Test Customer");
+        console.log("Entered search criteria");
+      }
+    }, 2000);
   }
 
   function automateCustomerDetails() {
     console.log("Automating Customer Details workflow");
 
+// Step 1: Find and click on customer details tab
+    const detailsTab = findElement([
+      '[data-tab="details"]',
+      '.tab:contains("Details")',
+      '[data-testid="details-tab"]'
+    ]);
+
+    if (detailsTab) {
+      clickElement(detailsTab);
+      console.log("Clicked Customer Details tab");
+    }
   }
 
   function automatePaymentInstruments() {
     console.log("Automating Payment Instruments workflow");
 
+// Step 1: Find and click on payment instruments tab
+    const instrumentsTab = findElement([
+      '[data-tab="instruments"]',
+      '.tab:contains("Instruments")',
+      '.tab:contains("Payment")',
+      '[data-testid="instruments-tab"]'
+    ]);
+
+    if (instrumentsTab) {
+      clickElement(instrumentsTab);
+      console.log("Clicked Payment Instruments tab");
+    }
+
+// Step 2: Find and click view details button
+    setTimeout(() => {
+      const viewDetailsBtn = findElement([
+        '#view-details-btn',
+        'button:contains("View Details")',
+        '[data-testid="view-details-button"]'
+      ]);
+
+      if (viewDetailsBtn) {
+        clickElement(viewDetailsBtn);
+        console.log("Clicked View Details button");
+      }
+    }, 2000);
   }
 
   function automateTransactionHistory() {
     console.log("Automating Transaction History workflow");
 
+// Step 1: Find and click on transactions tab
+    const transactionsTab = findElement([
+      '[data-tab="transactions"]',
+      '.tab:contains("Transactions")',
+      '[data-testid="transactions-tab"]'
+    ]);
+
+    if (transactionsTab) {
+      clickElement(transactionsTab);
+      console.log("Clicked Transactions tab");
+    }
+
+// Step 2: Find and click filter button
+    setTimeout(() => {
+      const filterBtn = findElement([
+        '#filter-btn',
+        'button:contains("Filter")',
+        '[data-testid="filter-button"]'
+      ]);
+
+      if (filterBtn) {
+        clickElement(filterBtn);
+        console.log("Clicked Filter button");
+      }
+    }, 2000);
   }
 
   function automateAccountManagement() {
     console.log("Automating Account Management workflow");
-// Implementation would go here
+
+// Step 1: Find and click account management button
+    const accountBtn = findElement([
+      '#account-btn',
+      'button:contains("Account")',
+      '[data-testid="account-button"]',
+      '.account-button'
+    ]);
+
+    if (accountBtn) {
+      clickElement(accountBtn);
+      console.log("Clicked Account Management button");
+    }
   }
 
   /* ------------ AUTOMATION SYSTEM (UPDATED) ------------ */
@@ -724,28 +819,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const guidePanel = document.createElement("div");
     guidePanel.id = "nav-guide-panel";
-    guidePanel.style.position = "fixed";
-    guidePanel.style.top = "20px";
-    guidePanel.style.right = "20px";
-    guidePanel.style.background = "white";
-    guidePanel.style.borderRadius = "10px";
-    guidePanel.style.padding = "15px";
-    guidePanel.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
-    guidePanel.style.zIndex = "10000";
-    guidePanel.style.minWidth = "300px";
-    guidePanel.style.maxWidth = "400px";
-    guidePanel.style.cursor = "move";
 
     const title = document.createElement("h3");
     title.innerText = `${option.name} Guide`;
-    title.style.margin = "0 0 10px 0";
-    title.style.color = "#092365";
-    title.style.fontSize = "16px";
+    guidePanel.appendChild(title);
 
     const message = document.createElement("div");
     message.style.fontSize = "14px";
     message.style.marginBottom = "15px";
     message.style.lineHeight = "1.4";
+    guidePanel.appendChild(message);
 
     const progressContainer = document.createElement("div");
     progressContainer.style.display = "flex";
@@ -773,6 +856,7 @@ document.addEventListener("DOMContentLoaded", () => {
     progressBar.appendChild(progress);
     progressContainer.appendChild(progressText);
     progressContainer.appendChild(progressBar);
+    guidePanel.appendChild(progressContainer);
 
     const buttonContainer = document.createElement("div");
     buttonContainer.style.display = "flex";
@@ -781,41 +865,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const prevBtn = document.createElement("button");
     prevBtn.innerText = "← Previous";
-    prevBtn.style.padding = "8px 12px";
-    prevBtn.style.border = "1px solid #ccc";
-    prevBtn.style.borderRadius = "4px";
-    prevBtn.style.cursor = "pointer";
-    prevBtn.style.fontSize = "12px";
     prevBtn.style.background = "white";
     prevBtn.disabled = true;
 
     const nextBtn = document.createElement("button");
     nextBtn.innerText = "Next →";
-    nextBtn.style.padding = "8px 12px";
-    nextBtn.style.border = "none";
-    nextBtn.style.borderRadius = "4px";
-    nextBtn.style.cursor = "pointer";
-    nextBtn.style.fontSize = "12px";
     nextBtn.style.background = "#4caf50";
     nextBtn.style.color = "white";
 
     const autoBtn = document.createElement("button");
     autoBtn.innerText = "Auto Run";
-    autoBtn.style.padding = "8px 12px";
-    autoBtn.style.border = "none";
-    autoBtn.style.borderRadius = "4px";
-    autoBtn.style.cursor = "pointer";
-    autoBtn.style.fontSize = "12px";
     autoBtn.style.background = "#2196f3";
     autoBtn.style.color = "white";
 
     const closeBtn = document.createElement("button");
     closeBtn.innerText = "Close";
-    closeBtn.style.padding = "8px 12px";
-    closeBtn.style.border = "none";
-    closeBtn.style.borderRadius = "4px";
-    closeBtn.style.cursor = "pointer";
-    closeBtn.style.fontSize = "12px";
     closeBtn.style.background = "#f44336";
     closeBtn.style.color = "white";
 
@@ -823,10 +887,6 @@ document.addEventListener("DOMContentLoaded", () => {
     buttonContainer.appendChild(nextBtn);
     buttonContainer.appendChild(autoBtn);
     buttonContainer.appendChild(closeBtn);
-
-    guidePanel.appendChild(title);
-    guidePanel.appendChild(message);
-    guidePanel.appendChild(progressContainer);
     guidePanel.appendChild(buttonContainer);
 
     currentAutomation = guidePanel;
@@ -849,8 +909,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function highlightCurrentStep(optionName, step) {
-// Generic highlighting - would need to be customized based on actual UI elements
-      console.log(`Highlighting step ${step + 1} for ${optionName}`);
+// Custom highlighting based on the option and step
+      let selectors = [];
+
+      switch(optionName) {
+        case "Customer Service":
+          if (step === 0) selectors = ['#customer-service-btn', 'button:contains("Customer Service")'];
+          else if (step === 1) selectors = ['#pan-input', 'input[placeholder*="PAN"]'];
+          else if (step === 2) selectors = ['#search-btn', 'button:contains("Search")'];
+          break;
+
+        case "Customer Search":
+          if (step === 0) selectors = ['#customer-service-btn', 'button:contains("Customer Service")'];
+          else if (step === 1) selectors = ['.search-box', 'input[placeholder*="Search"]'];
+          break;
+
+        case "Customer Details":
+          if (step === 0) selectors = ['[data-tab="details"]', '.tab:contains("Details")'];
+          break;
+
+        case "Payment Instruments":
+          if (step === 0) selectors = ['[data-tab="instruments"]', '.tab:contains("Instruments")'];
+          else if (step === 4) selectors = ['#view-details-btn', 'button:contains("View Details")'];
+          break;
+
+        case "Transaction History":
+          if (step === 0) selectors = ['[data-tab="transactions"]', '.tab:contains("Transactions")'];
+          else if (step === 1) selectors = ['#filter-btn', 'button:contains("Filter")'];
+          break;
+
+        case "Account Management":
+          if (step === 0) selectors = ['#account-btn', 'button:contains("Account")'];
+          break;
+      }
+
+      if (selectors.length > 0) {
+        highlightElement(selectors[0], option.steps[step]);
+      }
     }
 
     updateStep();
@@ -944,10 +1039,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('mouseup', stopDragPanel);
   }
 
-
+// Clean up highlights when page changes
   const observer = new MutationObserver(() => {
     if (currentAutomation) {
-
+// Re-highlight current step if DOM changes
       setTimeout(() => {
         const progressText = currentAutomation.querySelector("span");
         if (progressText) {
@@ -978,4 +1073,23 @@ document.addEventListener("DOMContentLoaded", () => {
       currentAutomation = null;
     }
   });
+
+// Helper function for :contains selector (since it's not native)
+  function containsSelector(selector, text) {
+    const elements = document.querySelectorAll(selector);
+    return Array.from(elements).find(el =>
+      el.textContent.includes(text)
+    );
+  }
+
+// Extend the querySelector to support :contains
+  const originalQuerySelector = document.querySelector;
+  document.querySelector = function(selector) {
+    if (selector.includes(':contains(')) {
+      const [tag, text] = selector.split(':contains(');
+      const cleanText = text.replace(')', '');
+      return containsSelector(tag, cleanText);
+    }
+    return originalQuerySelector.call(this, selector);
+  };
 });

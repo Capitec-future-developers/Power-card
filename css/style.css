@@ -186,7 +186,7 @@
 
 .card-number {
   width: 500px;
-  height: 15px;
+  height: 25px;
   padding: 5px 10px;
   font-size: 16px;
   font-weight: 500;
@@ -229,7 +229,7 @@
   top: 330px;
   left: 200px;
   border-collapse: collapse;
-  width: 88%;
+  width: 90%;
   table-layout: fixed;
 }
 

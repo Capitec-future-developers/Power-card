@@ -1,0 +1,316 @@
+/* Navigation Help System Styles */
+
+/* Container for the navigation help button */
+#nav-help-container {
+  position: fixed;
+  z-index: 9999;
+  cursor: move;
+}
+
+/* Navigation button */
+#nav-help-container button {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  background: #092365;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Dropdown menu */
+#nav-help-container > div {
+  display: none;
+  position: absolute;
+  bottom: 50px;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  min-width: 200px;
+  overflow: hidden;
+  z-index: 10000;
+}
+
+/* Dropdown items */
+#nav-help-container > div > div {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+#nav-help-container > div > div:hover {
+  background: #f0f0f0;
+}
+
+/* Settings item in dropdown */
+#nav-help-container > div > div:first-child {
+  background: #f8f8f8;
+  font-weight: bold;
+}
+
+#nav-help-container > div > div:first-child:hover {
+  background: #e0e0e0;
+}
+
+/* Admin item in dropdown */
+#nav-help-container > div > div:nth-child(2) {
+  background: #f8f8f8;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+#nav-help-container > div > div:nth-child(2):hover {
+  background: #ffcdd2;
+}
+
+/* Speech bubbles */
+#nav-help-container > div.speech-bubble {
+  position: absolute;
+  background: #ffeb3b;
+  color: black;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 1s ease;
+  white-space: nowrap;
+  z-index: 9998;
+}
+
+/* Element highlighting */
+.nav-highlight {
+  position: absolute;
+  border: 3px solid #ff6b6b;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 9998;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+  animation: pulse 2s infinite;
+}
+
+/* Guide panel */
+#nav-guide-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  z-index: 10000;
+  min-width: 300px;
+  max-width: 400px;
+  cursor: move;
+}
+
+#nav-guide-panel h3 {
+  margin: 0 0 10px 0;
+  color: #092365;
+  font-size: 16px;
+}
+
+#nav-guide-panel > div:first-of-type {
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+#nav-guide-panel > div:nth-of-type(2) {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+#nav-guide-panel > div:nth-of-type(2) > span {
+  font-size: 12px;
+  color: #666;
+}
+
+#nav-guide-panel > div:nth-of-type(2) > div {
+  flex-grow: 1;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+#nav-guide-panel > div:nth-of-type(2) > div > div {
+  height: 100%;
+  background: #092365;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+#nav-guide-panel > div:last-of-type {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+#nav-guide-panel > div:last-of-type button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* Dialogs */
+#nav-admin-dialog,
+#nav-custom-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 10001;
+}
+
+#nav-admin-dialog {
+  min-width: 500px;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#nav-custom-dialog {
+  min-width: 300px;
+  max-width: 400px;
+}
+
+#nav-admin-dialog h3,
+#nav-custom-dialog h3 {
+  margin-top: 0;
+}
+
+#nav-admin-dialog h3 {
+  color: #d32f2f;
+}
+
+#nav-admin-dialog p,
+#nav-custom-dialog p {
+  margin-bottom: 15px;
+  color: #666;
+}
+
+#use-cases-container {
+  margin-bottom: 20px;
+}
+
+.use-case-editor {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #f9f9f9;
+}
+
+.use-case-editor label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.use-case-editor input[type="text"],
+.use-case-editor textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.use-case-editor textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.use-case-editor div:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.use-case-editor div:has(input[type="checkbox"]) input {
+  margin-right: 8px;
+}
+
+.use-case-editor button {
+  padding: 6px 12px;
+  border: none;
+  background: #f44336;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+
+#nav-admin-dialog > button,
+#nav-custom-dialog > button {
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  border: 1px dashed #092365;
+  background: transparent;
+  color: #092365;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+}
+
+#nav-admin-dialog > div:last-of-type,
+#nav-custom-dialog > div:last-of-type {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+#nav-admin-dialog > div:last-of-type button,
+#nav-custom-dialog > div:last-of-type button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#nav-admin-dialog > div:last-of-type button:first-of-type,
+#nav-custom-dialog > div:last-of-type button:first-of-type {
+  border: 1px solid #ccc;
+  background: white;
+}
+
+#nav-admin-dialog > div:last-of-type button:last-of-type,
+#nav-custom-dialog > div:last-of-type button:last-of-type {
+  border: none;
+  background: #4caf50;
+  color: white;
+}
+
+#nav-custom-dialog > div:nth-of-type(2) {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#nav-custom-dialog label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#nav-custom-dialog label input {
+  margin-right: 10px;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
