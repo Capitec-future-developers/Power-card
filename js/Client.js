@@ -501,11 +501,6 @@ export function showClient(customer) {
     memoPopup.style.display = 'none';
   });
 
-
-  document.getElementById('lost-stolen-btn').addEventListener('click', () => {
-    showLostStolen(customer);
-  });
-
   document.getElementById('change-status').addEventListener('click', () => {
     const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
 
@@ -530,7 +525,7 @@ z-index: 1000;
     changeStatusPopup.style.cssText = `
 background-color: white;
 width: 80%;
-max-width: 1000px;
+max-width: 600px;
 max-height: 80vh;
 overflow-y: auto;
 border-radius: 5px;
@@ -539,99 +534,46 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     changeStatusPopup.innerHTML = `
 <div class="popup-header" style="background-color: #092365; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
-<span style="font-weight: bold;">PAYMENT INSTRUMENTS OPERATIONS</span>
+<span style="font-weight: bold;">Change Client Status</span>
 <button class="close-btn" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">&times;</button>
 </div>
 <div class="popup-content" style="padding: 20px;">
-<div class="pan-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-<div>
-<label style="display: block; font-weight: bold;">PAN:</label>
-<input type="text" value="${customer.pan || ''}" disabled style="width: 100%; padding: 5px; border: 1px solid #ccc;">
+<div class="client-info" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+<span>Client Code: ${customer.client_code || ''}</span>
+<span>Name: ${customer.first_name || ''} ${customer.family_name || ''}</span>
 </div>
+<div class="status-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
 <div>
-<label style="display: block; font-weight: bold;">Embossed name:</label>
-<input type="text" value="${instrument.full_name || customer.first_name + ' ' + customer.family_name}" disabled style="width: 100%; padding: 5px; border: 1px solid #ccc;">
-</div>
-<div>
-<label style="display: block; font-weight: bold;">Expiry date:</label>
-<input type="text" value="${instrument.expiry || ''}" disabled style="width: 100%; padding: 5px; border: 1px solid #ccc;">
-</div>
-</div>
-<div class="pan-status" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-<div>
-<label style="display: block; font-weight: bold;">Status:</label>
+<label style="display: block; font-weight: bold;">Current Status:</label>
 <input type="text" value="${instrument.condition || ''}" disabled style="width: 100%; padding: 5px; border: 1px solid #ccc;">
 </div>
 <div>
-<label style="display: block; font-weight: bold;">Status reason:</label>
-<input type="text" value="${instrument.status_reason || ''}" disabled style="width: 100%; padding: 5px; border: 1px solid #ccc;">
-</div>
-</div>
-<div class="pan-operations" style="margin-bottom: 20px;">
-<h2 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">PAN operations</h2>
-<div class="operation" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center;">
-<label>PAN deactivation</label>
-<button style="padding: 5px 30px; width: 100px; background-color: #092365; padding-right: -50px; color: white; border: none; border-radius: 3px; cursor: pointer;">Deactivate</button>
-</div>
-<div class="operation" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center;">
-<label>PAN delivery</label>
-<div>
-<label style="display: block;">Delivery date:</label>
-<input type="date" value="${new Date().toISOString().split('T')[0]}" style="width: 100%; padding: 5px; border: 1px solid #ccc;">
-</div>
-<button style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Deliver</button>
-</div>
-<div class="operation" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center;">
-<label>Renewal request</label>
-<div>
-<label style="display: block;">Batch number:</label>
-<select style="width: 100%; padding: 5px; border: 1px solid #ccc;">
-<option value="">Select batch number</option>
-<option value="batch1">Batch 1</option>
-<option value="batch2">Batch 2</option>
+<label style="display: block; font-weight: bold;">Status:</label>
+<select id="new-status" style="width: 100%; padding: 5px; border: 1px solid #ccc;">
+<option value="CANCEL">Cancel</option>
+<option value="MONITORED">Monitored</option>
+<option value="NORMAL">Normal</option>
+<option value="SUSPENDED">Suspended</option>
 </select>
 </div>
-<button style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Send</button>
 </div>
-<div class="operation" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center;">
-<label>Expiry</label>
-<input type="text" value="${instrument.expiry || ''}" disabled style="width: 100%; padding: 5px; border: 1px solid #ccc;">
-<button style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Send</button>
+<div class="reason-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+<div>
+<label style="display: block; font-weight: bold;">Current Status Reason:</label>
+<input type="text" value="${instrument.status_reason || ''}" disabled style="width: 100%; padding: 5px; border: 1px solid #ccc;">
 </div>
-<div class="operation" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: center;">
-<label>Unstop renewal</label>
-<button style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Unstop</button>
-</div>
-</div>
-<div class="pending-operations" style="margin-bottom: 20px;">
-<h2 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">PENDING OPERATIONS</h2>
-<div style="display: flex; gap: 10px; margin-bottom: 10px;">
-<button style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Validate all</button>
-<button style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Cancel all</button>
-<button style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Clear all</button>
+<div>
+<label style="display: block; font-weight: bold;">Status Reason:</label>
+<select id="new-reason" style="width: 100%; padding: 5px; border: 1px solid #ccc;">
+<option value="closed client">Closed Client</option>
+<option value=""></option>
+<option value="reopened client">Reopened Client</option>
+<option value="suspend">Suspend</option>
+</select>
 </div>
 </div>
-<div class="pan-production-queue">
-<h2 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">PAN PRODUCTION QUEUE</h2>
-<table style="width: 100%; border-collapse: collapse;">
-<thead>
-<tr style="background-color: #f2f2f2;">
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">Date</th>
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">User</th>
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">Operation type</th>
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">Operation status</th>
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">PAN perso</th>
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">PIN perso</th>
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">PIN delay</th>
-<th style="border: 1px solid #ccc; padding: 8px; text-align: left;">PIN hold status</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="8" style="border: 1px solid #ccc; padding: 8px; text-align: center;">No records found</td>
-</tr>
-</tbody>
-</table>
+<div style="text-align: right;">
+<button id="save-status" style="padding: 5px 10px; background-color: #092365; color: white; border: none; border-radius: 3px; cursor: pointer;">Save</button>
 </div>
 </div>
 `;
@@ -640,6 +582,16 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       popupOverlay.remove();
     });
 
+    changeStatusPopup.querySelector('#save-status').addEventListener('click', () => {
+      const newStatus = document.getElementById('new-status').value;
+      const newReason = document.getElementById('new-reason').value;
+      if (customer.payment_instruments && customer.payment_instruments[0]) {
+        customer.payment_instruments[0].condition = newStatus;
+        customer.payment_instruments[0].status_reason = newReason;
+      }
+      popupOverlay.remove();
+      showClient(customer);
+    });
 
 
     popupOverlay.appendChild(changeStatusPopup);

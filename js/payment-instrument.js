@@ -70,6 +70,88 @@ ${row('Status date', formatDate(account.pan_status_date))}
 `;
 }
 
+export function renderAddress(customer) {
+  const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+  const account = (customer.accounts && customer.accounts[0]) || {};
+
+  const abbrev = (value) => {
+    if (!value) return '';
+    const map = { 'REPLACED':'R','ACTIVE':'A','NEW':'N','NORMAL':'N' };
+    return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
+  };
+
+  const infoDot = `<button class="info-dot" data-customer-id="${customer.id || ''}">i</button>`;
+  const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
+  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
+  const row = (label, value, trailing='') => `
+<div class="card-section">
+<div class="section-title">${label}</div>
+${box(value)}
+${trailing}
+</div>
+`;
+
+  const fullName = `${(customer.first_name||'').toUpperCase()} ${(customer.family_name||'').toUpperCase()}`.trim();
+  const maskedPan = instrument.number || customer.pan || '';
+  const customerType = (instrument.type||'').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
+
+  return `
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
+<div class="customer-card">
+<div class="card-column">
+${row('Institution','Capitec Bank Limited',small('000010'))}
+${row('PAN',maskedPan)}
+${row('Client code', customer.client_code)}
+${row('Gender', customer.gender)}
+${row('Family name', customer.family_name)}
+${row('Second name', customer.family_name)}
+${row('Status', instrument.condition||'N/A', small(abbrev(instrument.condition||'')))}
+${row('Application ID', customer.application_ID)}
+</div>
+<div class="card-column">
+${row('Branch', instrument.branch)}
+${row('PAN sequence', instrument.sequence)}
+${row('Client host ID', customer.client_host_id)}
+${row('Title', customer.title, small('01'))}
+${row('First Name', customer.first_name)}
+${row('Second first name', customer.first_name)}
+${row('Status reason', instrument.status_reason)}
+${row('Contract element ID', '')}
+</div>
+<div class="card-column">
+${row('Payment instrument', '')}
+${row('Primary PAN', '')}
+${row('Corporate ID', customer.corporate_id)}
+${row('', '')}
+${row('Maiden name', '')}
+${row('Legal ID', customer.legal_id)}
+${row('Status date', formatDate(account.pan_status_date))}
+</div>
+</div>
+<div class="customer-profile">
+<div class="ID" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
+</div>
+</div>
+<div class="addtional customer-card">
+<div class="ID" style="background-color: #092365; color: white; padding: 10px;">Addtional fields</div>
+<div class="card-column">
+<table>
+<th>
+<tr>Field family</tr>
+<tr>Field type</tr>
+<tr>Feild name</tr>
+<tr>Value</tr>
+<tr></tr>
+</th>
+<tbody>
+<p>No records found</p>
+</tbody>
+</table>
+</div>
+</div>
+`;
+}
+
 export function renderLostStolen(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
@@ -479,7 +561,7 @@ export function showPaymentInstrument(customer) {
 <section id="Demographic">${renderCustomerProfile(customer)}</section>
 <section id="Embossing">${renderCustomerEmbossing(customer)}</section>
 <section id="Address"><p>${renderCustomerAddress(customer)}</p></section>
-<section id="Additional"><p>Additional fields content...</p></section>
+<section id="Additional"><p>${renderAddress(customer)}</p></section>
 <section id="AddOn"><p>Add-on services content...</p></section>
 <section id="Accounts"><p>Accounts content...</p></section>
 <section id="Comms"><p>Communication strategy content...</p></section>

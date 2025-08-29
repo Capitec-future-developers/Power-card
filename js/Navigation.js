@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Load saved options or use defaults
   const savedOptions = JSON.parse(localStorage.getItem('navHelpOptions')) || {};
   const savedEnabledOptions = savedOptions.enabledOptions || {};
-  const savedPosition = savedOptions.position || { bottom: '30px', right: '30px' };
+  const savedPosition = savedOptions.position || { bottom: '40px', right: '40px' };
   const savedNavigationOptions = savedOptions.navigationOptions || null;
 
 // Use saved navigation options if available, otherwise use defaults
@@ -586,7 +586,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bubble.style.position = "absolute";
     bubble.style.bottom = `${60 + (i * 45)}px`;
     bubble.style.right = "150px";
-    bubble.style.background = "#ffeb3b";
+    bubble.style.background = "#ffffff";
     bubble.style.color = "black";
     bubble.style.padding = "8px 12px";
     bubble.style.borderRadius = "20px";
@@ -626,7 +626,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setTimeout(showBubbles, 1500);
 
-  /* ------------ ELEMENT HIGHLIGHTING ------------ */
+
   function highlightElement(selector, message) {
     removeHighlights();
 
@@ -654,7 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.appendChild(highlight);
 
-// Add pulse animation
+
     if (!document.getElementById("nav-pulse-style")) {
       const style = document.createElement("style");
       style.id = "nav-pulse-style";
@@ -678,7 +678,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
   }
 
-  /* ------------ AUTOMATION FUNCTIONS (PLACEHOLDERS) ------------ */
+
   function automateCustomerService() {
     console.log("Automating Customer Service workflow");
 // Implementation would go here
@@ -686,22 +686,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function automateCustomerSearch() {
     console.log("Automating Customer Search workflow");
-// Implementation would go here
+
   }
 
   function automateCustomerDetails() {
     console.log("Automating Customer Details workflow");
-// Implementation would go here
+
   }
 
   function automatePaymentInstruments() {
     console.log("Automating Payment Instruments workflow");
-// Implementation would go here
+
   }
 
   function automateTransactionHistory() {
     console.log("Automating Transaction History workflow");
-// Implementation would go here
+
   }
 
   function automateAccountManagement() {
@@ -944,10 +944,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('mouseup', stopDragPanel);
   }
 
-// Clean up highlights when page changes
+
   const observer = new MutationObserver(() => {
     if (currentAutomation) {
-// Re-highlight current step if DOM changes
+
       setTimeout(() => {
         const progressText = currentAutomation.querySelector("span");
         if (progressText) {
