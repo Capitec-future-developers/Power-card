@@ -1,55 +1,57 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const navigationOptions = [
-    {
-      name: "Customer Service",
-      steps: [
-        "Click Customer Service button to begin",
-        "Enter customer PAN (at least 13 digits)",
-        "Click Search button to find customer",
-        "Click on customer row to expand details",
-        "Double-click payment instruments to view customer details"
-      ],
-      automation: automateCustomerService
-    },
-    {
-      name: "Customer Search",
-      steps: [
-        "Navigate to Customer Service section",
-        "Fill in search criteria (PAN, First Name, or Client Host ID)",
-        "Review search results in the table",
-        "Expand customer details by clicking the row",
-        "Access full customer view by double-clicking"
-      ],
-      automation: automateCustomerSearch
-    },
-    {
-      name: "Customer Details",
-      steps: [
-        "View customer identification information",
-        "Navigate through different tabs (PAN Summary, Account Summary, etc.)",
-        "Use Memo button to add customer notes",
-        "Access Account Transactions for transaction history",
-        "Use info buttons (i) for additional details"
-      ],
-      automation: automateCustomerDetails
-    },
-    {
-      name: "Payment Instruments",
-      steps: [
-        "Click info button (i) next to PAN field",
-        "Review payment instrument details",
-        "Check card status and conditions",
-        "Verify expiry dates and limits",
-        "Navigate back to customer view when done"
-      ],
-      automation: automatePaymentInstruments
-    }
+
+  document.addEventListener("DOMContentLoaded", () => {
+  let navigationOptions = [
+{
+  name: "Customer Service",
+  steps: [
+  "Click Customer Service button to begin",
+  "Enter customer PAN (at least 13 digits)",
+  "Click Search button to find customer",
+  "Click on customer row to expand details",
+  "Double-click payment instruments to view customer details"
+  ],
+  automation: automateCustomerService
+},
+{
+  name: "Customer Search",
+  steps: [
+  "Navigate to Customer Service section",
+  "Fill in search criteria (PAN, First Name, or Client Host ID)",
+  "Review search results in the table",
+  "Expand customer details by clicking the row",
+  "Access full customer view by double-clicking"
+  ],
+  automation: automateCustomerSearch
+},
+{
+  name: "Customer Details",
+  steps: [
+  "View customer identification information",
+  "Navigate through different tabs (PAN Summary, Account Summary, etc.)",
+  "Use Memo button to add customer notes",
+  "Access Account Transactions for transaction history",
+  "Use info buttons (i) for additional details"
+  ],
+  automation: automateCustomerDetails
+},
+{
+  name: "Payment Instruments",
+  steps: [
+  "Click info button (i) next to PAN field",
+  "Review payment instrument details",
+  "Check card status and conditions",
+  "Verify expiry dates and limits",
+  "Navigate back to customer view when done"
+  ],
+  automation: automatePaymentInstruments
+}
   ];
 
   const frequentOptions = ["Customer Service", "Customer Search"];
   let bubbles = [];
   let currentAutomation = null;
   let currentAutomationInterval = null;
+  const PASSWORD = "Genesis@2025!!";
 
   /* ------------ CREATE BUTTON ------------ */
   const navContainer = document.createElement("div");
@@ -85,531 +87,696 @@ document.addEventListener("DOMContentLoaded", () => {
   dropdown.style.minWidth = "200px";
   dropdown.style.overflow = "hidden";
 
+  function renderDropdown() {
+  dropdown.innerHTML = "";
   navigationOptions.forEach(opt => {
-    const item = document.createElement("div");
-    item.innerText = opt.name;
-    item.style.padding = "12px 15px";
-    item.style.cursor = "pointer";
-    item.style.borderBottom = "1px solid #eee";
-    item.addEventListener("mouseenter", () => item.style.background = "#f0f0f0");
-    item.addEventListener("mouseleave", () => item.style.background = "white");
+  const item = document.createElement("div");
+  item.innerText = opt.name;
+  item.style.padding = "12px 15px";
+  item.style.cursor = "pointer";
+  item.style.borderBottom = "1px solid #eee";
+  item.addEventListener("mouseenter", () => item.style.background = "#f0f0f0");
+  item.addEventListener("mouseleave", () => item.style.background = "white");
+  item.addEventListener("click", () => {
+  dropdown.style.display = "none";
+  startAutomation(opt);
+});
+  dropdown.appendChild(item);
+});
 
-    item.addEventListener("click", () => {
-      dropdown.style.display = "none";
-      startAutomation(opt);
-    });
+  const editItem = document.createElement("div");
+  editItem.innerText = "Edit Use Cases";
+  editItem.style.padding = "12px 15px";
+  editItem.style.cursor = "pointer";
+  editItem.style.borderBottom = "1px solid #eee";
+  editItem.style.background = "#e0f7fa";
+  editItem.addEventListener("mouseenter", () => editItem.style.background = "#b2ebf2");
+  editItem.addEventListener("mouseleave", () => editItem.style.background = "#e0f7fa");
+  editItem.addEventListener("click", () => {
+  dropdown.style.display = "none";
+  showEditUseCasesModal();
+});
+  dropdown.appendChild(editItem);
+}
 
-    dropdown.appendChild(item);
-  });
-
+  renderDropdown();
   navContainer.appendChild(dropdown);
 
   navButton.addEventListener("click", () => {
-    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
-    hideBubbles();
-  });
+  dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+  hideBubbles();
+});
 
   /* ------------ FREQUENT OPTIONS AS SPEECH BUBBLES ------------ */
   frequentOptions.forEach((freq, i) => {
-    const bubble = document.createElement("div");
-    bubble.innerText = freq;
-    bubble.style.position = "absolute";
-    bubble.style.bottom = `${60 + (i * 45)}px`;
-    bubble.style.right = "150px";
-    bubble.style.background = "#ffeb3b";
-    bubble.style.color = "black";
-    bubble.style.padding = "8px 12px";
-    bubble.style.borderRadius = "20px";
-    bubble.style.fontSize = "13px";
-    bubble.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
-    bubble.style.cursor = "pointer";
-    bubble.style.opacity = "0";
-    bubble.style.transition = "opacity 1s ease";
-    bubble.style.whiteSpace = "nowrap";
+  const bubble = document.createElement("div");
+  bubble.innerText = freq;
+  bubble.style.position = "absolute";
+  bubble.style.bottom = `${60 + (i * 45)}px`;
+  bubble.style.right = "150px";
+  bubble.style.background = "#ffeb3b";
+  bubble.style.color = "black";
+  bubble.style.padding = "8px 12px";
+  bubble.style.borderRadius = "20px";
+  bubble.style.fontSize = "13px";
+  bubble.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
+  bubble.style.cursor = "pointer";
+  bubble.style.opacity = "0";
+  bubble.style.transition = "opacity 1s ease";
+  bubble.style.whiteSpace = "nowrap";
 
-    bubble.addEventListener("click", () => {
-      const opt = navigationOptions.find(o => o.name === freq);
-      if (opt) startAutomation(opt);
-    });
+  bubble.addEventListener("click", () => {
+  const opt = navigationOptions.find(o => o.name === freq);
+  if (opt) startAutomation(opt);
+});
 
-    navContainer.appendChild(bubble);
-    bubbles.push(bubble);
-  });
+  navContainer.appendChild(bubble);
+  bubbles.push(bubble);
+});
 
   function showBubbles() {
-    bubbles.forEach((b, i) => {
-      setTimeout(() => {
-        b.style.opacity = "1";
-        setTimeout(() => {
-          b.style.opacity = "0";
-        }, 12000);
-      }, i * 600);
-    });
-  }
+  bubbles.forEach((b, i) => {
+  setTimeout(() => {
+  b.style.opacity = "1";
+  setTimeout(() => {
+  b.style.opacity = "0";
+}, 12000);
+}, i * 600);
+});
+}
 
   function hideBubbles() {
-    bubbles.forEach(b => {
-      b.style.opacity = "0";
-    });
-  }
+  bubbles.forEach(b => b.style.opacity = "0");
+}
 
   setTimeout(showBubbles, 1500);
 
   /* ------------ ELEMENT HIGHLIGHTING ------------ */
   function highlightElement(selector, message) {
-    removeHighlights();
+  removeHighlights();
+  const element = document.querySelector(selector);
+  if (!element) return false;
 
-    const element = document.querySelector(selector);
-    if (!element) return false;
+  const highlight = document.createElement("div");
+  highlight.className = "nav-highlight";
+  highlight.style.position = "absolute";
+  highlight.style.border = "3px solid #ff6b6b";
+  highlight.style.borderRadius = "8px";
+  highlight.style.pointerEvents = "none";
+  highlight.style.zIndex = "9998";
+  highlight.style.boxShadow = "0 0 20px rgba(255, 107, 107, 0.5)";
+  highlight.style.animation = "pulse 2s infinite";
 
-    const highlight = document.createElement("div");
-    highlight.className = "nav-highlight";
-    highlight.style.position = "absolute";
-    highlight.style.border = "3px solid #ff6b6b";
-    highlight.style.borderRadius = "8px";
-    highlight.style.pointerEvents = "none";
-    highlight.style.zIndex = "9998";
-    highlight.style.boxShadow = "0 0 20px rgba(255, 107, 107, 0.5)";
-    highlight.style.animation = "pulse 2s infinite";
+  const rect = element.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
-    const rect = element.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  highlight.style.top = (rect.top + scrollTop - 5) + "px";
+  highlight.style.left = (rect.left + scrollLeft - 5) + "px";
+  highlight.style.width = (rect.width + 10) + "px";
+  highlight.style.height = (rect.height + 10) + "px";
 
-    highlight.style.top = (rect.top + scrollTop - 5) + "px";
-    highlight.style.left = (rect.left + scrollLeft - 5) + "px";
-    highlight.style.width = (rect.width + 10) + "px";
-    highlight.style.height = (rect.height + 10) + "px";
-
-    document.body.appendChild(highlight);
-
-    // Add pulse animation
-    if (!document.getElementById("nav-pulse-style")) {
-      const style = document.createElement("style");
-      style.id = "nav-pulse-style";
-      style.textContent = `
-@keyframes pulse {
- 0% { opacity: 1; transform: scale(1); }
- 50% { opacity: 0.7; transform: scale(1.05); }
- 100% { opacity: 1; transform: scale(1); }
- }
- `;
-      document.head.appendChild(style);
-    }
-
-    // Scroll element into view
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    return true;
-  }
+  document.body.appendChild(highlight);
+  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  return true;
+}
 
   function removeHighlights() {
-    document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
-  }
+  document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
+}
+
+  /* ------------ EDIT USE CASES MODAL ------------ */
+  function showEditUseCasesModal() {
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.zIndex = "10000";
+  overlay.style.display = "flex";
+  overlay.style.flexDirection = "column";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.background = "rgba(0,0,0,0.5)";
+
+  const modal = document.createElement("div");
+  modal.style.background = "white";
+  modal.style.borderRadius = "15px";
+  modal.style.padding = "25px";
+  modal.style.maxWidth = "600px";
+  modal.style.width = "90%";
+  modal.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+
+  const title = document.createElement("h3");
+  title.innerText = "Edit Use Cases";
+  title.style.margin = "0 0 15px 0";
+  title.style.color = "#092365";
+  title.style.textAlign = "center";
+
+  const passwordInput = document.createElement("input");
+  passwordInput.type = "password";
+  passwordInput.placeholder = "Enter password";
+  passwordInput.style.width = "100%";
+  passwordInput.style.padding = "10px";
+  passwordInput.style.marginBottom = "15px";
+  passwordInput.style.border = "1px solid #ccc";
+  passwordInput.style.borderRadius = "5px";
+
+  const errorMessage = document.createElement("div");
+  errorMessage.style.color = "red";
+  errorMessage.style.marginBottom = "10px";
+  errorMessage.style.display = "none";
+
+  const verifyButton = document.createElement("button");
+  verifyButton.innerText = "Verify Password";
+  verifyButton.style.padding = "10px 20px";
+  verifyButton.style.border = "none";
+  verifyButton.style.borderRadius = "6px";
+  verifyButton.style.cursor = "pointer";
+  verifyButton.style.background = "#4caf50";
+  verifyButton.style.color = "white";
+
+  modal.appendChild(title);
+  modal.appendChild(passwordInput);
+  modal.appendChild(errorMessage);
+  modal.appendChild(verifyButton);
+
+  verifyButton.addEventListener("click", () => {
+  if (passwordInput.value === PASSWORD) {
+  modal.innerHTML = "";
+  modal.appendChild(title);
+  showUseCaseEditor(modal, overlay);
+} else {
+  errorMessage.innerText = "Incorrect password";
+  errorMessage.style.display = "block";
+}
+});
+
+  overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) {
+  document.body.removeChild(overlay);
+}
+});
+
+  document.body.appendChild(overlay);
+}
+
+  function showUseCaseEditor(modal, overlay) {
+  const useCaseList = document.createElement("div");
+  useCaseList.style.maxHeight = "200px";
+  useCaseList.style.overflowY = "auto";
+  useCaseList.style.marginBottom = "20px";
+
+  function renderUseCaseList() {
+  useCaseList.innerHTML = "";
+  navigationOptions.forEach((opt, index) => {
+  const useCaseItem = document.createElement("div");
+  useCaseItem.style.display = "flex";
+  useCaseItem.style.alignItems = "center";
+  useCaseItem.style.padding = "10px";
+  useCaseItem.style.borderBottom = "1px solid #eee";
+
+  const nameSpan = document.createElement("span");
+  nameSpan.innerText = opt.name;
+  nameSpan.style.flex = "1";
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.innerText = "Delete";
+  deleteBtn.style.padding = "5px 10px";
+  deleteBtn.style.border = "none";
+  deleteBtn.style.borderRadius = "5px";
+  deleteBtn.style.background = "#f44336";
+  deleteBtn.style.color = "white";
+  deleteBtn.style.cursor = "pointer";
+  deleteBtn.addEventListener("click", () => {
+  navigationOptions.splice(index, 1);
+  renderUseCaseList();
+  renderDropdown();
+});
+
+  useCaseItem.appendChild(nameSpan);
+  useCaseItem.appendChild(deleteBtn);
+  useCaseList.appendChild(useCaseItem);
+});
+}
+
+  renderUseCaseList();
+
+  const newUseCaseInput = document.createElement("input");
+  newUseCaseInput.type = "text";
+  newUseCaseInput.placeholder = "New use case name";
+  newUseCaseInput.style.width = "100%";
+  newUseCaseInput.style.padding = "10px";
+  newUseCaseInput.style.marginBottom = "15px";
+  newUseCaseInput.style.border = "1px solid #ccc";
+  newUseCaseInput.style.borderRadius = "5px";
+
+  const addButton = document.createElement("button");
+  addButton.innerText = "Add Use Case";
+  addButton.style.padding = "10px 20px";
+  addButton.style.border = "none";
+  addButton.style.borderRadius = "6px";
+  addButton.style.cursor = "pointer";
+  addButton.style.background = "#4caf50";
+  addButton.style.color = "white";
+  addButton.addEventListener("click", () => {
+  if (newUseCaseInput.value.trim()) {
+  navigationOptions.push({
+  name: newUseCaseInput.value.trim(),
+  steps: ["Step 1: To be defined"],
+  automation: () => console.log(`Automation for ${newUseCaseInput.value.trim()} not yet implemented`)
+});
+  newUseCaseInput.value = "";
+  renderUseCaseList();
+  renderDropdown();
+}
+});
+
+  const closeButton = document.createElement("button");
+  closeButton.innerText = "Close";
+  closeButton.style.padding = "10px 20px";
+  closeButton.style.border = "none";
+  closeButton.style.borderRadius = "6px";
+  closeButton.style.cursor = "pointer";
+  closeButton.style.background = "#f44336";
+  closeButton.style.color = "white";
+  closeButton.addEventListener("click", () => {
+  document.body.removeChild(overlay);
+});
+
+  modal.appendChild(useCaseList);
+  modal.appendChild(newUseCaseInput);
+  modal.appendChild(addButton);
+  modal.appendChild(closeButton);
+}
 
   /* ------------ AUTOMATION FUNCTIONS ------------ */
-  function automateCustomerService() {
-    // Click Customer Service button
-    const customerServiceBtn = document.getElementById('customer-service');
-    if (customerServiceBtn) {
-      customerServiceBtn.click();
+  function automateCustomerService(stepIndex = 0) {
+  const steps = [
+  () => {
+  const btn = document.getElementById('customer-service');
+  if (btn) btn.click();
+  return !!btn;
+},
+  () => {
+  const panInput = document.getElementById('pan');
+  if (panInput) panInput.value = '4644090987127908';
+  return !!panInput;
+},
+  () => {
+  const searchBtn = document.querySelector('.search-btn');
+  if (searchBtn) searchBtn.click();
+  return !!searchBtn;
+},
+  () => {
+  const customerRow = document.querySelector('.collapsible-row');
+  if (customerRow) customerRow.click();
+  return !!customerRow;
+},
+  () => {
+  const paymentTable = document.querySelector('.payment-table');
+  if (paymentTable) {
+  const event = new MouseEvent('dblclick', { view: window, bubbles: true, cancelable: true });
+  paymentTable.dispatchEvent(event);
+}
+  return !!paymentTable;
+}
+  ];
 
-      // Wait for the content to load
-      setTimeout(() => {
-        // Enter PAN
-        const panInput = document.getElementById('pan');
-        if (panInput) {
-          panInput.value = '4644090987127908'; // Sample PAN
+  if (stepIndex < steps.length) {
+  return steps[stepIndex]();
+}
+  return false;
+}
 
-          // Click Search button
-          setTimeout(() => {
-            const searchBtn = document.querySelector('.search-btn');
-            if (searchBtn) {
-              searchBtn.click();
+  function automateCustomerSearch(stepIndex = 0) {
+  const steps = [
+  () => {
+  const btn = document.getElementById('customer-service');
+  if (btn) btn.click();
+  return !!btn;
+},
+  () => {
+  const fnameInput = document.getElementById('fname');
+  if (fnameInput) fnameInput.value = 'Omphile';
+  return !!fnameInput;
+},
+  () => {
+  const searchBtn = document.querySelector('.search-btn');
+  if (searchBtn) searchBtn.click();
+  return !!searchBtn;
+},
+  () => {
+  const customerRow = document.querySelector('.collapsible-row');
+  if (customerRow) customerRow.click();
+  return !!customerRow;
+},
+  () => {
+  const paymentTable = document.querySelector('.payment-table');
+  if (paymentTable) {
+  const event = new MouseEvent('dblclick', { view: window, bubbles: true, cancelable: true });
+  paymentTable.dispatchEvent(event);
+}
+  return !!paymentTable;
+}
+  ];
 
-              // Wait for results and click on customer row
-              setTimeout(() => {
-                const customerRow = document.querySelector('.collapsible-row');
-                if (customerRow) {
-                  customerRow.click();
+  if (stepIndex < steps.length) {
+  return steps[stepIndex]();
+}
+  return false;
+}
 
-                  // Wait for details to expand and double-click payment instruments
-                  setTimeout(() => {
-                    const paymentTable = document.querySelector('.payment-table');
-                    if (paymentTable) {
-                      // Simulate double-click
-                      const event = new MouseEvent('dblclick', {
-                        view: window,
-                        bubbles: true,
-                        cancelable: true
-                      });
-                      paymentTable.dispatchEvent(event);
-                    }
-                  }, 1000);
-                }
-              }, 1000);
-            }
-          }, 500);
-        }
-      }, 500);
-    }
-  }
+  function automateCustomerDetails(stepIndex = 0) {
+  const steps = [
+  () => true, // View customer identification
+  () => {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  if (tabButtons.length > 1) tabButtons[1].click();
+  return tabButtons.length > 1;
+},
+  () => {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  if (tabButtons.length > 2) tabButtons[2].click();
+  return tabButtons.length > 2;
+},
+  () => {
+  const memoBtn = document.getElementById('memo-btn');
+  if (memoBtn) memoBtn.click();
+  return !!memoBtn;
+},
+  () => {
+  const cancelMemo = document.getElementById('cancel-memo');
+  if (cancelMemo) cancelMemo.click();
+  return !!cancelMemo;
+},
+  () => {
+  const transactionsBtn = document.getElementById('transactions-btn');
+  if (transactionsBtn) transactionsBtn.click();
+  return !!transactionsBtn;
+},
+  () => {
+  const infoBtn = document.querySelector('.info-dot');
+  if (infoBtn) infoBtn.click();
+  return !!infoBtn;
+}
+  ];
 
-  function automateCustomerSearch() {
-    // Click Customer Service button
-    const customerServiceBtn = document.getElementById('customer-service');
-    if (customerServiceBtn) {
-      customerServiceBtn.click();
+  if (stepIndex < steps.length) {
+  return steps[stepIndex]();
+}
+  return false;
+}
 
-      // Wait for the content to load
-      setTimeout(() => {
-        // Enter First Name
-        const fnameInput = document.getElementById('fname');
-        if (fnameInput) {
-          fnameInput.value = 'Omphile'; // Sample first name
+  function automatePaymentInstruments(stepIndex = 0) {
+  const steps = [
+  () => {
+  const infoBtn = document.querySelector('.info-dot');
+  if (infoBtn) infoBtn.click();
+  return !!infoBtn;
+},
+  () => true, // Review payment instrument details
+  () => true, // Check card status
+  () => true, // Verify expiry dates
+  () => {
+  const backBtn = document.getElementById('back-btn');
+  if (backBtn) backBtn.click();
+  return !!backBtn;
+}
+  ];
 
-          // Click Search button
-          setTimeout(() => {
-            const searchBtn = document.querySelector('.search-btn');
-            if (searchBtn) {
-              searchBtn.click();
-
-              // Wait for results and click on customer row
-              setTimeout(() => {
-                const customerRow = document.querySelector('.collapsible-row');
-                if (customerRow) {
-                  customerRow.click();
-
-                  // Wait for details to expand and double-click payment instruments
-                  setTimeout(() => {
-                    const paymentTable = document.querySelector('.payment-table');
-                    if (paymentTable) {
-                      // Simulate double-click
-                      const event = new MouseEvent('dblclick', {
-                        view: window,
-                        bubbles: true,
-                        cancelable: true
-                      });
-                      paymentTable.dispatchEvent(event);
-                    }
-                  }, 1000);
-                }
-              }, 1000);
-            }
-          }, 500);
-        }
-      }, 500);
-    }
-  }
-
-  function automateCustomerDetails() {
-    // This assumes we're already in the customer view
-    // Navigate through tabs
-    setTimeout(() => {
-      const tabButtons = document.querySelectorAll('.tab-btn');
-      if (tabButtons.length > 1) {
-        // Click on Account Summary tab
-        tabButtons[1].click();
-
-        // Continue through other tabs
-        setTimeout(() => {
-          tabButtons[2].click();
-
-          setTimeout(() => {
-            // Click Memo button
-            const memoBtn = document.getElementById('memo-btn');
-            if (memoBtn) memoBtn.click();
-
-            setTimeout(() => {
-              // Close memo popup
-              const cancelMemo = document.getElementById('cancel-memo');
-              if (cancelMemo) cancelMemo.click();
-
-              setTimeout(() => {
-                // Click Transactions button
-                const transactionsBtn = document.getElementById('transactions-btn');
-                if (transactionsBtn) transactionsBtn.click();
-
-                setTimeout(() => {
-                  // Click on info button
-                  const infoBtn = document.querySelector('.info-dot');
-                  if (infoBtn) infoBtn.click();
-                }, 500);
-              }, 500);
-            }, 500);
-          }, 500);
-        }, 1000);
-      }
-    }, 500);
-  }
-
-  function automatePaymentInstruments() {
-    // Click on info button next to PAN
-    setTimeout(() => {
-      const infoBtn = document.querySelector('.info-dot');
-      if (infoBtn) {
-        infoBtn.click();
-
-        // After viewing payment instruments, go back
-        setTimeout(() => {
-          const backBtn = document.getElementById('back-btn');
-          if (backBtn) backBtn.click();
-        }, 2000);
-      }
-    }, 500);
-  }
+  if (stepIndex < steps.length) {
+  return steps[stepIndex]();
+}
+  return false;
+}
 
   /* ------------ AUTOMATION SYSTEM ------------ */
   function startAutomation(option) {
-    if (currentAutomation) {
-      document.body.removeChild(currentAutomation);
-      if (currentAutomationInterval) {
-        clearInterval(currentAutomationInterval);
-        currentAutomationInterval = null;
-      }
-    }
+  if (currentAutomation) {
+  document.body.removeChild(currentAutomation);
+  if (currentAutomationInterval) {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+}
+}
 
-    let stepIndex = 0;
-    removeHighlights();
+  let stepIndex = 0;
+  removeHighlights();
 
-    const overlay = document.createElement("div");
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.zIndex = "10000";
-    overlay.style.display = "flex";
-    overlay.style.flexDirection = "column";
-    overlay.style.justifyContent = "center";
-    overlay.style.alignItems = "center";
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.zIndex = "10000";
+  overlay.style.display = "flex";
+  overlay.style.flexDirection = "column";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.background = "rgba(0,0,0,0.5)";
 
-    const modal = document.createElement("div");
-    modal.style.background = "white";
-    modal.style.borderRadius = "15px";
-    modal.style.padding = "25px";
-    modal.style.maxWidth = "500px";
-    modal.style.width = "90%";
-    modal.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+  const modal = document.createElement("div");
+  modal.style.background = "white";
+  modal.style.borderRadius = "15px";
+  modal.style.padding = "25px";
+  modal.style.maxWidth = "500px";
+  modal.style.width = "90%";
+  modal.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
 
-    const title = document.createElement("h3");
-    title.innerText = `${option.name} Guide`;
-    title.style.margin = "0 0 15px 0";
-    title.style.color = "#092365";
-    title.style.textAlign = "center";
+  const title = document.createElement("h3");
+  title.innerText = `${option.name} Guide`;
+  title.style.margin = "0 0 15px 0";
+  title.style.color = "#092365";
+  title.style.textAlign = "center";
 
-    const message = document.createElement("div");
-    message.style.fontSize = "16px";
-    message.style.marginBottom = "20px";
-    message.style.lineHeight = "1.5";
-    message.style.textAlign = "center";
+  const message = document.createElement("div");
+  message.style.fontSize = "16px";
+  message.style.marginBottom = "20px";
+  message.style.lineHeight = "1.5";
+  message.style.textAlign = "center";
 
-    const progressBar = document.createElement("div");
-    progressBar.style.width = "100%";
-    progressBar.style.height = "6px";
-    progressBar.style.background = "#eee";
-    progressBar.style.borderRadius = "3px";
-    progressBar.style.marginBottom = "20px";
-    progressBar.style.overflow = "hidden";
+  const progressBar = document.createElement("div");
+  progressBar.style.width = "100%";
+  progressBar.style.height = "6px";
+  progressBar.style.background = "#eee";
+  progressBar.style.borderRadius = "3px";
+  progressBar.style.marginBottom = "20px";
+  progressBar.style.overflow = "hidden";
 
-    const progress = document.createElement("div");
-    progress.style.height = "100%";
-    progress.style.background = "#092365";
-    progress.style.borderRadius = "3px";
-    progress.style.transition = "width 0.3s ease";
+  const progress = document.createElement("div");
+  progress.style.height = "100%";
+  progress.style.background = "#092365";
+  progress.style.borderRadius = "3px";
+  progress.style.transition = "width 0.3s ease";
 
-    progressBar.appendChild(progress);
+  progressBar.appendChild(progress);
 
-    const buttonContainer = document.createElement("div");
-    buttonContainer.style.display = "flex";
-    buttonContainer.style.gap = "10px";
-    buttonContainer.style.justifyContent = "center";
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.display = "flex";
+  buttonContainer.style.gap = "10px";
+  buttonContainer.style.justifyContent = "center";
 
-    const nextBtn = document.createElement("button");
-    nextBtn.innerText = "Next Step →";
-    nextBtn.style.padding = "12px 20px";
-    nextBtn.style.border = "none";
-    nextBtn.style.borderRadius = "6px";
-    nextBtn.style.cursor = "pointer";
-    nextBtn.style.fontSize = "14px";
-    nextBtn.style.background = "#4caf50";
-    nextBtn.style.color = "white";
-    const autoBtn = document.createElement("button");
-    autoBtn.innerText = "Auto Run";
-    autoBtn.style.padding = "12px 20px";
-    autoBtn.style.border = "none";
-    autoBtn.style.borderRadius = "6px";
-    autoBtn.style.cursor = "pointer";
-    autoBtn.style.fontSize = "14px";
-    autoBtn.style.background = "#2196f3";
-    autoBtn.style.color = "white";
+  const nextBtn = document.createElement("button");
+  nextBtn.innerText = "Next Step →";
+  nextBtn.style.padding = "12px 20px";
+  nextBtn.style.border = "none";
+  nextBtn.style.borderRadius = "6px";
+  nextBtn.style.cursor = "pointer";
+  nextBtn.style.fontSize = "14px";
+  nextBtn.style.background = "#4caf50";
+  nextBtn.style.color = "white";
 
-    const closeBtn = document.createElement("button");
-    closeBtn.innerText = " Close";
-    closeBtn.style.padding = "12px 20px";
-    closeBtn.style.border = "none";
-    closeBtn.style.borderRadius = "6px";
-    closeBtn.style.cursor = "pointer";
-    closeBtn.style.fontSize = "14px";
-    closeBtn.style.background = "#f44336";
-    closeBtn.style.color = "white";
+  const autoBtn = document.createElement("button");
+  autoBtn.innerText = "Auto Run";
+  autoBtn.style.padding = "12px 20px";
+  autoBtn.style.border = "none";
+  autoBtn.style.borderRadius = "6px";
+  autoBtn.style.cursor = "pointer";
+  autoBtn.style.fontSize = "14px";
+  autoBtn.style.background = "#2196f3";
+  autoBtn.style.color = "white";
 
-    modal.appendChild(title);
-    modal.appendChild(message);
-    modal.appendChild(progressBar);
-    modal.appendChild(buttonContainer);
-    buttonContainer.appendChild(nextBtn);
-    buttonContainer.appendChild(autoBtn);
-    buttonContainer.appendChild(closeBtn);
-    overlay.appendChild(modal);
+  const closeBtn = document.createElement("button");
+  closeBtn.innerText = "Close";
+  closeBtn.style.padding = "12px 20px";
+  closeBtn.style.border = "none";
+  closeBtn.style.borderRadius = "6px";
+  closeBtn.style.cursor = "pointer";
+  closeBtn.style.fontSize = "14px";
+  closeBtn.style.background = "#f44336";
+  closeBtn.style.color = "white";
 
-    currentAutomation = overlay;
+  modal.appendChild(title);
+  modal.appendChild(message);
+  modal.appendChild(progressBar);
+  modal.appendChild(buttonContainer);
+  buttonContainer.appendChild(nextBtn);
+  buttonContainer.appendChild(autoBtn);
+  buttonContainer.appendChild(closeBtn);
+  overlay.appendChild(modal);
 
-    function updateStep() {
-      const currentStep = option.steps[stepIndex];
-      message.innerHTML = `<strong>Step ${stepIndex + 1} of ${option.steps.length}:</strong><br>${currentStep}`;
+  currentAutomation = overlay;
 
-      const progressPercent = ((stepIndex + 1) / option.steps.length) * 100;
-      progress.style.width = progressPercent + "%";
+  function updateStep() {
+  const currentStep = option.steps[stepIndex];
+  message.innerHTML = `<strong>Step ${stepIndex + 1} of ${option.steps.length}:</strong><br>${currentStep}`;
+  const progressPercent = ((stepIndex + 1) / option.steps.length) * 100;
+  progress.style.width = progressPercent + "%";
+  highlightCurrentStep(option.name, stepIndex);
 
-      // Highlight relevant elements based on the step
-      highlightCurrentStep(option.name, stepIndex);
+  if (stepIndex >= option.steps.length - 1) {
+  nextBtn.innerText = "Complete ✓";
+  nextBtn.style.background = "#092365";
+} else {
+  nextBtn.innerText = "Next Step →";
+  nextBtn.style.background = "#4caf50";
+}
+}
 
-      if (stepIndex >= option.steps.length - 1) {
-        nextBtn.innerText = "Complete ✓";
-        nextBtn.style.background = "#092365";
-      }
-    }
+  function highlightCurrentStep(optionName, step) {
+  switch(optionName) {
+  case "Customer Service":
+  switch(step) {
+  case 0: highlightElement("#customer-service", "Click here to start"); break;
+  case 1: highlightElement("#pan", "Enter customer PAN here"); break;
+  case 2: highlightElement(".search-btn", "Click to search"); break;
+  case 3: highlightElement(".collapsible-row", "Click customer row to expand"); break;
+  case 4: highlightElement(".payment-table", "Double-click for customer view"); break;
+}
+  break;
+  case "Customer Search":
+  switch(step) {
+  case 0: highlightElement("#customer-service", "Navigate here first"); break;
+  case 1: highlightElement(".customer-details", "Fill in search criteria"); break;
+  case 2: highlightElement("#client-table", "Review results here"); break;
+  case 3: highlightElement(".collapsible-row", "Click to expand details"); break;
+  case 4: highlightElement(".payment-table", "Double-click for full view"); break;
+}
+  break;
+  case "Customer Details":
+  switch(step) {
+  case 0: highlightElement(".customer-card", "Customer identification info"); break;
+  case 1: highlightElement(".tabs", "Navigate through these tabs"); break;
+  case 2: highlightElement("#memo-btn", "Add customer notes"); break;
+  case 3: highlightElement("#transactions-btn", "View transaction history"); break;
+  case 4: highlightElement(".info-dot", "Click for additional details"); break;
+}
+  break;
+  case "Payment Instruments":
+  switch(step) {
+  case 0: highlightElement(".info-dot", "Click this info button"); break;
+  case 1: highlightElement(".payment-section", "Review instrument details"); break;
+  case 2: highlightElement("[data-label*='status']", "Check status information"); break;
+  case 3: highlightElement("[data-label*='expiry']", "Verify expiry dates"); break;
+  case 4: highlightElement("#back-btn", "Return to customer view"); break;
+}
+  break;
+}
+}
 
-    function highlightCurrentStep(optionName, step) {
-      switch(optionName) {
-        case "Customer Service":
-          switch(step) {
-            case 0: highlightElement("#customer-service", "Click here to start"); break;
-            case 1: highlightElement("#pan", "Enter customer PAN here"); break;
-            case 2: highlightElement(".search-btn", "Click to search"); break;
-            case 3: highlightElement(".collapsible-row", "Click customer row to expand"); break;
-            case 4: highlightElement(".payment-table", "Double-click for customer view"); break;
-          }
-          break;
-        case "Customer Search":
-          switch(step) {
-            case 0: highlightElement("#customer-service", "Navigate here first"); break;
-            case 1: highlightElement(".customer-details", "Fill in search criteria"); break;
-            case 2: highlightElement("#client-table", "Review results here"); break;
-            case 3: highlightElement(".collapsible-row", "Click to expand details"); break;
-            case 4: highlightElement(".payment-table", "Double-click for full view"); break;
-          }
-          break;
-        case "Customer Details":
-          switch(step) {
-            case 0: highlightElement(".customer-card", "Customer identification info"); break;
-            case 1: highlightElement(".tabs", "Navigate through these tabs"); break;
-            case 2: highlightElement("#memo-btn", "Add customer notes"); break;
-            case 3: highlightElement("#transactions-btn", "View transaction history"); break;
-            case 4: highlightElement(".info-dot", "Click for additional details"); break;
-          }
-          break;
-        case "Payment Instruments":
-          switch(step) {
-            case 0: highlightElement(".info-dot", "Click this info button"); break;
-            case 1: highlightElement(".payment-section", "Review instrument details"); break;
-            case 2: highlightElement("[data-label*='status']", "Check status information"); break;
-            case 3: highlightElement("[data-label*='expiry']", "Verify expiry dates"); break;
-            case 4: highlightElement("#back-btn", "Return to customer view"); break;
-          }
-          break;
-      }
-    }
+  updateStep();
 
-    updateStep();
+  nextBtn.addEventListener("click", () => {
+  if (stepIndex < option.steps.length - 1) {
+  stepIndex++;
+  updateStep();
+} else {
+  removeHighlights();
+  document.body.removeChild(overlay);
+  currentAutomation = null;
+  if (currentAutomationInterval) {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+}
+}
+});
 
-    nextBtn.addEventListener("click", () => {
-      if (stepIndex < option.steps.length - 1) {
-        stepIndex++;
-        updateStep();
-      } else {
-        removeHighlights();
-        document.body.removeChild(overlay);
-        currentAutomation = null;
-      }
-    });
-    autoBtn.addEventListener("click", () => {
-      // Start the automation
-      if (option.automation) {
-        option.automation();
+  autoBtn.addEventListener("click", () => {
+  if (currentAutomationInterval) {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+  autoBtn.innerText = "Auto Run";
+} else {
+  autoBtn.innerText = "Stop Auto";
+  let autoStepIndex = stepIndex;
+  currentAutomationInterval = setInterval(() => {
+  if (autoStepIndex < option.steps.length - 1) {
+  autoStepIndex++;
+  stepIndex = autoStepIndex;
+  if (option.automation(autoStepIndex)) {
+  updateStep();
+} else {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+  autoBtn.innerText = "Auto Run";
+}
+} else {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+  autoBtn.innerText = "Auto Run";
+  stepIndex = option.steps.length - 1;
+  updateStep();
+}
+}, 3000);
+}
+});
 
-        // Auto-advance through steps
-        if (currentAutomationInterval) {
-          clearInterval(currentAutomationInterval);
-        }
+  closeBtn.addEventListener("click", () => {
+  removeHighlights();
+  if (currentAutomationInterval) {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+}
+  document.body.removeChild(overlay);
+  currentAutomation = null;
+});
 
-        currentAutomationInterval = setInterval(() => {
-          if (stepIndex < option.steps.length - 1) {
-            stepIndex++;
-            updateStep();
-          } else {
-            clearInterval(currentAutomationInterval);
-            currentAutomationInterval = null;
-          }
-        }, 3000);
-      }
-    });
+  overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) {
+  removeHighlights();
+  if (currentAutomationInterval) {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+}
+  document.body.removeChild(overlay);
+  currentAutomation = null;
+}
+});
 
-    closeBtn.addEventListener("click", () => {
-      removeHighlights();
-      if (currentAutomationInterval) {
-        clearInterval(currentAutomationInterval);
-        currentAutomationInterval = null;
-      }
-      document.body.removeChild(overlay);
-      currentAutomation = null;
-    });
+  document.body.appendChild(overlay);
+}
 
-    // Close on backdrop click
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) {
-        removeHighlights();
-        if (currentAutomationInterval) {
-          clearInterval(currentAutomationInterval);
-          currentAutomationInterval = null;
-        }
-        document.body.removeChild(overlay);
-        currentAutomation = null;
-      }
-    });
-
-    document.body.appendChild(overlay);
-  }
-
-  // Clean up highlights when page changes
   const observer = new MutationObserver(() => {
-    if (currentAutomation) {
-      // Re-highlight current step if DOM changes
-      setTimeout(() => {
-        const currentStepIndex = parseInt(currentAutomation.querySelector(".progress").style.width) / (100 / navigationOptions[0].steps.length) - 1;
-        if (currentStepIndex >= 0) {
-          highlightCurrentStep("Customer Service", Math.floor(currentStepIndex));
-        }
-      }, 100);
-    }
-  });
+  if (currentAutomation) {
+  setTimeout(() => {
+  const progress = currentAutomation.querySelector(".progress");
+  if (progress) {
+  const currentStepIndex = parseInt(progress.style.width) / (100 / navigationOptions[0].steps.length) - 1;
+  if (currentStepIndex >= 0) {
+  highlightCurrentStep(navigationOptions[0].name, Math.floor(currentStepIndex));
+}
+}
+}, 100);
+}
+});
 
   observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+  childList: true,
+  subtree: true
+});
 
-  // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && currentAutomation) {
-      removeHighlights();
-      if (currentAutomationInterval) {
-        clearInterval(currentAutomationInterval);
-        currentAutomationInterval = null;
-      }
-      document.body.removeChild(currentAutomation);
-      currentAutomation = null;
-    }
-  });
+  if (e.key === "Escape" && currentAutomation) {
+  removeHighlights();
+  if (currentAutomationInterval) {
+  clearInterval(currentAutomationInterval);
+  currentAutomationInterval = null;
+}
+  document.body.removeChild(currentAutomation);
+  currentAutomation = null;
+}
+});
 });
