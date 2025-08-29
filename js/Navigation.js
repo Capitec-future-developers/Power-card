@@ -74,7 +74,7 @@
   navContainer.appendChild(navButton);
   document.body.appendChild(navContainer);
 
-  /* ------------ DROPDOWN MENU ------------ */
+
   const dropdown = document.createElement("div");
   dropdown.style.display = "none";
   dropdown.style.position = "absolute";
@@ -127,7 +127,7 @@
   hideBubbles();
 });
 
-  /* ------------ FREQUENT OPTIONS AS SPEECH BUBBLES ------------ */
+
   frequentOptions.forEach((freq, i) => {
   const bubble = document.createElement("div");
   bubble.innerText = freq;
@@ -171,7 +171,7 @@
 
   setTimeout(showBubbles, 1500);
 
-  /* ------------ ELEMENT HIGHLIGHTING ------------ */
+
   function highlightElement(selector, message) {
   removeHighlights();
   const element = document.querySelector(selector);
@@ -205,7 +205,7 @@
   document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
 }
 
-  /* ------------ EDIT USE CASES MODAL ------------ */
+
   function showEditUseCasesModal() {
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
@@ -371,7 +371,7 @@
   modal.appendChild(closeButton);
 }
 
-  /* ------------ AUTOMATION FUNCTIONS ------------ */
+
   function automateCustomerService(stepIndex = 0) {
   const steps = [
   () => {
@@ -496,9 +496,9 @@
   if (infoBtn) infoBtn.click();
   return !!infoBtn;
 },
-  () => true, // Review payment instrument details
-  () => true, // Check card status
-  () => true, // Verify expiry dates
+  () => true,
+  () => true,
+  () => true,
   () => {
   const backBtn = document.getElementById('back-btn');
   if (backBtn) backBtn.click();
@@ -512,7 +512,7 @@
   return false;
 }
 
-  /* ------------ AUTOMATION SYSTEM ------------ */
+
   function startAutomation(option) {
   if (currentAutomation) {
   document.body.removeChild(currentAutomation);
