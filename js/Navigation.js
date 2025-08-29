@@ -1,16 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-// Configuration - UPDATED TO 1 MINUTE DELAY
-  const AUTOMATION_STEP_DELAY = 60000; // 60 seconds between steps (1 minute)
-  const BUBBLE_DISPLAY_TIME = 12000;
-
-// Load saved options or use defaults
-  const savedOptions = JSON.parse(localStorage.getItem('navHelpOptions')) || {};
-  const savedEnabledOptions = savedOptions.enabledOptions || {};
-  const savedPosition = savedOptions.position || { bottom: '30px', right: '30px' };
-  const savedNavigationOptions = savedOptions.navigationOptions || null;
-
-// Use saved navigation options if available, otherwise use defaults
-  let navigationOptions = savedNavigationOptions || [
+  const navigationOptions = [
     {
       name: "Customer Service",
       steps: [
@@ -20,9 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Click on customer row to expand details",
         "Double-click payment instruments to view customer details"
       ],
-      automation: automateCustomerService,
-      enabled: savedEnabledOptions["Customer Service"] !== undefined ?
-        savedEnabledOptions["Customer Service"] : true
+      automation: automateCustomerService
     },
     {
       name: "Customer Search",
@@ -33,9 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Expand customer details by clicking the row",
         "Access full customer view by double-clicking"
       ],
-      automation: automateCustomerSearch,
-      enabled: savedEnabledOptions["Customer Search"] !== undefined ?
-        savedEnabledOptions["Customer Search"] : true
+      automation: automateCustomerSearch
     },
     {
       name: "Customer Details",
@@ -46,9 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Access Account Transactions for transaction history",
         "Use info buttons (i) for additional details"
       ],
-      automation: automateCustomerDetails,
-      enabled: savedEnabledOptions["Customer Details"] !== undefined ?
-        savedEnabledOptions["Customer Details"] : true
+      automation: automateCustomerDetails
     },
     {
       name: "Payment Instruments",
@@ -59,237 +42,33 @@ document.addEventListener("DOMContentLoaded", () => {
         "Verify expiry dates and limits",
         "Navigate back to customer view when done"
       ],
-      automation: automatePaymentInstruments,
-      enabled: savedEnabledOptions["Payment Instruments"] !== undefined ?
-        savedEnabledOptions["Payment Instruments"] : true
-    },
-    {
-      name: "Transaction History",
-      steps: [
-        "Navigate to Account Transactions tab",
-        "Filter transactions by date range",
-        "Search for specific transaction types",
-        "View detailed transaction information",
-        "Export transaction data if needed"
-      ],
-      automation: automateTransactionHistory,
-      enabled: savedEnabledOptions["Transaction History"] !== undefined ?
-        savedEnabledOptions["Transaction History"] : true
-    },
-    {
-      name: "Account Management",
-      steps: [
-        "Access account details from customer view",
-        "Review account status and limits",
-        "Check loyalty program information",
-        "View associated payment instruments",
-        "Manage account preferences"
-      ],
-      automation: automateAccountManagement,
-      enabled: savedEnabledOptions["Account Management"] !== undefined ?
-        savedEnabledOptions["Account Management"] : true
+      automation: automatePaymentInstruments
     }
   ];
 
-  const frequentOptions = ["Customer Service", "Customer Search", "Transaction History"];
+  const frequentOptions = ["Customer Service", "Customer Search"];
   let bubbles = [];
   let currentAutomation = null;
   let currentAutomationInterval = null;
-  let isDragging = false;
-  let dragOffset = { x: 0, y: 0 };
-
-  /* ------------ ELEMENT DISCOVERY AND INTERACTION FUNCTIONS ------------ */
-
-// Function to find elements by various selectors
-  function findElement(selectors) {
-    for (const selector of selectors) {
-      try {
-        if (selector.includes(':contains(')) {
-// Handle :contains pseudo-selector
-          const [tag, text] = selector.split(':contains(');
-          const cleanText = text.replace(')', '');
-          const elements = document.querySelectorAll(tag);
-          for (const el of elements) {
-            if (el.textContent.includes(cleanText)) {
-              return el;
-            }
-          }
-        } else {
-          const element = document.querySelector(selector);
-          if (element) return element;
-        }
-      } catch (e) {
-        console.warn('Invalid selector:', selector);
-      }
-    }
-    return null;
-  }
-
-// Function to simulate a click on an element
-  function clickElement(element) {
-    if (!element) return false;
-
-    try {
-// Highlight the element before clicking
-      highlightElementForClick(element);
-
-// Create and dispatch a mouse event
-      const mouseEvent = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-      });
-      element.dispatchEvent(mouseEvent);
-
-// Also trigger the native click method
-      if (typeof element.click === 'function') {
-        element.click();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error clicking element:', error);
-      return false;
-    }
-  }
-
-// Function to highlight an element before clicking (visual feedback)
-  function highlightElementForClick(element) {
-    const rect = element.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-
-    const highlight = document.createElement("div");
-    highlight.className = "nav-click-highlight";
-    highlight.style.position = "absolute";
-    highlight.style.top = (rect.top + scrollTop - 5) + "px";
-    highlight.style.left = (rect.left + scrollLeft - 5) + "px";
-    highlight.style.width = (rect.width + 10) + "px";
-    highlight.style.height = (rect.height + 10) + "px";
-    highlight.style.background = "rgba(255, 215, 0, 0.3)";
-    highlight.style.border = "2px solid gold";
-    highlight.style.borderRadius = "4px";
-    highlight.style.zIndex = "9997";
-    highlight.style.pointerEvents = "none";
-    highlight.style.animation = "pulseClick 0.8s ease-in-out";
-
-    document.body.appendChild(highlight);
-
-// Remove highlight after animation
-    setTimeout(() => {
-      if (document.body.contains(highlight)) {
-        document.body.removeChild(highlight);
-      }
-    }, 800);
-
-// Scroll element into view if needed
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-// Function to simulate typing into an input field
-  function typeInInput(selectors, text) {
-    const input = findElement(selectors);
-    if (!input) return false;
-
-    try {
-// Highlight the input before typing
-      highlightElementForClick(input);
-
-      input.focus();
-      input.value = text;
-
-// Trigger input events
-      const inputEvent = new Event('input', { bubbles: true });
-      input.dispatchEvent(inputEvent);
-
-      const changeEvent = new Event('change', { bubbles: true });
-      input.dispatchEvent(changeEvent);
-
-      return true;
-    } catch (error) {
-      console.error('Error typing in input:', error);
-      return false;
-    }
-  }
-
-// Function to wait for an element to appear
-  function waitForElement(selectors, timeout = 5000) {
-    return new Promise((resolve) => {
-      const startTime = Date.now();
-
-      function check() {
-        const element = findElement(selectors);
-        if (element) {
-          resolve(element);
-          return;
-        }
-
-        if (Date.now() - startTime < timeout) {
-          setTimeout(check, 100);
-        } else {
-          resolve(null);
-        }
-      }
-
-      check();
-    });
-  }
 
   /* ------------ CREATE BUTTON ------------ */
   const navContainer = document.createElement("div");
-  navContainer.id = "nav-help-container";
   navContainer.style.position = "fixed";
-  navContainer.style.bottom = savedPosition.bottom;
-  navContainer.style.right = savedPosition.right;
+  navContainer.style.bottom = "30px";
+  navContainer.style.right = "30px";
   navContainer.style.zIndex = "9999";
-  navContainer.style.cursor = "move";
-
-// Make container draggable
-  navContainer.addEventListener('mousedown', startDrag);
-  document.addEventListener('mousemove', drag);
-  document.addEventListener('mouseup', stopDrag);
-
-  function startDrag(e) {
-    if (e.target === navContainer || e.target === navButton) {
-      isDragging = true;
-      const rect = navContainer.getBoundingClientRect();
-      dragOffset = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-      navContainer.style.cursor = "grabbing";
-    }
-  }
-
-  function drag(e) {
-    if (!isDragging) return;
-
-    navContainer.style.left = (e.clientX - dragOffset.x) + 'px';
-    navContainer.style.top = (e.clientY - dragOffset.y) + 'px';
-    navContainer.style.right = 'auto';
-    navContainer.style.bottom = 'auto';
-  }
-
-  function stopDrag() {
-    if (isDragging) {
-      isDragging = false;
-      navContainer.style.cursor = "move";
-
-// Save position
-      const rect = navContainer.getBoundingClientRect();
-      const savedOptions = JSON.parse(localStorage.getItem('navHelpOptions')) || {};
-      savedOptions.position = {
-        top: rect.top + 'px',
-        left: rect.left + 'px',
-        bottom: 'auto',
-        right: 'auto'
-      };
-      localStorage.setItem('navHelpOptions', JSON.stringify(savedOptions));
-    }
-  }
 
   const navButton = document.createElement("button");
   navButton.innerText = "☰ Navigation Help";
+  navButton.style.padding = "10px 20px";
+  navButton.style.borderRadius = "20px";
+  navButton.style.border = "none";
+  navButton.style.background = "#092365";
+  navButton.style.color = "white";
+  navButton.style.cursor = "pointer";
+  navButton.style.fontSize = "16px";
+  navButton.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
+
   navContainer.appendChild(navButton);
   document.body.appendChild(navContainer);
 
@@ -297,69 +76,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdown = document.createElement("div");
   dropdown.style.display = "none";
   dropdown.style.position = "absolute";
-  dropdown.style.bottom = "100%";
+  dropdown.style.bottom = "50px";
   dropdown.style.right = "0";
-  dropdown.style.width = "250px";
   dropdown.style.background = "white";
+  dropdown.style.border = "1px solid #ccc";
   dropdown.style.borderRadius = "8px";
-  dropdown.style.boxShadow = "0 5px 15px rgba(0,0,0,0.15)";
+  dropdown.style.boxShadow = "0 4px 6px rgba(0,0,0,0.2)";
+  dropdown.style.minWidth = "200px";
   dropdown.style.overflow = "hidden";
-  dropdown.style.marginBottom = "10px";
 
-// Add settings option to customize dropdown
-  const settingsItem = document.createElement("div");
-  settingsItem.innerText = "Customize Options...";
-  settingsItem.style.padding = "12px 15px";
-  settingsItem.style.cursor = "pointer";
-  settingsItem.style.transition = "background 0.2s";
-  settingsItem.style.borderBottom = "1px solid #eee";
-  settingsItem.addEventListener("mouseenter", () => settingsItem.style.background = "#e0e0e0");
-  settingsItem.addEventListener("mouseleave", () => settingsItem.style.background = "#f8f8f8");
-  settingsItem.addEventListener("click", showCustomizationDialog);
-  dropdown.appendChild(settingsItem);
+  navigationOptions.forEach(opt => {
+    const item = document.createElement("div");
+    item.innerText = opt.name;
+    item.style.padding = "12px 15px";
+    item.style.cursor = "pointer";
+    item.style.borderBottom = "1px solid #eee";
+    item.addEventListener("mouseenter", () => item.style.background = "#f0f0f0");
+    item.addEventListener("mouseleave", () => item.style.background = "white");
 
-// Add admin option to edit use cases
-  const adminItem = document.createElement("div");
-  adminItem.innerText = "Admin: Edit Use Cases";
-  adminItem.style.padding = "12px 15px";
-  adminItem.style.cursor = "pointer";
-  adminItem.style.transition = "background 0.2s";
-  adminItem.style.color = "#d32f2f";
-  adminItem.addEventListener("mouseenter", () => adminItem.style.background = "#ffcdd2");
-  adminItem.addEventListener("mouseleave", () => adminItem.style.background = "#f8f8f8");
-  adminItem.addEventListener("click", showAdminDialog);
-  dropdown.appendChild(adminItem);
+    item.addEventListener("click", () => {
+      dropdown.style.display = "none";
+      startAutomation(opt);
+    });
 
-// Function to refresh dropdown options
-  function refreshDropdownOptions() {
-// Remove all options except the settings and admin items
-    while (dropdown.children.length > 2) {
-      dropdown.removeChild(dropdown.lastChild);
-    }
-
-// Add filtered options
-    navigationOptions
-      .filter(opt => opt.enabled)
-      .forEach(opt => {
-        const item = document.createElement("div");
-        item.innerText = opt.name;
-        item.style.padding = "12px 15px";
-        item.style.cursor = "pointer";
-        item.style.transition = "background 0.2s";
-        item.style.borderBottom = "1px solid #eee";
-        item.addEventListener("mouseenter", () => item.style.background = "#f0f0f0");
-        item.addEventListener("mouseleave", () => item.style.background = "white");
-        item.addEventListener("click", () => {
-          dropdown.style.display = "none";
-          startAutomation(opt);
-        });
-
-        dropdown.appendChild(item);
-      });
-  }
-
-// Initial dropdown setup
-  refreshDropdownOptions();
+    dropdown.appendChild(item);
+  });
 
   navContainer.appendChild(dropdown);
 
@@ -368,329 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
     hideBubbles();
   });
 
-  /* ------------ ADMIN DIALOG FOR EDITING USE CASES ------------ */
-  function showAdminDialog() {
-    dropdown.style.display = "none";
-
-    const dialog = document.createElement("div");
-    dialog.id = "nav-admin-dialog";
-    dialog.style.position = "fixed";
-    dialog.style.top = "50%";
-    dialog.style.left = "50%";
-    dialog.style.transform = "translate(-50%, -50%)";
-    dialog.style.background = "white";
-    dialog.style.padding = "25px";
-    dialog.style.borderRadius = "10px";
-    dialog.style.boxShadow = "0 5px 25px rgba(0,0,0,0.25)";
-    dialog.style.zIndex = "10001";
-    dialog.style.width = "450px";
-    dialog.style.maxWidth = "90%";
-    dialog.style.maxHeight = "80vh";
-    dialog.style.overflowY = "auto";
-
-    const title = document.createElement("h3");
-    title.innerText = "Admin: Edit Navigation Use Cases";
-    title.style.marginTop = "0";
-    title.style.color = "#092365";
-    title.style.borderBottom = "2px solid #f0f0f0";
-    title.style.paddingBottom = "10px";
-    dialog.appendChild(title);
-
-    const instructions = document.createElement("p");
-    instructions.innerText = "Add, edit, or remove navigation use cases. Each use case requires a name and step-by-step instructions.";
-    dialog.appendChild(instructions);
-
-    const useCasesContainer = document.createElement("div");
-    useCasesContainer.id = "use-cases-container";
-
-// Add existing use cases
-    navigationOptions.forEach((option, index) => {
-      const useCaseDiv = createUseCaseEditor(option, index);
-      useCasesContainer.appendChild(useCaseDiv);
-    });
-
-    dialog.appendChild(useCasesContainer);
-
-// Add new use case button
-    const addButton = document.createElement("button");
-    addButton.innerText = "+ Add New Use Case";
-    addButton.style.marginTop = "15px";
-    addButton.addEventListener("click", () => {
-      const newUseCase = {
-        name: "New Use Case",
-        steps: ["Step 1"],
-        automation: function() { console.log("Automation for new use case"); },
-        enabled: true
-      };
-      const newIndex = navigationOptions.push(newUseCase) - 1;
-      const useCaseDiv = createUseCaseEditor(newUseCase, newIndex);
-      useCasesContainer.appendChild(useCaseDiv);
-// Scroll to the new use case
-      useCaseDiv.scrollIntoView({ behavior: 'smooth' });
-    });
-
-    dialog.appendChild(addButton);
-
-    const buttonContainer = document.createElement("div");
-    buttonContainer.style.display = "flex";
-    buttonContainer.style.justifyContent = "flex-end";
-    buttonContainer.style.marginTop = "20px";
-    buttonContainer.style.gap = "10px";
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.innerText = "Cancel";
-    cancelBtn.addEventListener("click", () => document.body.removeChild(dialog));
-
-    const saveBtn = document.createElement("button");
-    saveBtn.innerText = "Save All Changes";
-    saveBtn.style.background = "#4caf50";
-    saveBtn.style.color = "white";
-    saveBtn.addEventListener("click", () => {
-// Collect all use case data
-      const useCaseEditors = dialog.querySelectorAll('.use-case-editor');
-      const updatedOptions = [];
-
-      useCaseEditors.forEach(editor => {
-        const index = parseInt(editor.dataset.index);
-        const nameInput = editor.querySelector('.use-case-name');
-        const stepsTextarea = editor.querySelector('.use-case-steps');
-        const enabledCheckbox = editor.querySelector('.use-case-enabled');
-
-// Parse steps from textarea (one per line)
-        const steps = stepsTextarea.value.split('\n')
-          .map(step => step.trim())
-          .filter(step => step.length > 0);
-
-        updatedOptions.push({
-          name: nameInput.value,
-          steps: steps,
-          automation: navigationOptions[index]?.automation || function() { console.log("Automation not defined"); },
-          enabled: enabledCheckbox.checked
-        });
-      });
-
-// Update navigation options
-      navigationOptions = updatedOptions;
-
-// Save to localStorage
-      const savedOptions = JSON.parse(localStorage.getItem('navHelpOptions')) || {};
-      savedOptions.navigationOptions = navigationOptions;
-      localStorage.setItem('navHelpOptions', JSON.stringify(savedOptions));
-
-// Refresh dropdown
-      refreshDropdownOptions();
-
-      document.body.removeChild(dialog);
-
-// Show confirmation
-      alert("Use cases updated successfully!");
-    });
-
-    buttonContainer.appendChild(cancelBtn);
-    buttonContainer.appendChild(saveBtn);
-    dialog.appendChild(buttonContainer);
-
-    document.body.appendChild(dialog);
-  }
-
-  function createUseCaseEditor(option, index) {
-    const useCaseDiv = document.createElement("div");
-    useCaseDiv.className = "use-case-editor";
-    useCaseDiv.dataset.index = index;
-    useCaseDiv.style.border = "1px solid #e0e0e0";
-    useCaseDiv.style.borderRadius = "8px";
-    useCaseDiv.style.padding = "15px";
-    useCaseDiv.style.marginBottom = "15px";
-    useCaseDiv.style.background = "#fafafa";
-
-// Use case name
-    const nameLabel = document.createElement("label");
-    nameLabel.innerText = "Use Case Name:";
-    nameLabel.style.display = "block";
-    nameLabel.style.marginBottom = "5px";
-    nameLabel.style.fontWeight = "bold";
-    nameLabel.style.color = "#333";
-
-    const nameInput = document.createElement("input");
-    nameInput.type = "text";
-    nameInput.value = option.name;
-    nameInput.className = "use-case-name";
-    nameInput.style.width = "100%";
-    nameInput.style.padding = "8px";
-    nameInput.style.border = "1px solid #ccc";
-    nameInput.style.borderRadius = "4px";
-    nameInput.style.marginBottom = "10px";
-    nameInput.style.boxSizing = "border-box";
-
-// Use case steps
-    const stepsLabel = document.createElement("label");
-    stepsLabel.innerText = "Steps (one per line):";
-    stepsLabel.style.display = "block";
-    stepsLabel.style.marginBottom = "5px";
-    stepsLabel.style.fontWeight = "bold";
-    stepsLabel.style.color = "#333";
-
-    const stepsTextarea = document.createElement("textarea");
-    stepsTextarea.value = option.steps.join('\n');
-    stepsTextarea.className = "use-case-steps";
-    stepsTextarea.style.width = "100%";
-    stepsTextarea.style.height = "100px";
-    stepsTextarea.style.padding = "8px";
-    stepsTextarea.style.border = "1px solid #ccc";
-    stepsTextarea.style.borderRadius = "4px";
-    stepsTextarea.style.marginBottom = "10px";
-    stepsTextarea.style.resize = "vertical";
-    stepsTextarea.style.boxSizing = "border-box";
-
-// Enabled checkbox
-    const enabledContainer = document.createElement("div");
-    enabledContainer.style.display = "flex";
-    enabledContainer.style.alignItems = "center";
-    enabledContainer.style.marginBottom = "10px";
-
-    const enabledCheckbox = document.createElement("input");
-    enabledCheckbox.type = "checkbox";
-    enabledCheckbox.checked = option.enabled;
-    enabledCheckbox.className = "use-case-enabled";
-    enabledCheckbox.style.marginRight = "8px";
-
-    const enabledLabel = document.createElement("label");
-    enabledLabel.innerText = "Enabled";
-    enabledLabel.style.margin = "0";
-
-    enabledContainer.appendChild(enabledCheckbox);
-    enabledContainer.appendChild(enabledLabel);
-
-// Delete button
-    const deleteButton = document.createElement("button");
-    deleteButton.innerText = "Delete";
-    deleteButton.style.background = "#f44336";
-    deleteButton.style.color = "white";
-    deleteButton.style.border = "none";
-    deleteButton.style.padding = "8px 15px";
-    deleteButton.style.borderRadius = "4px";
-    deleteButton.style.cursor = "pointer";
-    deleteButton.addEventListener("click", () => {
-      if (confirm("Are you sure you want to delete this use case?")) {
-        navigationOptions.splice(index, 1);
-        useCaseDiv.remove();
-      }
-    });
-
-    useCaseDiv.appendChild(nameLabel);
-    useCaseDiv.appendChild(nameInput);
-    useCaseDiv.appendChild(stepsLabel);
-    useCaseDiv.appendChild(stepsTextarea);
-    useCaseDiv.appendChild(enabledContainer);
-    useCaseDiv.appendChild(deleteButton);
-
-    return useCaseDiv;
-  }
-
-  /* ------------ CUSTOMIZATION DIALOG ------------ */
-  function showCustomizationDialog() {
-    dropdown.style.display = "none";
-
-    const dialog = document.createElement("div");
-    dialog.id = "nav-custom-dialog";
-    dialog.style.position = "fixed";
-    dialog.style.top = "50%";
-    dialog.style.left = "50%";
-    dialog.style.transform = "translate(-50%, -50%)";
-    dialog.style.background = "white";
-    dialog.style.padding = "25px";
-    dialog.style.borderRadius = "10px";
-    dialog.style.boxShadow = "0 5px 25px rgba(0,0,0,0.25)";
-    dialog.style.zIndex = "10001";
-    dialog.style.width = "450px";
-    dialog.style.maxWidth = "90%";
-    dialog.style.maxHeight = "80vh";
-    dialog.style.overflowY = "auto";
-
-    const title = document.createElement("h3");
-    title.innerText = "Customize Navigation Options";
-    title.style.marginTop = "0";
-    title.style.color = "#092365";
-    dialog.appendChild(title);
-
-    const instructions = document.createElement("p");
-    instructions.innerText = "Select which options should appear in the dropdown:";
-    dialog.appendChild(instructions);
-
-    const optionsContainer = document.createElement("div");
-    optionsContainer.style.maxHeight = "300px";
-    optionsContainer.style.overflowY = "auto";
-
-// Create checkboxes for each option
-    navigationOptions.forEach(opt => {
-      const label = document.createElement("label");
-      label.style.display = "flex";
-      label.style.alignItems = "center";
-      label.style.marginBottom = "10px";
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = opt.enabled;
-      checkbox.dataset.option = opt.name;
-      checkbox.style.marginRight = "10px";
-
-      const text = document.createElement("span");
-      text.innerText = opt.name;
-
-      label.appendChild(checkbox);
-      label.appendChild(text);
-      optionsContainer.appendChild(label);
-    });
-
-    dialog.appendChild(optionsContainer);
-
-    const buttonContainer = document.createElement("div");
-    buttonContainer.style.display = "flex";
-    buttonContainer.style.justifyContent = "flex-end";
-    buttonContainer.style.marginTop = "20px";
-    buttonContainer.style.gap = "10px";
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.innerText = "Cancel";
-    cancelBtn.addEventListener("click", () => document.body.removeChild(dialog));
-
-    const saveBtn = document.createElement("button");
-    saveBtn.innerText = "Save";
-    saveBtn.style.background = "#092365";
-    saveBtn.style.color = "white";
-    saveBtn.addEventListener("click", () => {
-// Update enabled status for each option
-      const checkboxes = dialog.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(checkbox => {
-        const optionName = checkbox.dataset.option;
-        const option = navigationOptions.find(opt => opt.name === optionName);
-        if (option) {
-          option.enabled = checkbox.checked;
-        }
-      });
-
-// Save to localStorage
-      const savedOptions = JSON.parse(localStorage.getItem('navHelpOptions')) || {};
-      const enabledOptions = {};
-      navigationOptions.forEach(opt => {
-        enabledOptions[opt.name] = opt.enabled;
-      });
-      savedOptions.enabledOptions = enabledOptions;
-      localStorage.setItem('navHelpOptions', JSON.stringify(savedOptions));
-
-// Refresh dropdown
-      refreshDropdownOptions();
-
-      document.body.removeChild(dialog);
-    });
-
-    buttonContainer.appendChild(cancelBtn);
-    buttonContainer.appendChild(saveBtn);
-    dialog.appendChild(buttonContainer);
-
-    document.body.appendChild(dialog);
-  }
-
   /* ------------ FREQUENT OPTIONS AS SPEECH BUBBLES ------------ */
   frequentOptions.forEach((freq, i) => {
     const bubble = document.createElement("div");
@@ -698,19 +116,19 @@ document.addEventListener("DOMContentLoaded", () => {
     bubble.style.position = "absolute";
     bubble.style.bottom = `${60 + (i * 45)}px`;
     bubble.style.right = "150px";
-    bubble.className = "speech-bubble";
-    bubble.style.background = "white";
-    bubble.style.padding = "10px 15px";
-    bubble.style.borderRadius = "18px";
-    bubble.style.boxShadow = "0 3px 10px rgba(0,0,0,0.15)";
+    bubble.style.background = "#ffeb3b";
+    bubble.style.color = "black";
+    bubble.style.padding = "8px 12px";
+    bubble.style.borderRadius = "20px";
+    bubble.style.fontSize = "13px";
+    bubble.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
     bubble.style.cursor = "pointer";
-    bubble.style.transition = "all 0.3s ease";
     bubble.style.opacity = "0";
-    bubble.style.fontSize = "14px";
-    bubble.style.border = "1px solid #e0e0e0";
+    bubble.style.transition = "opacity 1s ease";
+    bubble.style.whiteSpace = "nowrap";
 
     bubble.addEventListener("click", () => {
-      const opt = navigationOptions.find(o => o.name === freq && o.enabled);
+      const opt = navigationOptions.find(o => o.name === freq);
       if (opt) startAutomation(opt);
     });
 
@@ -724,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         b.style.opacity = "1";
         setTimeout(() => {
           b.style.opacity = "0";
-        }, BUBBLE_DISPLAY_TIME);
+        }, 12000);
       }, i * 600);
     });
   }
@@ -741,19 +159,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function highlightElement(selector, message) {
     removeHighlights();
 
-    const element = findElement([selector]);
+    const element = document.querySelector(selector);
     if (!element) return false;
 
     const highlight = document.createElement("div");
     highlight.className = "nav-highlight";
     highlight.style.position = "absolute";
-    highlight.style.background = "rgba(33, 150, 243, 0.2)";
-    highlight.style.border = "2px solid #2196f3";
-    highlight.style.borderRadius = "4px";
+    highlight.style.border = "3px solid #ff6b6b";
+    highlight.style.borderRadius = "8px";
     highlight.style.pointerEvents = "none";
     highlight.style.zIndex = "9998";
-    highlight.style.boxSizing = "border-box";
-    highlight.style.animation = "pulse 1.5s infinite";
+    highlight.style.boxShadow = "0 0 20px rgba(255, 107, 107, 0.5)";
+    highlight.style.animation = "pulse 2s infinite";
 
     const rect = element.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -766,7 +183,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.appendChild(highlight);
 
-// Scroll element into view
+    // Add pulse animation
+    if (!document.getElementById("nav-pulse-style")) {
+      const style = document.createElement("style");
+      style.id = "nav-pulse-style";
+      style.textContent = `
+@keyframes pulse {
+ 0% { opacity: 1; transform: scale(1); }
+ 50% { opacity: 0.7; transform: scale(1.05); }
+ 100% { opacity: 1; transform: scale(1); }
+ }
+ `;
+      document.head.appendChild(style);
+    }
+
+    // Scroll element into view
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     return true;
@@ -774,194 +205,161 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function removeHighlights() {
     document.querySelectorAll(".nav-highlight").forEach(el => el.remove());
-    document.querySelectorAll(".nav-click-highlight").forEach(el => el.remove());
   }
 
-  /* ------------ UPDATED AUTOMATION FUNCTIONS WITH ELEMENT INTERACTION ------------ */
+  /* ------------ AUTOMATION FUNCTIONS ------------ */
   function automateCustomerService() {
-    console.log("Automating Customer Service workflow");
-
-// Step 1: Find and click Customer Service button
-    const customerServiceBtn = findElement([
-      '#customer-service-btn',
-      'button:contains("Customer Service")',
-      '[data-testid="customer-service-button"]',
-      '.customer-service-button'
-    ]);
-
+    // Click Customer Service button
+    const customerServiceBtn = document.getElementById('customer-service');
     if (customerServiceBtn) {
-      clickElement(customerServiceBtn);
-      console.log("Clicked Customer Service button");
+      customerServiceBtn.click();
+
+      // Wait for the content to load
+      setTimeout(() => {
+        // Enter PAN
+        const panInput = document.getElementById('pan');
+        if (panInput) {
+          panInput.value = '4644090987127908'; // Sample PAN
+
+          // Click Search button
+          setTimeout(() => {
+            const searchBtn = document.querySelector('.search-btn');
+            if (searchBtn) {
+              searchBtn.click();
+
+              // Wait for results and click on customer row
+              setTimeout(() => {
+                const customerRow = document.querySelector('.collapsible-row');
+                if (customerRow) {
+                  customerRow.click();
+
+                  // Wait for details to expand and double-click payment instruments
+                  setTimeout(() => {
+                    const paymentTable = document.querySelector('.payment-table');
+                    if (paymentTable) {
+                      // Simulate double-click
+                      const event = new MouseEvent('dblclick', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                      });
+                      paymentTable.dispatchEvent(event);
+                    }
+                  }, 1000);
+                }
+              }, 1000);
+            }
+          }, 500);
+        }
+      }, 500);
     }
-
-// Step 2: Find PAN input and enter test data
-    setTimeout(() => {
-      const panInput = findElement([
-        '#pan-input',
-        'input[placeholder*="PAN"]',
-        'input[name*="pan"]',
-        '[data-testid="pan-input"]'
-      ]);
-
-      if (panInput) {
-        typeInInput([
-          '#pan-input',
-          'input[placeholder*="PAN"]',
-          'input[name*="pan"]',
-          '[data-testid="pan-input"]'
-        ], "1234567890123");
-        console.log("Entered PAN number");
-      }
-    }, 2000);
-
-// Step 3: Find and click Search button
-    setTimeout(() => {
-      const searchBtn = findElement([
-        '#search-btn',
-        'button:contains("Search")',
-        '[data-testid="search-button"]',
-        '.search-button'
-      ]);
-
-      if (searchBtn) {
-        clickElement(searchBtn);
-        console.log("Clicked Search button");
-      }
-    }, 4000);
   }
 
   function automateCustomerSearch() {
-    console.log("Automating Customer Search workflow");
-
-// Step 1: Find and click Customer Service button
-    const customerServiceBtn = findElement([
-      '#customer-service-btn',
-      'button:contains("Customer Service")',
-      '[data-testid="customer-service-button"]',
-      '.customer-service-button'
-    ]);
-
+    // Click Customer Service button
+    const customerServiceBtn = document.getElementById('customer-service');
     if (customerServiceBtn) {
-      clickElement(customerServiceBtn);
-      console.log("Clicked Customer Service button");
+      customerServiceBtn.click();
+
+      // Wait for the content to load
+      setTimeout(() => {
+        // Enter First Name
+        const fnameInput = document.getElementById('fname');
+        if (fnameInput) {
+          fnameInput.value = 'Omphile'; // Sample first name
+
+          // Click Search button
+          setTimeout(() => {
+            const searchBtn = document.querySelector('.search-btn');
+            if (searchBtn) {
+              searchBtn.click();
+
+              // Wait for results and click on customer row
+              setTimeout(() => {
+                const customerRow = document.querySelector('.collapsible-row');
+                if (customerRow) {
+                  customerRow.click();
+
+                  // Wait for details to expand and double-click payment instruments
+                  setTimeout(() => {
+                    const paymentTable = document.querySelector('.payment-table');
+                    if (paymentTable) {
+                      // Simulate double-click
+                      const event = new MouseEvent('dblclick', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                      });
+                      paymentTable.dispatchEvent(event);
+                    }
+                  }, 1000);
+                }
+              }, 1000);
+            }
+          }, 500);
+        }
+      }, 500);
     }
-
-// Step 2: Find search input and enter test data
-    setTimeout(() => {
-      const searchInput = findElement([
-        '.search-box',
-        'input[placeholder*="Search"]',
-        'input[name*="search"]',
-        '[data-testid="search-input"]'
-      ]);
-
-      if (searchInput) {
-        typeInInput([
-          '.search-box',
-          'input[placeholder*="Search"]',
-          'input[name*="search"]',
-          '[data-testid="search-input"]'
-        ], "Test Customer");
-        console.log("Entered search criteria");
-      }
-    }, 2000);
   }
 
   function automateCustomerDetails() {
-    console.log("Automating Customer Details workflow");
+    // This assumes we're already in the customer view
+    // Navigate through tabs
+    setTimeout(() => {
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      if (tabButtons.length > 1) {
+        // Click on Account Summary tab
+        tabButtons[1].click();
 
-// Step 1: Find and click on customer details tab
-    const detailsTab = findElement([
-      '[data-tab="details"]',
-      '.tab:contains("Details")',
-      '[data-testid="details-tab"]'
-    ]);
+        // Continue through other tabs
+        setTimeout(() => {
+          tabButtons[2].click();
 
-    if (detailsTab) {
-      clickElement(detailsTab);
-      console.log("Clicked Customer Details tab");
-    }
+          setTimeout(() => {
+            // Click Memo button
+            const memoBtn = document.getElementById('memo-btn');
+            if (memoBtn) memoBtn.click();
+
+            setTimeout(() => {
+              // Close memo popup
+              const cancelMemo = document.getElementById('cancel-memo');
+              if (cancelMemo) cancelMemo.click();
+
+              setTimeout(() => {
+                // Click Transactions button
+                const transactionsBtn = document.getElementById('transactions-btn');
+                if (transactionsBtn) transactionsBtn.click();
+
+                setTimeout(() => {
+                  // Click on info button
+                  const infoBtn = document.querySelector('.info-dot');
+                  if (infoBtn) infoBtn.click();
+                }, 500);
+              }, 500);
+            }, 500);
+          }, 500);
+        }, 1000);
+      }
+    }, 500);
   }
 
   function automatePaymentInstruments() {
-    console.log("Automating Payment Instruments workflow");
-
-// Step 1: Find and click on payment instruments tab
-    const instrumentsTab = findElement([
-      '[data-tab="instruments"]',
-      '.tab:contains("Instruments")',
-      '.tab:contains("Payment")',
-      '[data-testid="instruments-tab"]'
-    ]);
-
-    if (instrumentsTab) {
-      clickElement(instrumentsTab);
-      console.log("Clicked Payment Instruments tab");
-    }
-
-// Step 2: Find and click view details button
+    // Click on info button next to PAN
     setTimeout(() => {
-      const viewDetailsBtn = findElement([
-        '#view-details-btn',
-        'button:contains("View Details")',
-        '[data-testid="view-details-button"]'
-      ]);
+      const infoBtn = document.querySelector('.info-dot');
+      if (infoBtn) {
+        infoBtn.click();
 
-      if (viewDetailsBtn) {
-        clickElement(viewDetailsBtn);
-        console.log("Clicked View Details button");
+        // After viewing payment instruments, go back
+        setTimeout(() => {
+          const backBtn = document.getElementById('back-btn');
+          if (backBtn) backBtn.click();
+        }, 2000);
       }
-    }, 2000);
+    }, 500);
   }
 
-  function automateTransactionHistory() {
-    console.log("Automating Transaction History workflow");
-
-// Step 1: Find and click on transactions tab
-    const transactionsTab = findElement([
-      '[data-tab="transactions"]',
-      '.tab:contains("Transactions")',
-      '[data-testid="transactions-tab"]'
-    ]);
-
-    if (transactionsTab) {
-      clickElement(transactionsTab);
-      console.log("Clicked Transactions tab");
-    }
-
-// Step 2: Find and click filter button
-    setTimeout(() => {
-      const filterBtn = findElement([
-        '#filter-btn',
-        'button:contains("Filter")',
-        '[data-testid="filter-button"]'
-      ]);
-
-      if (filterBtn) {
-        clickElement(filterBtn);
-        console.log("Clicked Filter button");
-      }
-    }, 2000);
-  }
-
-  function automateAccountManagement() {
-    console.log("Automating Account Management workflow");
-
-// Step 1: Find and click account management button
-    const accountBtn = findElement([
-      '#account-btn',
-      'button:contains("Account")',
-      '[data-testid="account-button"]',
-      '.account-button'
-    ]);
-
-    if (accountBtn) {
-      clickElement(accountBtn);
-      console.log("Clicked Account Management button");
-    }
-  }
-
-  /* ------------ AUTOMATION SYSTEM (UPDATED) ------------ */
+  /* ------------ AUTOMATION SYSTEM ------------ */
   function startAutomation(option) {
     if (currentAutomation) {
       document.body.removeChild(currentAutomation);
@@ -974,47 +372,44 @@ document.addEventListener("DOMContentLoaded", () => {
     let stepIndex = 0;
     removeHighlights();
 
-    const guidePanel = document.createElement("div");
-    guidePanel.id = "nav-guide-panel";
-    guidePanel.style.position = "fixed";
-    guidePanel.style.top = "50px";
-    guidePanel.style.right = "30px";
-    guidePanel.style.width = "350px";
-    guidePanel.style.background = "white";
-    guidePanel.style.borderRadius = "10px";
-    guidePanel.style.boxShadow = "0 5px 20px rgba(0,0,0,0.2)";
-    guidePanel.style.padding = "20px";
-    guidePanel.style.zIndex = "10000";
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.zIndex = "10000";
+    overlay.style.display = "flex";
+    overlay.style.flexDirection = "column";
+    overlay.style.justifyContent = "center";
+    overlay.style.alignItems = "center";
+
+    const modal = document.createElement("div");
+    modal.style.background = "white";
+    modal.style.borderRadius = "15px";
+    modal.style.padding = "25px";
+    modal.style.maxWidth = "500px";
+    modal.style.width = "90%";
+    modal.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
 
     const title = document.createElement("h3");
     title.innerText = `${option.name} Guide`;
-    title.style.marginTop = "0";
+    title.style.margin = "0 0 15px 0";
     title.style.color = "#092365";
-    title.style.borderBottom = "2px solid #f0f0f0";
-    title.style.paddingBottom = "10px";
-    guidePanel.appendChild(title);
+    title.style.textAlign = "center";
 
     const message = document.createElement("div");
-    message.style.fontSize = "14px";
-    message.style.marginBottom = "15px";
-    message.style.lineHeight = "1.4";
-    guidePanel.appendChild(message);
-
-    const progressContainer = document.createElement("div");
-    progressContainer.style.display = "flex";
-    progressContainer.style.alignItems = "center";
-    progressContainer.style.marginBottom = "15px";
-    progressContainer.style.gap = "10px";
-
-    const progressText = document.createElement("span");
-    progressText.style.fontSize = "12px";
-    progressText.style.color = "#666";
+    message.style.fontSize = "16px";
+    message.style.marginBottom = "20px";
+    message.style.lineHeight = "1.5";
+    message.style.textAlign = "center";
 
     const progressBar = document.createElement("div");
-    progressBar.style.flexGrow = "1";
+    progressBar.style.width = "100%";
     progressBar.style.height = "6px";
     progressBar.style.background = "#eee";
     progressBar.style.borderRadius = "3px";
+    progressBar.style.marginBottom = "20px";
     progressBar.style.overflow = "hidden";
 
     const progress = document.createElement("div");
@@ -1024,62 +419,51 @@ document.addEventListener("DOMContentLoaded", () => {
     progress.style.transition = "width 0.3s ease";
 
     progressBar.appendChild(progress);
-    progressContainer.appendChild(progressText);
-    progressContainer.appendChild(progressBar);
-    guidePanel.appendChild(progressContainer);
 
     const buttonContainer = document.createElement("div");
     buttonContainer.style.display = "flex";
-    buttonContainer.style.gap = "8px";
-    buttonContainer.style.justifyContent = "space-between";
-
-    const prevBtn = document.createElement("button");
-    prevBtn.innerText = "← Previous";
-    prevBtn.style.padding = "8px 15px";
-    prevBtn.style.border = "none";
-    prevBtn.style.borderRadius = "5px";
-    prevBtn.style.cursor = "pointer";
-    prevBtn.style.fontWeight = "bold";
-    prevBtn.style.background = "white";
-    prevBtn.disabled = true;
+    buttonContainer.style.gap = "10px";
+    buttonContainer.style.justifyContent = "center";
 
     const nextBtn = document.createElement("button");
-    nextBtn.innerText = "Next →";
-    nextBtn.style.padding = "8px 15px";
+    nextBtn.innerText = "Next Step →";
+    nextBtn.style.padding = "12px 20px";
     nextBtn.style.border = "none";
-    nextBtn.style.borderRadius = "5px";
+    nextBtn.style.borderRadius = "6px";
     nextBtn.style.cursor = "pointer";
-    nextBtn.style.fontWeight = "bold";
+    nextBtn.style.fontSize = "14px";
     nextBtn.style.background = "#4caf50";
     nextBtn.style.color = "white";
-
     const autoBtn = document.createElement("button");
     autoBtn.innerText = "Auto Run";
-    autoBtn.style.padding = "8px 15px";
+    autoBtn.style.padding = "12px 20px";
     autoBtn.style.border = "none";
-    autoBtn.style.borderRadius = "5px";
+    autoBtn.style.borderRadius = "6px";
     autoBtn.style.cursor = "pointer";
-    autoBtn.style.fontWeight = "bold";
+    autoBtn.style.fontSize = "14px";
     autoBtn.style.background = "#2196f3";
     autoBtn.style.color = "white";
 
     const closeBtn = document.createElement("button");
-    closeBtn.innerText = "Close";
-    closeBtn.style.padding = "8px 15px";
+    closeBtn.innerText = " Close";
+    closeBtn.style.padding = "12px 20px";
     closeBtn.style.border = "none";
-    closeBtn.style.borderRadius = "5px";
+    closeBtn.style.borderRadius = "6px";
     closeBtn.style.cursor = "pointer";
-    closeBtn.style.fontWeight = "bold";
+    closeBtn.style.fontSize = "14px";
     closeBtn.style.background = "#f44336";
     closeBtn.style.color = "white";
 
-    buttonContainer.appendChild(prevBtn);
+    modal.appendChild(title);
+    modal.appendChild(message);
+    modal.appendChild(progressBar);
+    modal.appendChild(buttonContainer);
     buttonContainer.appendChild(nextBtn);
     buttonContainer.appendChild(autoBtn);
     buttonContainer.appendChild(closeBtn);
-    guidePanel.appendChild(buttonContainer);
+    overlay.appendChild(modal);
 
-    currentAutomation = guidePanel;
+    currentAutomation = overlay;
 
     function updateStep() {
       const currentStep = option.steps[stepIndex];
@@ -1087,65 +471,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const progressPercent = ((stepIndex + 1) / option.steps.length) * 100;
       progress.style.width = progressPercent + "%";
-      progressText.innerText = `${stepIndex + 1}/${option.steps.length}`;
 
-// Enable/disable navigation buttons
-      prevBtn.disabled = stepIndex === 0;
-      nextBtn.innerText = stepIndex >= option.steps.length - 1 ? "Finish" : "Next →";
-      nextBtn.style.background = stepIndex >= option.steps.length - 1 ? "#092365" : "#4caf50";
-
-// Highlight relevant elements based on the step
+      // Highlight relevant elements based on the step
       highlightCurrentStep(option.name, stepIndex);
+
+      if (stepIndex >= option.steps.length - 1) {
+        nextBtn.innerText = "Complete ✓";
+        nextBtn.style.background = "#092365";
+      }
     }
 
     function highlightCurrentStep(optionName, step) {
-// Custom highlighting based on the option and step
-      let selectors = [];
-
       switch(optionName) {
         case "Customer Service":
-          if (step === 0) selectors = ['#customer-service-btn', 'button:contains("Customer Service")'];
-          else if (step === 1) selectors = ['#pan-input', 'input[placeholder*="PAN"]'];
-          else if (step === 2) selectors = ['#search-btn', 'button:contains("Search")'];
+          switch(step) {
+            case 0: highlightElement("#customer-service", "Click here to start"); break;
+            case 1: highlightElement("#pan", "Enter customer PAN here"); break;
+            case 2: highlightElement(".search-btn", "Click to search"); break;
+            case 3: highlightElement(".collapsible-row", "Click customer row to expand"); break;
+            case 4: highlightElement(".payment-table", "Double-click for customer view"); break;
+          }
           break;
-
         case "Customer Search":
-          if (step === 0) selectors = ['#customer-service-btn', 'button:contains("Customer Service")'];
-          else if (step === 1) selectors = ['.search-box', 'input[placeholder*="Search"]'];
+          switch(step) {
+            case 0: highlightElement("#customer-service", "Navigate here first"); break;
+            case 1: highlightElement(".customer-details", "Fill in search criteria"); break;
+            case 2: highlightElement("#client-table", "Review results here"); break;
+            case 3: highlightElement(".collapsible-row", "Click to expand details"); break;
+            case 4: highlightElement(".payment-table", "Double-click for full view"); break;
+          }
           break;
-
         case "Customer Details":
-          if (step === 0) selectors = ['[data-tab="details"]', '.tab:contains("Details")'];
+          switch(step) {
+            case 0: highlightElement(".customer-card", "Customer identification info"); break;
+            case 1: highlightElement(".tabs", "Navigate through these tabs"); break;
+            case 2: highlightElement("#memo-btn", "Add customer notes"); break;
+            case 3: highlightElement("#transactions-btn", "View transaction history"); break;
+            case 4: highlightElement(".info-dot", "Click for additional details"); break;
+          }
           break;
-
         case "Payment Instruments":
-          if (step === 0) selectors = ['[data-tab="instruments"]', '.tab:contains("Instruments")'];
-          else if (step === 4) selectors = ['#view-details-btn', 'button:contains("View Details")'];
+          switch(step) {
+            case 0: highlightElement(".info-dot", "Click this info button"); break;
+            case 1: highlightElement(".payment-section", "Review instrument details"); break;
+            case 2: highlightElement("[data-label*='status']", "Check status information"); break;
+            case 3: highlightElement("[data-label*='expiry']", "Verify expiry dates"); break;
+            case 4: highlightElement("#back-btn", "Return to customer view"); break;
+          }
           break;
-
-        case "Transaction History":
-          if (step === 0) selectors = ['[data-tab="transactions"]', '.tab:contains("Transactions")'];
-          else if (step === 1) selectors = ['#filter-btn', 'button:contains("Filter")'];
-          break;
-
-        case "Account Management":
-          if (step === 0) selectors = ['#account-btn', 'button:contains("Account")'];
-          break;
-      }
-
-      if (selectors.length > 0) {
-        highlightElement(selectors[0], option.steps[step]);
       }
     }
 
     updateStep();
-
-    prevBtn.addEventListener("click", () => {
-      if (stepIndex > 0) {
-        stepIndex--;
-        updateStep();
-      }
-    });
 
     nextBtn.addEventListener("click", () => {
       if (stepIndex < option.steps.length - 1) {
@@ -1153,17 +530,16 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStep();
       } else {
         removeHighlights();
-        document.body.removeChild(guidePanel);
+        document.body.removeChild(overlay);
         currentAutomation = null;
       }
     });
-
     autoBtn.addEventListener("click", () => {
-// Start the automation
+      // Start the automation
       if (option.automation) {
         option.automation();
 
-// Auto-advance through steps with 1 MINUTE DELAY
+        // Auto-advance through steps
         if (currentAutomationInterval) {
           clearInterval(currentAutomationInterval);
         }
@@ -1172,13 +548,11 @@ document.addEventListener("DOMContentLoaded", () => {
           if (stepIndex < option.steps.length - 1) {
             stepIndex++;
             updateStep();
-// Execute the action for this step
-            executeAutomationStep(option.name, stepIndex);
           } else {
             clearInterval(currentAutomationInterval);
             currentAutomationInterval = null;
           }
-        }, AUTOMATION_STEP_DELAY); // 60,000ms = 1 minute
+        }, 3000);
       }
     });
 
@@ -1188,172 +562,34 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(currentAutomationInterval);
         currentAutomationInterval = null;
       }
-      document.body.removeChild(guidePanel);
+      document.body.removeChild(overlay);
       currentAutomation = null;
     });
 
-    document.body.appendChild(guidePanel);
-
-// Panel dragging functions
-    let isPanelDragging = false;
-    let panelDragOffset = { x: 0, y: 0 };
-
-    function startDragPanel(e) {
-      isPanelDragging = true;
-      const rect = guidePanel.getBoundingClientRect();
-      panelDragOffset = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-      guidePanel.style.cursor = "grabbing";
-    }
-
-    function dragPanel(e) {
-      if (!isPanelDragging) return;
-
-      guidePanel.style.left = (e.clientX - panelDragOffset.x) + 'px';
-      guidePanel.style.top = (e.clientY - panelDragOffset.y) + 'px';
-      guidePanel.style.right = 'auto';
-    }
-
-    function stopDragPanel() {
-      isPanelDragging = false;
-      guidePanel.style.cursor = "move";
-    }
-
-    guidePanel.addEventListener('mousedown', (e) => {
-      if (e.target.tagName !== 'BUTTON') {
-        startDragPanel(e);
+    // Close on backdrop click
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        removeHighlights();
+        if (currentAutomationInterval) {
+          clearInterval(currentAutomationInterval);
+          currentAutomationInterval = null;
+        }
+        document.body.removeChild(overlay);
+        currentAutomation = null;
       }
     });
 
-    document.addEventListener('mousemove', dragPanel);
-    document.addEventListener('mouseup', stopDragPanel);
+    document.body.appendChild(overlay);
   }
 
-// Function to execute automation steps
-  function executeAutomationStep(optionName, stepIndex) {
-    switch(optionName) {
-      case "Customer Service":
-        if (stepIndex === 0) {
-          const customerServiceBtn = findElement([
-            '#customer-service-btn',
-            'button:contains("Customer Service")',
-            '[data-testid="customer-service-button"]',
-            '.customer-service-button'
-          ]);
-          if (customerServiceBtn) clickElement(customerServiceBtn);
-        } else if (stepIndex === 1) {
-          typeInInput([
-            '#pan-input',
-            'input[placeholder*="PAN"]',
-            'input[name*="pan"]',
-            '[data-testid="pan-input"]'
-          ], "1234567890123");
-        } else if (stepIndex === 2) {
-          const searchBtn = findElement([
-            '#search-btn',
-            'button:contains("Search")',
-            '[data-testid="search-button"]',
-            '.search-button'
-          ]);
-          if (searchBtn) clickElement(searchBtn);
-        }
-        break;
-
-      case "Customer Search":
-        if (stepIndex === 0) {
-          const customerServiceBtn = findElement([
-            '#customer-service-btn',
-            'button:contains("Customer Service")',
-            '[data-testid="customer-service-button"]',
-            '.customer-service-button'
-          ]);
-          if (customerServiceBtn) clickElement(customerServiceBtn);
-        } else if (stepIndex === 1) {
-          typeInInput([
-            '.search-box',
-            'input[placeholder*="Search"]',
-            'input[name*="search"]',
-            '[data-testid="search-input"]'
-          ], "Test Customer");
-        }
-        break;
-
-      case "Customer Details":
-        if (stepIndex === 0) {
-          const detailsTab = findElement([
-            '[data-tab="details"]',
-            '.tab:contains("Details")',
-            '[data-testid="details-tab"]'
-          ]);
-          if (detailsTab) clickElement(detailsTab);
-        }
-        break;
-
-      case "Payment Instruments":
-        if (stepIndex === 0) {
-          const instrumentsTab = findElement([
-            '[data-tab="instruments"]',
-            '.tab:contains("Instruments")',
-            '.tab:contains("Payment")',
-            '[data-testid="instruments-tab"]'
-          ]);
-          if (instrumentsTab) clickElement(instrumentsTab);
-        } else if (stepIndex === 4) {
-          const viewDetailsBtn = findElement([
-            '#view-details-btn',
-            'button:contains("View Details")',
-            '[data-testid="view-details-button"]'
-          ]);
-          if (viewDetailsBtn) clickElement(viewDetailsBtn);
-        }
-        break;
-
-      case "Transaction History":
-        if (stepIndex === 0) {
-          const transactionsTab = findElement([
-            '[data-tab="transactions"]',
-            '.tab:contains("Transactions")',
-            '[data-testid="transactions-tab"]'
-          ]);
-          if (transactionsTab) clickElement(transactionsTab);
-        } else if (stepIndex === 1) {
-          const filterBtn = findElement([
-            '#filter-btn',
-            'button:contains("Filter")',
-            '[data-testid="filter-button"]'
-          ]);
-          if (filterBtn) clickElement(filterBtn);
-        }
-        break;
-
-      case "Account Management":
-        if (stepIndex === 0) {
-          const accountBtn = findElement([
-            '#account-btn',
-            'button:contains("Account")',
-            '[data-testid="account-button"]',
-            '.account-button'
-          ]);
-          if (accountBtn) clickElement(accountBtn);
-        }
-        break;
-    }
-  }
-
-// Clean up highlights when page changes
+  // Clean up highlights when page changes
   const observer = new MutationObserver(() => {
     if (currentAutomation) {
-// Re-highlight current step if DOM changes
+      // Re-highlight current step if DOM changes
       setTimeout(() => {
-        const progressText = currentAutomation.querySelector("span");
-        if (progressText) {
-          const [current, total] = progressText.innerText.split('/').map(Number);
-          if (current > 0) {
-            const optionName = currentAutomation.querySelector("h3").innerText.replace(" Guide", "");
-            highlightCurrentStep(optionName, current - 1);
-          }
+        const currentStepIndex = parseInt(currentAutomation.querySelector(".progress").style.width) / (100 / navigationOptions[0].steps.length) - 1;
+        if (currentStepIndex >= 0) {
+          highlightCurrentStep("Customer Service", Math.floor(currentStepIndex));
         }
       }, 100);
     }
@@ -1364,7 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
     subtree: true
   });
 
-// Keyboard shortcuts
+  // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && currentAutomation) {
       removeHighlights();
@@ -1376,21 +612,4 @@ document.addEventListener("DOMContentLoaded", () => {
       currentAutomation = null;
     }
   });
-
-// Add CSS animations
-  const style = document.createElement('style');
-  style.textContent = `
-@keyframes pulse {
-0% { border-color: #2196f3; }
-50% { border-color: #64b5f6; }
-100% { border-color: #2196f3; }
-}
-
-@keyframes pulseClick {
-0% { transform: scale(1); opacity: 0.7; }
-50% { transform: scale(1.05); opacity: 1; }
-100% { transform: scale(1); opacity: 0; }
-}
-`;
-  document.head.appendChild(style);
 });
