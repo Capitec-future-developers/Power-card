@@ -96,59 +96,67 @@ ${trailing}
   const customerType = (instrument.type||'').toLowerCase().includes('business') ? 'CORPORATE' : 'INDIVIDUAL';
 
   return `
-<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
+<!-- Identification Header -->
+<div  style="background-color: #092365; color: white; margin-top: 20px; padding: 10px;">Identification</div>
+
 <div class="customer-card">
-<div class="card-column">
-${row('Institution','Capitec Bank Limited',small('000010'))}
-${row('PAN',maskedPan)}
-${row('Client code', customer.client_code)}
-${row('Gender', customer.gender)}
-${row('Family name', customer.family_name)}
-${row('Second name', customer.family_name)}
-${row('Status', instrument.condition||'N/A', small(abbrev(instrument.condition||'')))}
-${row('Application ID', customer.application_ID)}
+  <div class="card-column">
+    ${row('Institution','Capitec Bank Limited',small('000010'))}
+    ${row('PAN', maskedPan)}
+    ${row('Client code', customer.client_code)}
+    ${row('Gender', customer.gender)}
+    ${row('Family name', customer.family_name)}
+    ${row('Second name', customer.family_name)}
+    ${row('Status', instrument.condition || 'N/A', small(abbrev(instrument.condition || '')))}
+    ${row('Application ID', customer.application_ID)}
+  </div>
+
+  <div class="card-column">
+    ${row('Branch', instrument.branch)}
+    ${row('PAN sequence', instrument.sequence)}
+    ${row('Client host ID', customer.client_host_id)}
+    ${row('Title', customer.title, small('01'))}
+    ${row('First Name', customer.first_name)}
+    ${row('Second first name', customer.first_name)}
+    ${row('Status reason', instrument.status_reason)}
+    ${row('Contract element ID', '')}
+  </div>
+
+  <div class="card-column">
+    ${row('Payment instrument', '')}
+    ${row('Primary PAN', '')}
+    ${row('Corporate ID', customer.corporate_id)}
+    ${row('', '')}
+    ${row('Maiden name', '')}
+    ${row('Legal ID', customer.legal_id)}
+    ${row('Status date', formatDate(account.pan_status_date))}
+  </div>
 </div>
-<div class="card-column">
-${row('Branch', instrument.branch)}
-${row('PAN sequence', instrument.sequence)}
-${row('Client host ID', customer.client_host_id)}
-${row('Title', customer.title, small('01'))}
-${row('First Name', customer.first_name)}
-${row('Second first name', customer.first_name)}
-${row('Status reason', instrument.status_reason)}
-${row('Contract element ID', '')}
+
+
+<div  style="background-color: #092365; color: white; margin-top: 20px; padding: 10px;">Additional Fields</div>
+
+<div class="customer-card">
+  <div class="card-column full-width">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Field Family</th>
+          <th>Field Type</th>
+          <th>Field Name</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" class="empty-row">No records found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-<div class="card-column">
-${row('Payment instrument', '')}
-${row('Primary PAN', '')}
-${row('Corporate ID', customer.corporate_id)}
-${row('', '')}
-${row('Maiden name', '')}
-${row('Legal ID', customer.legal_id)}
-${row('Status date', formatDate(account.pan_status_date))}
-</div>
-</div>
-<div class="customer-profile">
-<div class="ID" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
-</div>
-</div>
-<div class="addtional customer-card">
-<div class="ID" style="background-color: #092365; color: white; padding: 10px;">Addtional fields</div>
-<div class="card-column">
-<table>
-<th>
-<tr>Field family</tr>
-<tr>Field type</tr>
-<tr>Feild name</tr>
-<tr>Value</tr>
-<tr></tr>
-</th>
-<tbody>
-<p>No records found</p>
-</tbody>
-</table>
-</div>
-</div>
+
+
 `;
 }
 
@@ -327,7 +335,7 @@ ${row('City', customer.city, small('01546'))}
 </div>
 </div>
 <div class="phones-customer-card" style="position: absolute; left: 650px; top: 130px;">
-<div class="demographic-header" style="position: absolute; background-color: #092365; color: white; padding-top: 10px; width: 500px; height: 30px; left: 20px;">Phones</div>
+<div class="ID" style="background-color: #092365; color: white; margin-top: 20px; padding: 10px;">Phones</div>
 <div class="card-column" style="position: absolute; top: 70px; width: 550px;">
 ${row('Phone 1','Personal mobile phone', box2(customer.phone))}
 ${row('Phone 2','Home phone',box2(customer.home_phone || '00000000000'))}
@@ -562,7 +570,9 @@ export function showPaymentInstrument(customer) {
 <section id="Embossing">${renderCustomerEmbossing(customer)}</section>
 <section id="Address"><p>${renderCustomerAddress(customer)}</p></section>
 <section id="Additional"><p>${renderAddress(customer)}</p></section>
-<section id="AddOn"><p>Add-on services content...</p></section>
+<section id="AddOn"><p>
+
+</p></section>
 <section id="Accounts"><p>Accounts content...</p></section>
 <section id="Comms"><p>Communication strategy content...</p></section>
 <section id="Pan"><p>PAN indicators content...</p></section>
