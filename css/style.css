@@ -37,6 +37,9 @@
   color: white;
   overflow: scroll;
   scrollbar-width: none;
+  text-wrap: nowrap;
+  z-index: 900;
+  align-content: start;
 }
 
 .search-bar{
