@@ -494,12 +494,12 @@ function showPanAction(customer) {
     </section>
   `;
 
-  // Add back button functionality
+
   document.getElementById("lost-stolen-back-btn").addEventListener("click", () => {
     showPanActivity();
   });
 
-  // Add refresh button functionality
+
   document.querySelector(".save-all").addEventListener("click", () => {
     showPanAction(customer);
   });
@@ -523,22 +523,5 @@ window.addEventListener("DOMContentLoaded", () => {
   const savedView = localStorage.getItem("currentView");
   const savedCustomer = localStorage.getItem("currentCustomer");
 
-  if (savedView === "panAction" && savedCustomer) {
-    try {
-      const customer = JSON.parse(savedCustomer);
-      // Validate customer data by checking if it exists in mockDatabase
-      const validCustomer = mockDatabase.find(c => c.id === customer.id);
-      if (validCustomer) {
-        showPanAction(validCustomer);
-      } else {
-        showPanActivity();
-      }
-    } catch (e) {
-      showPanActivity();
-    }
-  } else if (savedView === "panActivity") {
-    showPanActivity();
-  } else {
-    showPanActivity();
-  }
+
 });

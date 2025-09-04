@@ -467,34 +467,33 @@ document.addEventListener('DOMContentLoaded', () => {
             </section>
           </div>
           <div id="account-financials" class="tab-pane" style="display: none;">
-            ${(() => { const f = computeFinancials(customer); return `
             <section class="af-wrapper">
               <div class="as-section">
                 <div class="as-title">Account Financials</div>
                 <div class="af-grid">
                   <div class="af-row">
                     <div class="af-label">Total account balance</div>
-                    <div class="af-value">${f.totalAbs}</div>
+                    <div class="af-value">15,499.53</div>
                     <div class="af-suffix">ZAR</div>
-                    <div class="af-polarity">${f.totalPolarity}</div>
+                    <div class="af-polarity">Debit</div>
                     <div class="af-equals">=</div>
                     <div class="af-label">Opening balance</div>
-                    <div class="af-value">${f.openingAbs}</div>
+                    <div class="af-value">15,499.53</div>
                     <div class="af-suffix">ZAR</div>
-                    <div class="af-polarity">${f.openingPolarity}</div>
+                    <div class="af-polarity">Debit</div>
                     <div class="af-actions"><button class="af-btn">Balance</button><button class="af-btn">Global Summary</button></div>
                   </div>
                   <div class="af-row">
                     <div class="af-label">Available balance</div>
-                    <div class="af-value">${f.available}</div>
+                    <div class="af-value">4,496.62</div>
                     <div class="af-suffix">ZAR</div>
-                    <div class="af-polarity">${f.availablePolarity}</div>
+                    <div class="af-polarity">Credit</div>
                     <div class="af-equals">-</div>
                     <div class="af-colspan">
                       <div class="af-breakdown">
                         <div class="af-break">
                           <span class="af-sub">Current cycle balance</span>
-                          <span class="af-subv">${f.currentCycle}</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span>
+                          <span class="af-subv">0.00</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span>
                         </div>
                         <div class="af-break">
                           <span class="af-sub">Total loan balance</span>
@@ -502,15 +501,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="af-break">
                           <span class="af-sub">Credit limit</span>
-                          <span class="af-subv">${f.creditLimit}</span><span class="af-suffix">ZAR</span>
+                          <span class="af-subv">20,000.00</span><span class="af-suffix">ZAR</span>
                         </div>
                         <div class="af-break">
                           <span class="af-sub">Total account balance</span>
-                          <span class="af-subv">${f.totalAbs}</span><span class="af-suffix">ZAR</span><span class="af-polarity">${f.totalPolarity}</span>
+                          <span class="af-subv">15,499.53</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span>
                         </div>
                         <div class="af-break">
                           <span class="af-sub">Pending authorizations</span>
-                          <span class="af-subv">${f.pendingAuth}</span><span class="af-suffix">ZAR</span>
+                          <span class="af-subv">3.85</span><span class="af-suffix">ZAR</span>
                         </div>
                         <div class="af-break">
                           <span class="af-sub">Loan contracts in progress</span>
@@ -525,21 +524,36 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                   <div class="af-row">
                     <div class="af-label">Available cash</div>
-                    <div class="af-value">${f.available}</div>
+                    <div class="af-value">4,496.62</div>
                     <div class="af-suffix">ZAR</div>
-                    <div class="af-polarity">${f.availablePolarity}</div>
+                    <div class="af-polarity">Credit</div>
                     <div class="af-equals">-</div>
                     <div class="af-colspan">
                       <div class="af-breakdown">
-                        <div class="af-break"><span class="af-sub">Cash limit</span><span class="af-subv">${f.creditLimit}</span><span class="af-suffix">ZAR</span></div>
-                        <div class="af-break"><span class="af-sub">Total cash balance</span><span class="af-subv">${f.cashBalance}</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span></div>
+                        <div class="af-break"><span class="af-sub">Cash limit</span><span class="af-subv">20,000.00</span><span class="af-suffix">ZAR</span></div>
+                        <div class="af-break"><span class="af-sub">Total cash balance</span><span class="af-subv">3,474.62</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span></div>
                         <div class="af-break"><span class="af-sub">Pending cash authorizations</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
                       </div>
                     </div>
                   </div>
                   <div class="af-row">
+                    <div class="af-label">Available additional loan</div>
+                    <div class="af-value">0.00</div>
+                    <div class="af-suffix">ZAR</div>
+                    <div class="af-polarity">Debit</div>
+                    <div class="af-equals">-</div>
+                    <div class="af-colspan">
+                      <div class="af-breakdown">
+                        <div class="af-break"><span class="af-sub">Additional loan limit</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
+                        <div class="af-break"><span class="af-sub">Additional loans balance</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span><span class="af-polarity">Debit</span></div>
+                        <div class="af-break"><span class="af-sub">Pending additional loans</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
+                        <div class="af-break"><span class="af-sub">Additional loans in progress</span><span class="af-subv">0.00</span><span class="af-suffix">ZAR</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="af-row">
                     <div class="af-label">Accrued interest</div>
-                    <div class="af-value">${(f.isMbod ? 89.24 : 0.00).toFixed ? (f.isMbod ? 89.24 : 0.00).toFixed(2) : (f.isMbod ? '89.24' : '0.00')}</div>
+                    <div class="af-value">89.24</div>
                     <div class="af-suffix">ZAR</div>
                     <div class="af-polarity"></div>
                     <div class="af-equals"></div>
@@ -547,19 +561,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                 </div>
               </div>
-              <div class="as-section">
-                <div class="as-title">Status summary</div>
-                <div style="padding:10px; color:#333;">
-                  ${(() => {
-                    const acct = (customer.accounts && customer.accounts[0]) || {}; const s = String(acct.status||'').toUpperCase();
-                    if (f.isMbod) return `This account is in MBOD/arrears status (${acct.status}). The customer owes. Unpaid amount this cycle: ${f.unpaidText} ZAR.`;
-                    return `This is a normal account (${acct.status}). Balance is positive and there is no unpaid amount.`;
-                  })()}
-                </div>
-              </div>
-            </section>
-            `; })()}
-          </div>
               <div class="as-section">
                 <div class="as-title">Turnover</div>
                 <div style="padding:10px;"><button class="af-btn">Turnover</button></div>
