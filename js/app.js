@@ -95,8 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
   content.innerHTML = `<img src="img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
 
   function showCustomerService() {
-    localStorage.setItem('currentView', 'customerService');
-    localStorage.removeItem('currentCustomer'); // Clear customer data
+    try {
+      localStorage.setItem('currentView', 'customer-service');
+      localStorage.removeItem('currentCustomerPan');
+    } catch (_) {}
     setSubheader("Customer Service");
     content.innerHTML = `
       <section>
@@ -838,41 +840,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Handle page refresh to restore the correct view
+window.addEventListener("DOMContentLoaded", () => {
+  const savedView = localStorage.getItem("currentView");
+  const savedCustomer = localStorage.getItem("currentCustomer");
 
+  if (savedView === "customerView" && savedCustomer) {
+    try {
+      const customer = JSON.parse(savedCustomer);
 
-// Restore saved view on initial load
-(function restoreView() {
-  const savedView = localStorage.getItem('currentView');
-  const pan = localStorage.getItem('currentCustomerPan');
-  const customer = (pan && mockDatabase.find(c => c.pan === pan)) || null;
+      const validCustomer = mockDatabase.find(c => c.id === customer.id);
+      if (validCustomer) {
+        showCustomerView(validCustomer);
+      } else {
 
-  switch (savedView) {
-    case 'customer-view':
-      if (customer) { showCustomerView(customer); return; }
+        showCustomerService();
+      }
+    } catch (e) {
+
       showCustomerService();
-      break;
-    case 'customer-service':
-      showCustomerService();
-      break;
-    case 'payment-instrument':
-      if (customer) { showPaymentInstrument(customer); return; }
-      showCustomerService();
-      break;
-    case 'client':
-      if (customer) { showClient(customer); return; }
-      showCustomerService();
-      break;
-    case 'PAN-activity':
-      // No customer context required
-      showPanActivity();
-      break;
-    default:
-      // Default landing page
-      showCustomerService();
-      break;
+    }
+  } else {
+
+    showCustomerService();
   }
-})();
-
-
-
-
+});
