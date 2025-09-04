@@ -14,20 +14,20 @@ function formatDate(date) {
   return `${dd}/${mm}/${yyyy}`;
 }
 
-
 export function renderPanActivity(customer) {
   const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
   const account = (customer.accounts && customer.accounts[0]) || {};
 
   const abbrev = (value) => {
     if (!value) return '';
-    const map = { 'REPLACED':'R','ACTIVE':'A','NEW':'N','NORMAL':'N' };
+    const map = { 'REPLACED': 'R', 'ACTIVE': 'A', 'NEW': 'N', 'NORMAL': 'N' };
     return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
   };
 
+  const refresh =   `<button class="refresh-btn" data-customer-id="${customer.id || ''}">🔄</button>`;
   const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
   const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
-  const row = (label, value, trailing='') => `
+  const row = (label, value, trailing = '') => `
 <div class="card-section">
 <div class="section-title">${label}</div>
 ${box(value)}
@@ -39,58 +39,202 @@ ${trailing}
 <div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
 <div class="customer-card">
 <div class="card-column">
-${row('Institution','')}
-${row('PAN', '')}
-${row('Client code', '')}
-${row('Gender', '')}
-${row('Family name', '')}
-${row('Second name', '')}
-${row('Status', '')}
-${row('Application ID', customer.application_ID)}
+${row('Institution', 'Capitec Bank Limited', small('000010'))}
+
+
 </div>
 <div class="card-column">
-${row('Branch', instrument.branch)}
-${row('PAN sequence', instrument.sequence)}
-${row('Client host ID', customer.client_host_id)}
-${row('Title', customer.title, small('01'))}
-${row('First Name', customer.first_name)}
-${row('Second first name', customer.first_name)}
-${row('Status reason', instrument.status_reason)}
-${row('Contract element ID', '')}
+${row('PAN', customer.pan)}
+
 </div>
 <div class="card-column">
-${row('Payment instrument', '')}
-${row('Primary PAN', '')}
-${row('Corporate ID', customer.corporate_id)}
-${row('', '')}
-${row('Maiden name', '')}
-${row('Legal ID', customer.legal_id)}
-${row('Status date', formatDate(account.pan_status_date))}
+${row('PAN seq', '1')}
+
 </div>
 </div>
 
-<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Embossing</div>
-<div class="embossing customer-card">
-<div class="card-column" style="width: 500px;">
-${row('File reference', '')}
-${row('*Embossed name', instrument.full_name)}
-${row('Promotion code', '')}
-${row('Plastic code', account.plastic_code, small(''))}
-${row('Plastic delivery method', '', small('002'))}
-${row('Photo', '', small(''))}
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">PAN INFORMATION</div><br>
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px; margin-left: 20px; width: 95%;">LAST ACTIVITY</div>
+<div class="customer-card" style="margin-left: 20px; width: 95%;">
+<div class="card-column" >
+${row('Activity date', formatDate(account.pan_status_date), '')}
+${row('Terminal no', '94265602')}
+${row('Action', 'Rejected, Pick up card')}
+
 </div>
-<div class="card-column" style="padding-left: 200px; width: 500px">
-${row('Second embossed name', '')}
-${row('Encoded name', instrument.full_name)}
-${row('Priority code', '', small(''))}
-${row('', '')}
-${row('PIN delivery method', '', small(''))}
-${row('Photo reference', '')}
+<div class="card-column" >
+${row('Country', customer.country || 'N/A')}
+${row('MCC', 'Service Station' , small('5541'))}
+${row('Priority code', '')}
+</div>
+<div class="card-column" >
+${row('Outlet no', '197570')}
+${row('Service', '206')}
 </div>
 </div>
+<div class="show-more" id="show-more" >Show more</div>
+<div id="extra-info" style="display:none; margin-top:10px;">
+  <div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px;">PTC</div>
+  <div class="customer-card" style="margin-left:20px;width:95%;">
+    <div class="card-column">
+      ${row('PIN verif. no.', 0, refresh)}
+    </div>
+    <div class="card-column">
+      ${row('PIN error accumulate', 19)}
+    </div>
+    <div class="card-column">
+      ${row('PIN error date', formatDate(account.pan_status_date))}
+    </div>
+  </div>
+  <div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px;">LAST CVV2</div>
+  <div class="customer-card" style="margin-left:20px;width:95%;">
+  <div class="card-column">
+  ${row('Verification number', 0, refresh)}
+  ${row('Manual reset', '')}
+  ${row('Country code', customer.country || 'N/A')}
+  ${row('MCC', 'Airlines, Air Carries', small('4541'))}
+  </div>
+  <div class="card-column">
+  ${row('Error cum', 0)}
+  ${row('Auto reset', formatDate(account.pan_status_date))}
+  ${row('Outlet No', '197570')}
+  ${row('Auth amount', '1,2342.00', small('ZAR'))}
+
+</div>
+<div class="card-column">
+${row('Error date', '')}
+${row('Check date', formatDate(account.pan_status_date))}
+${row('Terminal no', '94265602')}
+${row('Auth currency', 'Rand')}
+</div>
+
+</div>
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px;">LAST EXPIRY DATE</div>
+<div class="customer-card" style="margin-left:20px;width:95%;">
+<div class="card-column">
+${row('Verfication number', 0, refresh)}
+${row('Manual reset', '')}
+</div>
+<div class="card-column">
+${row('Error cum', 0)}
+  ${row('Auto reset', formatDate(account.pan_status_date))}
+</div>
+<div class="card-column">
+${row('Error date', '')}
+${row('Check date', formatDate(account.pan_status_date))}
+</div>
+</div>
+
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px;">LAST AUTHORIZATION</div>
+<div class="customer-card" style="margin-left:20px;width:95%;">
+<div class="card-column">
+${row('Approved date', formatDate(account.pan_status_date))}
+${row('Approved amount', '1,2342.00', small('ZAR'))}
+
+</div>
+<div class="card-column">
+${row('Cancellation date', formatDate(account.pan_status_date))}
+${row('Cancellation amount', '1,2342.00', small('ZAR'))}
+</div>
+<div class="card-column">
+${row('Declined date', formatDate(account.pan_status_date))}
+${row('Declined amount', '1,2342.00', small('ZAR'))}
+</div>
+</div>
+
+<div class="sca-counter">
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px;">SCA COUNTER</div><BR>
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px;margin-left:20px;width:95%;">CONTACTLESS</div>
+<div class="customer-card" style="margin-left:20px;width:95%;">
+<div class="card-column">
+${row('Last reset date', '')}
+</div>
+<div class="card-column">
+${row('Counter', 0)}
+</div>
+<div class="card-column">
+${row('Amount', 0.00, small('ZAR'))}
+</div>
+</div>
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px;margin-left:20px;width:95%;">REMOTE PAYMENT</div>
+<div class="customer-card" style="margin-left:20px;width:95%;">
+<div class="card-column">
+${row('Last reset date', '')}
+</div>
+<div class="card-column">
+${row('Counter', 0)}
+</div>
+<div class="card-column">
+${row('Amount', 0.00, small('ZAR'))}
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px; margin-top: 30px;">PAN ACTIVITY</div><br>
+<div class="pash">
+<div class="cash tp">${instrument.type, 'CASH LIMIT'}</div>
+<div class="pos tp">${instrument.type, 'POS LIMIT'}</div>
+</div>
+
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px; width: 79%; margin-left: 200px; margin-top: -50px;">DAILY</div>
+<div class="customer-card">
+<div class="card-column" style="margin-left: 23px; margin-top: 50px; text-align: end">
+<span></span>
+<span>On us activity</span>
+<span>National activty</span>
+<span>International activity</span>
+<span>Total activity</span>
+</div>
+<div class="card-column" style="margin-left: 100px; margin-top: 30px; font-weight: bold;">
+<span>ONLINE</span>
+<span>0.00 ZAR / 0 Trx</span>
+<span>0.00 ZAR / 0 Trx</span>
+<span>0.00 ZAR / 0 Trx</span>
+<span>0.00 ZAR / 0 Trx</span>
+</div>
+<div class="card-column" style="margin-left: 80px; margin-top: 30px; font-weight: bold;">
+<span>OFFLINE</span>
+<span>0.00 ZAR / 0 Trx</span>
+<span>0.00 ZAR / 0 Trx</span>
+<span>0.00 ZAR / 0 Trx</span>
+<span>0.00 ZAR / 0 Trx</span>
+
+</div>
+</div>
+
+</div>
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px; width: 100%;  margin-top: 10px;">FEE ACTIVITY</div>
+<div class="customer-card">
+<div class="card-columns style="margin-left: 23px; margin-top: 50px; text-align: end">
+<table>
+<thead>
+<tr>
+<th>Fee type</th>
+<th>Fee type description</th>
+<th>Fee Id</th>
+<th>Fee Id description</th>
+<th>Period</th>
+<th>Amount</th>
+<th>Number</th>
+</tr>
+</thead>
+<tbody>
+<tb>
+<tr>03</tr>
+<tr>Cap On Us Withdr</td>
+<tr>3</tr>
+<tr>Cap On Us Cash W</td>
+<tr>From 06/11/2025 To 06/11/2025</tr>
+</tb>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
 `;
 }
-
 
 function setSubheader(text) {
   if (subheader) {
@@ -100,10 +244,9 @@ function setSubheader(text) {
 }
 
 export function showPanActivity() {
+  localStorage.setItem('currentView', 'panActivity');
+  localStorage.removeItem('currentCustomer'); // Clear customer data
   setSubheader("PAN Activity");
-  window.currentView = "PAN-activity";
-  localStorage.setItem("currentView", window.currentView);
-
   content.innerHTML = `
     <section class="pan-activity">
       <div class="error-message" id="error-message"></div>
@@ -194,41 +337,41 @@ export function showPanActivity() {
       </td>
     `;
 
-
     const collapseRow = document.createElement("tr");
     collapseRow.classList.add("collapse-row");
     collapseRow.style.display = "none";
     collapseRow.innerHTML = `
       <td colspan="2">
         <table class="nested-table">
-          <thead >
+          <thead>
             <tr>
               <th></th>
               <th>Loyalty account number</th>
               <th>Account type</th>
               <th>Account branch</th>
               <th>Account currency</th>
-              <th id="pan-activity"><span class="material-icons-sharp">menu</span></th>
+              <th id="pan-action-cell"><span class="material-icons-sharp">menu</span></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-            <td></td>
-            <td>${(customer.loyalty_accounts && customer.loyalty_accounts[0] && customer.loyalty_accounts[0].loyalty_account_number) || "N/A"}</td>
-            <td>${(customer.accounts && customer.accounts[0] && customer.accounts[0].type) || "N/A"}</td>
-            <td>${(customer.accounts && customer.accounts[0] && customer.accounts[0].branch) || "N/A"}</td>
-            <td>${(customer.accounts && customer.accounts[0] && customer.accounts[0].currency) || "N/A"}</td>
-            <td></td>
+              <td></td>
+              <td>${(customer.loyalty_accounts && customer.loyalty_accounts[0] && customer.loyalty_accounts[0].loyalty_account_number) || "N/A"}</td>
+              <td>${(customer.accounts && customer.accounts[0] && customer.accounts[0].type) || "N/A"}</td>
+              <td>${(customer.accounts && customer.accounts[0] && customer.accounts[0].branch) || "N/A"}</td>
+              <td>${(customer.accounts && customer.accounts[0] && customer.accounts[0].currency) || "N/A"}</td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
       </td>
     `;
 
     // Hook click on the nested menu cell to show detailed PAN Activity view
-    const panActionCell = collapseRow.querySelector('#pan-activity');
+    const panActionCell = collapseRow.querySelector('#pan-action-cell');
     if (panActionCell) {
       panActionCell.addEventListener('click', () => {
-        ShowPanAction(customer);
+        showPanAction(customer);
       });
     }
 
@@ -261,22 +404,70 @@ document.addEventListener("click", e => {
   }
 });
 
-function ShowPanAction(customer) {
+function showPanAction(customer) {
+  localStorage.setItem('currentView', 'panAction');
+  localStorage.setItem('currentCustomer', JSON.stringify(customer));
 
-  subheader.textContent = "PAN Activity";
-
-  const content = document.querySelector(".content");
+  setSubheader("PAN Activity");
   content.innerHTML = `
-    <section class="pan-activity">
-      <div class="lost-stolen-header">
-<button class="back-btn yo" id="lost-stolen-back-btn">Back ↞</button>
-<button class="save-all yo">Refresh🗘</button>
-<div class="pan-body">${renderPanActivity(customer)}</div>
+    <section class="pan-activity" style="position: absolute;
+  width: 88%;
+  left: 220px;
+  top: 150px;
+">
+      <div class="pan-head">
+        <button class="back-btn yo" id="lost-stolen-back-btn">Back ↞</button>
+        <button class="save-all yo">Refresh 🗘</button>
+      </div>
+      <div class="pan-body">${renderPanActivity(customer)}</div>
+    </section>
   `;
 
-  document.getElementById("pan-activity").addEventListener("click", (e) => {
-      if (e.target && e.target.id === "pan-activity") {
-        ShowPanAction(customer);
-    }
-  })
+  // Add back button functionality
+  document.getElementById("lost-stolen-back-btn").addEventListener("click", () => {
+    showPanActivity();
+  });
+
+  // Add refresh button functionality
+  document.querySelector(".save-all").addEventListener("click", () => {
+    showPanAction(customer);
+  });
+  const showMoreBtn = document.getElementById("show-more");
+  const extraInfo = document.getElementById("extra-info");
+  if (showMoreBtn && extraInfo) {
+    showMoreBtn.addEventListener("click", () => {
+      if (extraInfo.style.display === "none") {
+        extraInfo.style.display = "block";
+        showMoreBtn.textContent = "Show less";
+      } else {
+        extraInfo.style.display = "none";
+        showMoreBtn.textContent = "Show more";
+      }
+    });
+  }
 }
+
+// Handle page refresh to restore the correct view
+window.addEventListener("DOMContentLoaded", () => {
+  const savedView = localStorage.getItem("currentView");
+  const savedCustomer = localStorage.getItem("currentCustomer");
+
+  if (savedView === "panAction" && savedCustomer) {
+    try {
+      const customer = JSON.parse(savedCustomer);
+      // Validate customer data by checking if it exists in mockDatabase
+      const validCustomer = mockDatabase.find(c => c.id === customer.id);
+      if (validCustomer) {
+        showPanAction(validCustomer);
+      } else {
+        showPanActivity();
+      }
+    } catch (e) {
+      showPanActivity();
+    }
+  } else if (savedView === "panActivity") {
+    showPanActivity();
+  } else {
+    showPanActivity();
+  }
+});

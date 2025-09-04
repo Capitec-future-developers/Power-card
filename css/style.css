@@ -647,8 +647,8 @@
 }
 
 
-/* Clear buttons: center text and show icon */
-.clear-btn, .clear {
+
+.clear-btn{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -665,3 +665,6 @@
 
 }
 .clear-btn .material-icons-sharp, .clear .material-icons-sharp { font-size: 20px; }
+
+
+
