@@ -530,6 +530,13 @@ ${renderLostStolen(customer)}
 }
 
 export function showPaymentInstrument(customer) {
+  // Persist current view and customer for refresh restore
+  try {
+    if (customer && customer.pan) {
+      localStorage.setItem('currentCustomerPan', customer.pan);
+    }
+    localStorage.setItem('currentView', 'payment-instrument');
+  } catch (_) {}
   const content = document.getElementById("content");
   content.innerHTML = `
 <div class="payment-instrument">
@@ -765,6 +772,7 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     options.forEach(opt => opt.classList.toggle('active', opt.getAttribute('data-target') === currentSection));
   });
 
+  // Keep window references if used elsewhere, but persistence is via localStorage
   window.currentView = "payment-instrument";
   window.currentCustomer = customer;
 }

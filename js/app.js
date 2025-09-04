@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
           ${row('Corporate name', customer.corporate_name)}
           ${row('Currency', currencyCode, small(currencyNum))}
         </div>
-
       </div>
     `;
   }
@@ -96,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
   content.innerHTML = `<img src="img/issuer-front.png" alt="issuer-front" class="issuer-front">`;
 
   function showCustomerService() {
+    localStorage.setItem('currentView', 'customerService');
+    localStorage.removeItem('currentCustomer'); // Clear customer data
     setSubheader("Customer Service");
     content.innerHTML = `
       <section>
@@ -284,6 +285,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showCustomerView(customer) {
+    // Store the current view and customer data in localStorage
+    localStorage.setItem('currentView', 'customerView');
+    localStorage.setItem('currentCustomer', JSON.stringify(customer));
+
     setSubheader("Customer View");
     content.innerHTML = `
       <section class="customer-view">
@@ -416,7 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   <div class="as-field"><div class="as-label">Next term over due date</div><div class="as-value">${formatDate(customer.accounts[0].pan_status_date)}</div></div>
                 </div>
               </div>
-
               <div class="as-section">
                 <div class="as-title">Credit limit</div>
                 <div class="as-grid as-grid--four">
@@ -428,7 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   <div class="as-field"><div class="as-label">Former loan limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
                 </div>
               </div>
-
               <div class="as-section">
                 <div class="as-title">Temporary limits</div>
                 <div class="as-grid as-grid--four">
@@ -439,7 +442,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   <div class="as-field"><div class="as-label">Additional loan limit</div><div class="as-value">0.00</div><div class="as-suffix">ZAR</div></div>
                 </div>
               </div>
-
               <div class="as-section">
                 <div class="as-title">Direct debit accounts</div>
                 <table class="as-table">
@@ -520,7 +522,6 @@ document.addEventListener('DOMContentLoaded', () => {
                       </div>
                     </div>
                   </div>
-
                   <div class="af-row">
                     <div class="af-label">Available cash</div>
                     <div class="af-value">4,496.62</div>
@@ -535,7 +536,6 @@ document.addEventListener('DOMContentLoaded', () => {
                       </div>
                     </div>
                   </div>
-
                   <div class="af-row">
                     <div class="af-label">Available additional loan</div>
                     <div class="af-value">0.00</div>
@@ -551,7 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
                       </div>
                     </div>
                   </div>
-
                   <div class="af-row">
                     <div class="af-label">Accrued interest</div>
                     <div class="af-value">89.24</div>
@@ -562,14 +561,12 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                 </div>
               </div>
-
               <div class="as-section">
                 <div class="as-title">Turnover</div>
                 <div style="padding:10px;"><button class="af-btn">Turnover</button></div>
               </div>
             </section>
           </div>
-
           <div id="bills-loans" class="tab-pane" style="display: none;">
             <section class="af-wrapper">
               <div class="as-section">
@@ -619,7 +616,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                 </div>
               </div>
-
               <div class="as-section">
                 <div class="as-title" style="background: #1e4a72; color: white; padding: 8px 15px; margin: 0; font-weight: bold;">STATEMENTS</div>
                 <div style="overflow-x: auto;">
@@ -696,7 +692,6 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </section>
           </div>
-
           <div id="loyalty" class="tab-pane" style="display: none;">
             <table class="styleds-table">
               <thead>
@@ -729,12 +724,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </tbody>
             </table>
           </div>
-
           <div id="addon-services" class="tab-pane" style="display: none;">
             <h3>Add-on Services</h3>
             <p>No add-on services available for this customer.</p>
           </div>
-
           <div id="transaction-history" class="tab-pane" style="display: none;">
             <h3>Recent Transactions</h3>
             <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
@@ -844,3 +837,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+
+// Restore saved view on initial load
+(function restoreView() {
+  const savedView = localStorage.getItem('currentView');
+  const pan = localStorage.getItem('currentCustomerPan');
+  const customer = (pan && mockDatabase.find(c => c.pan === pan)) || null;
+
+  switch (savedView) {
+    case 'customer-view':
+      if (customer) { showCustomerView(customer); return; }
+      showCustomerService();
+      break;
+    case 'customer-service':
+      showCustomerService();
+      break;
+    case 'payment-instrument':
+      if (customer) { showPaymentInstrument(customer); return; }
+      showCustomerService();
+      break;
+    case 'client':
+      if (customer) { showClient(customer); return; }
+      showCustomerService();
+      break;
+    case 'PAN-activity':
+      // No customer context required
+      showPanActivity();
+      break;
+    default:
+      // Default landing page
+      showCustomerService();
+      break;
+  }
+})();
+
+
+
+

@@ -1,3 +1,5 @@
+import { showPanActivity } from './Pan-activity.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const sideBar = document.querySelector('.side-bar');
   const switchBtn = document.getElementById('switch');
@@ -79,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <a><span class="material-icons-sharp" style="color: red; font-size: 15px;">public</span>Activity</a>
       <ul>
         <li>Online network</li>
-        <li>PAN activity</li>
+        <li id="PAN-activity">PAN activity</li>
         <li>PAN limits</li>
         <li>Pan forced approval</li>
       </ul>
@@ -191,6 +193,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target.id === 'authorization-list' && typeof showAuthorizationList === 'function') {
       e.stopPropagation();
       showAuthorizationList();
+    }
+
+    if(target.id === 'PAN-activity') {
+      e.stopPropagation();
+      showPanActivity();
     }
   });
 });

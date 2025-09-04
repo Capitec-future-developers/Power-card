@@ -187,8 +187,18 @@
   white-space: nowrap;
 }
 
+.card-numbers{
+  width: 600px;
+  height: 25px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 1px solid #504f4f;
+  background-color: #ffffff;
+}
+
 .card-number {
-  width: 500px;
+  width: 600px;
   height: 25px;
   padding: 5px 10px;
   font-size: 16px;
@@ -613,4 +623,24 @@
 
 .info-dot{
   cursor: pointer;
+}
+
+.nested-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: -239px;
+  margin-left: -200px ;
+  background: #f9f9f9;
+}
+
+.nested-table th,
+.nested-table td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.collapse-row td {
+  padding: 0;
+  background: #f2f6fc;
 }
