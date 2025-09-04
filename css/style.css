@@ -629,7 +629,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: -239px;
-  margin-left: -200px ;
+  margin-left: -190px ;
   background: #f9f9f9;
 }
 
@@ -643,4 +643,25 @@
 .collapse-row td {
   padding: 0;
   background: #f2f6fc;
+  cursor: pointer;
 }
+
+
+/* Clear buttons: center text and show icon */
+.clear-btn, .clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-top: -20px;
+  color: #fff;
+  background-color: #092365;
+  border: none;
+  font-size: 16px;
+  width: 120px;
+  height: 35px;
+  cursor: pointer;
+  border-radius: 2px;
+
+}
+.clear-btn .material-icons-sharp, .clear .material-icons-sharp { font-size: 20px; }

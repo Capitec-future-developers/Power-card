@@ -975,11 +975,11 @@ document.addEventListener("DOMContentLoaded", () => {
       currentAutomation = null;
     });
 
-// Execute the first step
+
     option.automation(stepIndex);
   }
 
-// Add CSS for animations
+
   const style = document.createElement('style');
   style.textContent = `
 @keyframes pulse {

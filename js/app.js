@@ -2,6 +2,7 @@ import { mockDatabase } from './mockDatabase.js';
 import { showPaymentInstrument } from './payment-instrument.js';
 import { getTransactionHistory } from './mockDatabase.js';
 import { showClient } from './Client.js';
+import { showPanActivity } from './Pan-activity.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('content');
@@ -120,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="action-btn">
           <button class="search-btn">Search <span class="material-icons-sharp">search</span></button>
-          <button class="clear" style="align-items: center; justify-content: center; gap: 5px; color: white; background-color: #092365; border: none; font-size: 16px; width: 120px; height: 35px; cursor: pointer; border-radius: 2px; padding-top: 10px;">Clear <span class="material-icons-sharp">ink_eraser</span></button>
+          <button class="clear-btn"><span class="material-icons-sharp">ink_eraser</span> Clear</button>
         </div>
         <div class="client-details">
           <table id="client-table">
@@ -143,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     const searchBtn = document.querySelector('.search-btn');
-    const clearBtn = document.querySelector('.clear');
+    const clearBtn = document.querySelector('.clear-btn');
     const errorMessage = document.getElementById('error-message');
 
     searchBtn.addEventListener('click', () => {
@@ -164,10 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
           showError('PAN must be at least 13 characters');
           return;
         }
-        customer = mockDatabase.find(c => c.pan === pan);
+        customer = mockDatabase.find(c => c.pan === pan || (c.secondary_pan_owner && c.secondary_pan_owner.pan === pan));
       } else if (fname) {
+        const term = fname.toLowerCase();
         customer = mockDatabase.find(c =>
-          c.first_name.toLowerCase().includes(fname.toLowerCase())
+          (c.first_name && c.first_name.toLowerCase().includes(term)) ||
+          (c.secondary_pan_owner && c.secondary_pan_owner.first_name && c.secondary_pan_owner.first_name.toLowerCase().includes(term))
         );
       } else if (clientId) {
         customer = mockDatabase.find(c => c.client_host_id === clientId);
@@ -287,9 +290,50 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showCustomerView(customer) {
-    // Store the current view and customer data in localStorage
-    localStorage.setItem('currentView', 'customerView');
-    localStorage.setItem('currentCustomer', JSON.stringify(customer));
+    // Helper: compute Account Financials based on status
+    function computeFinancials(cust) {
+      const acct = (cust && cust.accounts && cust.accounts[0]) || {};
+      const status = String(acct.status || '').toUpperCase();
+      const isMbod = status.startsWith('MBOD') || status.includes('ICU') || status.includes('DELINQ');
+      // Simple demo amounts
+      const creditLimit = 20000.00;
+      let opening = isMbod ? -15499.53 : 15499.53;
+      let totalBalance = opening; // mirror opening for demo
+      let pendingAuth = 3.85;
+      let currentCycle = isMbod ? 1083.00 : 0.00; // unpaid for MBOD
+      let availableBalance = isMbod ? 0.00 : creditLimit - Math.max(0, totalBalance) - pendingAuth;
+      if (availableBalance < 0) availableBalance = 0.00;
+      const cashBalance = isMbod ? 3474.62 : 0.00;
+      const polarityFor = (val) => (val >= 0 ? 'Credit' : 'Debit');
+      const unpaidText = isMbod ? currentCycle.toFixed(2) : '0.00';
+      return {
+        isMbod,
+        creditLimit: creditLimit.toFixed(2),
+        openingAbs: Math.abs(opening).toFixed(2),
+        openingPolarity: polarityFor(opening),
+        totalAbs: Math.abs(totalBalance).toFixed(2),
+        totalPolarity: polarityFor(totalBalance),
+        available: availableBalance.toFixed(2),
+        availablePolarity: polarityFor(availableBalance),
+        currentCycle: currentCycle.toFixed(2),
+        pendingAuth: pendingAuth.toFixed(2),
+        cashBalance: cashBalance.toFixed(2),
+        unpaidText
+      };
+    }
+    // Persist and restore context
+    try {
+      if (!customer) {
+        const pan = localStorage.getItem('currentCustomerPan');
+        if (pan) {
+          customer = mockDatabase.find(c => c.pan === pan) || customer;
+        }
+      }
+      if (customer && customer.pan) {
+        localStorage.setItem('currentCustomerPan', customer.pan);
+      }
+      localStorage.setItem('currentView', 'customer-view');
+    } catch (_) {}
 
     setSubheader("Customer View");
     content.innerHTML = `
@@ -837,31 +881,43 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(tabId).style.display = 'block';
       });
     });
+    // Expose navigation globally for sidebar and other modules
+    window.showCustomerService = showCustomerService;
+    window.showCustomerView = showCustomerView;
   }
 });
 
-// Handle page refresh to restore the correct view
+// Handle page refresh to restore the correct view and support deep links
 window.addEventListener("DOMContentLoaded", () => {
-  const savedView = localStorage.getItem("currentView");
-  const savedCustomer = localStorage.getItem("currentCustomer");
+  try {
+    const savedView = localStorage.getItem("currentView");
+    const pan = localStorage.getItem("currentCustomerPan");
+    const customer = pan ? (mockDatabase.find(c => c.pan === pan) || null) : null;
 
-  if (savedView === "customerView" && savedCustomer) {
-    try {
-      const customer = JSON.parse(savedCustomer);
-
-      const validCustomer = mockDatabase.find(c => c.id === customer.id);
-      if (validCustomer) {
-        showCustomerView(validCustomer);
-      } else {
-
+    switch (savedView) {
+      case 'customer-view':
+        if (customer) { showCustomerView(customer); return; }
         showCustomerService();
-      }
-    } catch (e) {
-
-      showCustomerService();
+        return;
+      case 'customer-service':
+        showCustomerService();
+        return;
+      case 'payment-instrument':
+        if (customer) { showPaymentInstrument(customer); return; }
+        showCustomerService();
+        return;
+      case 'client':
+        if (customer) { showClient(customer); return; }
+        showCustomerService();
+        return;
+      case 'PAN-activity':
+        showPanActivity();
+        return;
+      default:
+        showCustomerService();
+        return;
     }
-  } else {
-
+  } catch (_) {
     showCustomerService();
   }
 });

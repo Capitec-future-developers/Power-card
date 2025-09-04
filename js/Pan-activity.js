@@ -3,6 +3,95 @@ import { mockDatabase } from "./mockDatabase.js";
 const content = document.querySelector(".content");
 const subheader = document.getElementById("subheader");
 
+// Local date formatter for this module
+function formatDate(date) {
+  if (!date) return "N/A";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return String(date);
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+
+export function renderPanActivity(customer) {
+  const instrument = (customer.payment_instruments && customer.payment_instruments[0]) || {};
+  const account = (customer.accounts && customer.accounts[0]) || {};
+
+  const abbrev = (value) => {
+    if (!value) return '';
+    const map = { 'REPLACED':'R','ACTIVE':'A','NEW':'N','NORMAL':'N' };
+    return map[value.toUpperCase()] || value.charAt(0).toUpperCase();
+  };
+
+  const box = (text) => `<div class="box-section">${text ?? ''}</div>`;
+  const small = (text) => `<span class="small-box">${text ?? ''}</span>`;
+  const row = (label, value, trailing='') => `
+<div class="card-section">
+<div class="section-title">${label}</div>
+${box(value)}
+${trailing}
+</div>
+`;
+
+  return `
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Identification</div>
+<div class="customer-card">
+<div class="card-column">
+${row('Institution','')}
+${row('PAN', '')}
+${row('Client code', '')}
+${row('Gender', '')}
+${row('Family name', '')}
+${row('Second name', '')}
+${row('Status', '')}
+${row('Application ID', customer.application_ID)}
+</div>
+<div class="card-column">
+${row('Branch', instrument.branch)}
+${row('PAN sequence', instrument.sequence)}
+${row('Client host ID', customer.client_host_id)}
+${row('Title', customer.title, small('01'))}
+${row('First Name', customer.first_name)}
+${row('Second first name', customer.first_name)}
+${row('Status reason', instrument.status_reason)}
+${row('Contract element ID', '')}
+</div>
+<div class="card-column">
+${row('Payment instrument', '')}
+${row('Primary PAN', '')}
+${row('Corporate ID', customer.corporate_id)}
+${row('', '')}
+${row('Maiden name', '')}
+${row('Legal ID', customer.legal_id)}
+${row('Status date', formatDate(account.pan_status_date))}
+</div>
+</div>
+
+<div class="demographic-header" style="background-color: #092365; color: white; padding: 10px;">Embossing</div>
+<div class="embossing customer-card">
+<div class="card-column" style="width: 500px;">
+${row('File reference', '')}
+${row('*Embossed name', instrument.full_name)}
+${row('Promotion code', '')}
+${row('Plastic code', account.plastic_code, small(''))}
+${row('Plastic delivery method', '', small('002'))}
+${row('Photo', '', small(''))}
+</div>
+<div class="card-column" style="padding-left: 200px; width: 500px">
+${row('Second embossed name', '')}
+${row('Encoded name', instrument.full_name)}
+${row('Priority code', '', small(''))}
+${row('', '')}
+${row('PIN delivery method', '', small(''))}
+${row('Photo reference', '')}
+</div>
+</div>
+`;
+}
+
+
 function setSubheader(text) {
   if (subheader) {
     subheader.textContent = text;
@@ -105,21 +194,21 @@ export function showPanActivity() {
       </td>
     `;
 
-    // Collapsible row
+
     const collapseRow = document.createElement("tr");
     collapseRow.classList.add("collapse-row");
     collapseRow.style.display = "none";
     collapseRow.innerHTML = `
       <td colspan="2">
         <table class="nested-table">
-          <thead>
+          <thead >
             <tr>
               <th></th>
               <th>Loyalty account number</th>
               <th>Account type</th>
               <th>Account branch</th>
               <th>Account currency</th>
-              <th><span class="material-icons-sharp">menu</span></th>
+              <th id="pan-activity"><span class="material-icons-sharp">menu</span></th>
             </tr>
           </thead>
           <tbody>
@@ -134,6 +223,14 @@ export function showPanActivity() {
         </table>
       </td>
     `;
+
+    // Hook click on the nested menu cell to show detailed PAN Activity view
+    const panActionCell = collapseRow.querySelector('#pan-activity');
+    if (panActionCell) {
+      panActionCell.addEventListener('click', () => {
+        ShowPanAction(customer);
+      });
+    }
 
     // Toggle collapse
     row.querySelector(".collapsible-pan").addEventListener("click", () => {
@@ -164,3 +261,22 @@ document.addEventListener("click", e => {
   }
 });
 
+function ShowPanAction(customer) {
+
+  subheader.textContent = "PAN Activity";
+
+  const content = document.querySelector(".content");
+  content.innerHTML = `
+    <section class="pan-activity">
+      <div class="lost-stolen-header">
+<button class="back-btn yo" id="lost-stolen-back-btn">Back ↞</button>
+<button class="save-all yo">Refresh🗘</button>
+<div class="pan-body">${renderPanActivity(customer)}</div>
+  `;
+
+  document.getElementById("pan-activity").addEventListener("click", (e) => {
+      if (e.target && e.target.id === "pan-activity") {
+        ShowPanAction(customer);
+    }
+  })
+}
