@@ -205,33 +205,104 @@ ${row('Amount', 0.00, small('ZAR'))}
 
 </div>
 <div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px; width: 100%;  margin-top: 10px;">FEE ACTIVITY</div>
-<div class="customer-card">
-<div class="card-columns style="margin-left: 23px; margin-top: 50px; text-align: end">
-<table>
-<thead>
-<tr>
-<th>Fee type</th>
-<th>Fee type description</th>
-<th>Fee Id</th>
-<th>Fee Id description</th>
-<th>Period</th>
-<th>Amount</th>
-<th>Number</th>
-</tr>
-</thead>
-<tbody>
-<tb>
-<tr>03</tr>
-<tr>Cap On Us Withdr</td>
-<tr>3</tr>
-<tr>Cap On Us Cash W</td>
-<tr>From 06/11/2025 To 06/11/2025</tr>
-</tb>
-</tbody>
-</table>
+<div class="customer-cards">
+<div style="margin-left: 23px; margin-top: 50px;">
+  <table class="fee-table">
+    <thead>
+      <tr>
+        <th>Fee type</th>
+        <th>Fee type description</th>
+        <th>Fee Id</th>
+        <th>Fee Id description</th>
+        <th>Period</th>
+        <th>Amount</th>
+        <th>Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>03</td>
+        <td>Cap On Us Withdr</td>
+        <td>3</td>
+        <td>Cap On Us Cash W</td>
+        <td>From 06/11/2025 To 06/11/2025</td>
+        <td>1,000.00</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>04</td>
+        <td>Dom Cash With Fe</td>
+        <td>4</td>
+        <td>Dom Cash With Fee</td>
+        <td>From 06/11/2025 To 06/11/2025</td>
+        <td>1,000.00</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>SMS Notific Fee</td>
+        <td>11</td>
+        <td>SMS Notific Fee</td>
+        <td>From 06/11/2025 To 06/11/2025</td>
+        <td>410.00</td>
+        <td>1</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 </div>
 </div>
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px; width: 100%;  margin-top: 10px;">ICC CARD ACTIVITY</div>
+<div class="customer-cards">
+<div style="margin-left: 23px; margin-top: 50px;">
+<table class="fee-table">
+    <thead>
+      <tr>
+         <th>Last ARQC</th>
+        <th>Single tap pin ATC</th>
+        <th>Single tap pin time</th>
+        <th>ContactLess interface</th>
+        <th>𖤉</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="height: 50px;">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div><br>
+
+<div class="demographic-header" style="background-color:#0b2a63;color:white;padding:10px; width: 100%;  margin-top: 10px;">TOKEN</div>
+<div class="customer-cards">
+<div style="margin-left: 23px; margin-top: 50px;">
+<table class="fee-table">
+    <thead>
+      <tr>
+        <th>Token number</th>
+        <th>Wallet id</th>
+        <th>Device name</th>
+        <th>Transaction id</th>
+        <th>MCI device type</th>
+        <th>Token type</th>
+        <th>Token status</th>
+        <th>Token status date</th>
+        <th>Expiry date</th>
+        <th>Assrance level</th>
+        <th>Token requester id</th>
+        <th>𖤉</th>
+      </tr>
+    </thead>
+  </table>
+</div>
+</div>
+</div><br>
 
 `;
 }
